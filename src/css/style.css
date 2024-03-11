@@ -1,0 +1,25 @@
+:root {
+  /* --font-body: Arial, Helvetica, sans-serif; */
+  /* --font-headline: Haettenschweiler, "Arial Narrow Bold", sans-serif; */
+  /* colors */
+  /* Source: https://coolors.co/fffffa-0d5c63-ff686b-ffbf00-30292f */
+  --primary-color: #0d5c63;
+  --secondary-color: #ff686b;
+  --tertiary-color: #ffbf00;
+  --light-color: #fffffa;
+  --dark-color: #30292f;
+
+  /* sizes */
+  --font-base: 18px;
+  --small-font: 0.8em;
+  --large-font: 1.2em;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  /* font-family: var(--font-body);
+  font-size: var(--font-base); */
+  color: var(--dark-color);
+}
