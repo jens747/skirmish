@@ -19,7 +19,15 @@
 }
 body {
   margin: 0;
-  /* font-family: var(--font-body);
-  font-size: var(--font-base); */
+  /* font-family: var(--font-body); */
+  font-size: var(--font-base);
+  /* Bangers font */
+  /* font-family: "Bangers", system-ui;
+  font-weight: 400;
+  font-style: normal; */
+  /* Luckiest Guy */
+  font-family: "Luckiest Guy", cursive;
+  font-weight: 400;
+  font-style: normal;
   color: var(--dark-color);
 }
