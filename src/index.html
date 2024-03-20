@@ -10,12 +10,84 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap" rel="stylesheet">
     <script src="js/main.js" type="module"></script>
+    <!-- <script type="module" src="js/utils.mjs"></script> -->
   </head>
   <body>
+    <!-- Pokeball animations -->
+    <div class="bg top-slide"></div>
+    <div class="bg bottom-slide"></div>
+    <div class="bg center-circle"></div>
+    <div class="bg center-circle title">Skirmish</div>
+    <div class="bg center-circle gray-circle"></div>
+    <div class="bg center-circle white-circle"></div>
+    <!-- End Pokeball animations -->
     <header id="poke-header"></header>
     <main>
-      <h1>Skirmish</h1>
-      
+      <h1 id="main-h1">Skirmish</h1>
+      <section class="trainer-modal">
+        <form class="trainer-form">
+          <fieldset class="modal-fieldset" id="trainer-num">
+            <legend class="modal-legend">Welcome to Skirmish!</legend>
+            <label class="trainer-label">
+              <!-- <span class="label-span">How many trainers are there? </span>
+              <input type="text" id="trainer-name" name="name" autofocus required/>
+              <button class="modal-btn prime-btn" id="single-btn" type="button" onclick="single()">One Trainer</button>
+              <button class="modal-btn prime-btn" id="multi-btn" type="button" onclick="multi()">Two Trainers</button> -->
+              <button type="button" class="modal-btn prime-btn" data-action="welcomeTrainer">Click to continue</button>
+            </label>
+          </fieldset>
+  
+          <fieldset class="modal-fieldset" id="trainer1Fieldset">
+            <legend class="modal-legend">Trainer 1</legend>
+            <label class="trainer-label" id="trainer1Label">
+              <span class="label-span">What is your name? </span>
+              <input class="trainer-input" type="text" id="trainer1Name" name="trainer1Name" autofocus required/>
+              <button class="modal-btn prime-btn another-btn" name="trainer1Name" data-action="addTrainer1" type="button">Add another trainer</button>
+              <button class="modal-btn prime-btn already-btn" name="trainer1Name" data-action="loginTrainer1" type="button">Already have an account</button>
+              <button class="modal-btn prime-btn ready-btn"  name="trainer1Name" data-action="skirmish1" type="button">Ready to play</button>
+            </label>
+          </fieldset>
+
+          <fieldset class="modal-fieldset" id="login1Fieldset">
+            <legend class="modal-legend">Trainer 1 Login</legend>
+            <label class="trainer-label" id="label1Name">
+              <span class="label-span">Name </span>
+              <input class="trainer-input" type="text" id="login1Name" name="login1Name" autofocus required/>
+            </label>
+            <label class="trainer-label" id="label1Pass">
+              <span class="label-span">Password </span>
+              <input class="trainer-input" type="password" id="login1Pass" name="login1Pass" required/>
+            </label>
+            <button class="modal-btn prime-btn another-btn" name="login1Name" data-action="addTrainer1Login" type="button">Add another trainer</button>
+            <button class="modal-btn prime-btn ready-btn" name="login1Name" data-action="skirmish1Login" type="button">Ready to play</button>
+          </fieldset>
+  
+          <fieldset class="modal-fieldset" id="trainer2Fieldset">
+            <legend class="modal-legend">Trainer 2</legend>
+            <label class="trainer-label" id="trainer2Label">
+              <span class="label-span">What is your name? </span>
+              <input class="trainer-input" type="text" id="trainer2Name" name="trainer2Name" autofocus required/>
+              <button class="modal-btn prime-btn already-btn" name="trainer2Name" data-action="loginTrainer2" type="button">Already have an account</button>
+              <button class="modal-btn prime-btn ready-btn" name="trainer2Name" data-action="skirmish2" type="button">Ready to play</button>
+            </label>
+          </fieldset>
+
+          <fieldset class="modal-fieldset" id="login2Fieldset">
+            <legend class="modal-legend">Trainer 2 Login</legend>
+            <label class="trainer-label" id="label2Name">
+              <span class="label-span">Name </span>
+              <input class="trainer-input" type="text" id="login2Name" name="login2Name" autofocus required/>
+            </label>
+            <label class="trainer-label" id="label2Pass">
+              <span class="label-span">Password </span>
+              <input class="trainer-input" type="password" id="login2Pass" name="login2Pass" required/>
+            </label>
+            <button class="modal-btn prime-btn" name="login2Name" data-action="skirmish2Login" type="button">Ready to play</button>
+          </fieldset>
+          
+          <input type="submit" value="Start playing Skirmish!" class="modal-btn" id="start-btn" />
+        </form>
+      </section>
     </main>
     <footer id="poke-footer"></footer>
   </body>
