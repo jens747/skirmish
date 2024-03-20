@@ -1,0 +1,40 @@
+{
+  "Ash": {
+    "name": "Ash",
+    "password": "password1",
+    "wins": 10,
+    "losses": 5,
+    "coins": 0, 
+    "pokemonCards": {
+      "Squirtle": {
+        "name": "Bulbasaur",
+        "forms": ["Ivysaur", "Venusaur"],
+        "id": 1,
+        "level": 1,
+        "wins": 0,
+        "losses": 0,
+        "next-level": 1,
+        "hp": 35,
+        "attack": 12,
+        "defense": 10,
+        "special-attack": 13,
+        "special-defense": 8,
+        "types": ["grass"],
+        "double-damage-to": ["fire", "bug"],
+        "double-damage-from": ["water"],
+        "half-damage-to": [],
+        "half-damage-from": [],
+        "no-damage-to": [],
+        "no-damage-from": [],
+        "sprites": "https://url.to.img"
+      }
+    }
+  },
+  "Misty": {
+    "name": "Misty",
+    "password": "password2",
+    "wins": 15,
+    "losses": 3,
+    "pokemonCards": ["Charmander", "Squirtle"]
+  }
+}

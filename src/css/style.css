@@ -3,16 +3,35 @@
   /* --font-headline: Haettenschweiler, "Arial Narrow Bold", sans-serif; */
   /* colors */
   /* Source: https://coolors.co/fffffa-0d5c63-ff686b-ffbf00-30292f */
+  /* Source: https://coolors.co/74121d-0d5c63-ff686b-ffbf00-31e981 */
+  /* Source: https://coolors.co/23022e-0d5c63-ff686b-ffbf00-31e981 */
+  /* Source: https://coolors.co/6cd4ff-0d5c63-ff686b-ffbf00-31e981 */
   --primary-color: #0d5c63;
   --secondary-color: #ff686b;
   --tertiary-color: #ffbf00;
   --light-color: #fffffa;
   --dark-color: #30292f;
+  
+  --dark-purple: #23022e;
+  --dark-red: #D8315B;
+  --dark-yellow: #FE9000;
+  --dark-blue: #1F01B9;
+  --dark-green: #00A676;
+  --mid-green: #3EC300;
+  --mid-red: #FF0035;
+  --mid-blue: #256EFF;
+  --light-green: #31E981;
+  --light-red: #FF1053;
+  --light-yellow: #FAA916;
+  --light-blue: #6cd4ff;
+
 
   /* sizes */
   --font-base: 18px;
   --small-font: 0.8em;
   --large-font: 1.2em;
+  --xl-font: 1.4em;
+  --xxl-font: 1.6em;
 }
 * {
   box-sizing: border-box;
@@ -30,4 +49,295 @@ body {
   font-weight: 400;
   font-style: normal;
   color: var(--dark-color);
+}
+
+#main-h1 {
+  opacity: 0;
+}
+
+form {
+  display: none;
+}
+
+/*  */
+/* Pokeball animations */
+/*  */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.top-slide, .bottom-slide {
+  position: fixed;
+  width: 100%;
+  height: 50%; /* Cover half the screen */
+  z-index: 1;
+}
+
+.top-slide {
+  top: -40vh;
+  background-color: red;
+  animation: slideDown 3s forwards;
+  transform-origin: center bottom;
+  border: 6px solid black;
+  border-radius: 300px 300px 0 0;
+  width: 50%;
+  height: 40%;
+  /* top: 15vh; */
+  left: 25vw;
+  /* text formatting */
+  /* text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--tertiary-color);
+  font-size: 5em;
+  text-shadow: 2px 2px var(--light-color); */
+}
+
+.bottom-slide {
+  background-color: white;
+  bottom: 60vh;
+  animation: slideUp 3s forwards;
+  /* animation: rotate 1s 1s forwards; */
+  transform-origin: center top;
+  border: 6px solid black;
+  border-radius: 0 0 300px 300px;
+  box-shadow: 6px 6px 10px lightgray;
+  width: 50%;
+  height: 40%;
+  left: 25vw;
+  /* bottom: 5vh; */
+}
+
+.center-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: black;
+  border-radius: 50%; /* Make it a circle */
+  /* Center the circle and start from scale 0 */
+  transform: translate(-50%, -50%) scale(0); 
+  animation: expandCircle 1s 1s forwards; /* Start after the previous animations */
+  z-index: 2;
+}
+
+.gray-circle {
+  background-color: gray;
+  /* box-shadow: 2px 2px 4px darkgray; */
+  max-width: 4vw;
+  max-height: 4vw;
+}
+
+.white-circle {
+  background-color: white;
+  max-width: 3vw;
+  max-height: 3vw;
+  box-shadow: 2px 2px 4px darkslategray;
+}
+
+.title {
+  top: 30%;
+  background-color: red;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--tertiary-color);
+  font-size: 5em;
+  text-shadow: 2px 2px var(--light-color);
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(0vh);
+  }
+  25% {
+    transform: translateY(50vh);
+  }
+  50%, 100% {
+    transform: translateY(50vh) rotate(360deg);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(100vh);
+  }
+  25% {
+    transform: translateY(50vh);
+  }
+  50%, 100% {
+    transform: translateY(50vh) rotate(360deg);
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes expandCircle {
+  0% {
+    width: 0;
+    height: 0;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    width: 10vw; /* Adjust based on the screen size */
+    height: 10vw; /* Make the circle's diameter 1/4th of the viewport width */
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes throwBall {
+  to {
+    transform: translateY(-100vh); 
+  }
+}
+
+@keyframes popForm {
+  0% {
+    transform: scale(0.25);
+    opacity: 0; /* Start from invisible */
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1; /* Make it visible as it grows */
+  }
+  75% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/*  */
+/* End Pokeball animations */
+/*  */
+
+/* Modal styles */
+
+.trainer-modal {
+
+}
+
+.trainer-form {
+
+}
+
+.modal-fieldset {
+  width: 80vw;
+  max-width: 640px;
+  margin: 2em auto;
+  box-shadow: 10px 6px 16px lightgray;
+  border: 6px outset var(--tertiary-color);
+  border-radius: 24px;
+  padding: 1em;
+}
+
+.modal-legend {
+  font-size: var(--xl-font);
+}
+
+.trainer-input {
+  display: block;
+  width: 100%;
+  /* max-width: 568px; */
+  height: 2em;
+  background: lightgray;
+  border: 2px inset lightgray;
+  border-radius: 8px;
+  font-family: "Luckiest Guy", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: large;
+  color: var(--dark-color);
+}
+
+.modal-btn {
+  /* display: block; */
+  /* margin: 1em; */
+  margin: 1em .5em;
+  padding: 1em 1.2em;
+  border: none;
+  border-radius: 22px;
+  background: var(--primary-color);
+  color: var(--light-color);
+  font-weight: 900;
+  box-shadow: 2px 2px 6px lightgray;
+}
+
+.another-btn {
+  background: var(--dark-red);
+}
+
+.already-btn {
+  background: var(--dark-yellow);
+}
+
+.ready-btn {
+  background: var(--dark-green);
+}
+
+.another-btn:hover, 
+.already-btn:hover, 
+.ready-btn:hover, 
+.modal-btn:hover {
+  background: var(--mid-blue);
+  cursor: pointer;
+}
+
+#trainer-num {
+  display: flex;
+  justify-content: center;
+}
+
+#trainer1Fieldset, 
+#trainer2Fieldset, 
+#login1Fieldset, 
+#login2Fieldset, 
+#start-btn {
+  display: none;
+}
+
+/* PokeCard Styles */
+
+.poke-card {
+  width: 64vw;
+  min-width: 216px;
+  max-width: 320px;
+  margin: 2em auto;
+  border: 5px outset var(--dark-green);
+  padding: 1em;
+  border-radius: 32px;
+  box-shadow: 2px 2px 8px gray;
+}
+
+.pokeImg {
+  width: 100%;
+}
+
+.poke-name {
+  color: var(--dark-red);
+}
+
+/* End PokeCard Styles */
+
+/* End of modal styles */
+
+@media (max-width: 775px) {
+  .modal-btn {
+    display: block; 
+    margin: 1em auto;
+    min-width: 16em;
+  }
 }
