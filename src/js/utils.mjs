@@ -138,6 +138,19 @@ function throwBall() {
   form.style.animation = "popForm .4s forwards";
 }
 
+export function shuffleCards(cards) {
+  // iterate through the array of values
+  for (let idx = cards.length - 1; idx > 0; idx--) {
+    // get a random number within the total value of cards
+    let swap = Math.floor(Math.random() * (idx + 1));
+    // swap the location of the cards based on their index and the random index
+    [cards[idx], cards[swap]] = [cards[swap], cards[idx]];
+  }
+  // return the randomized deck
+  return cards;
+  // return cards.slice(0, 5);
+}
+
 export function getParam(param) {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
