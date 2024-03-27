@@ -3,6 +3,20 @@ import { getLocalStorage, setLocalStorage, renderWithTemplate, setClick, shuffle
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {
   const p = getLocalStorage(name.toLowerCase());
+  // class Trainer {
+  //   constructor(name, pass, wins, losses, coins, roundsWon, roundsLost, skirmishCards) {
+  //     this.name = name;
+  //     this.pass = pass;
+  //     this.wins = wins;
+  //     this.losses = losses;
+  //     this.coins = coins;
+  //     this.roundsWon = roundsWon;
+  //     this.roundsLost = roundsLost;
+  //     this.skirmishCards = skirmishCards;
+  //   }
+
+
+  // }
   try {
     if (!p || p.name === "") {
       setLocalStorage(name, {
@@ -10,6 +24,7 @@ export default async function newTrainer(name, pass = "secret") {
         "pass": pass,
         "wins": 0,
         "losses": 0,
+        "draws": 0,
         "coins": 0, 
         "roundsWon": 0, 
         "roundsLost": 0, 
