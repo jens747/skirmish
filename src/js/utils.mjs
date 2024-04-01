@@ -20,6 +20,64 @@ export function setClick(selector, callback) {
   document.querySelector(selector).addEventListener("click", callback);
 }
 
+export function setBlur(selector, callback) {
+  document.querySelector(selector).addEventListener("blur", callback);
+}
+
+export function hasContent(message = "#message", trainerInput = ".trainer-input") {
+  let inputs = document.querySelectorAll(trainerInput);
+  let msg = document.querySelector(message);
+  msg.textContent = "";
+  
+  inputs.map(input => {
+    // Check if input field is empty
+    if (!input) {
+      msg.textContent += "Please fill out each field.";
+      msg.style.display = "block";
+    }
+
+    // If there's an error message, prevent form submission
+    if (msg.textContent) {
+      return false;
+    }
+
+    return true;
+  })
+}
+
+export function displayMessage(msg) {
+  // Create the <section> element
+  const msgsec = document.createElement("section");
+  msgsec.className = "messageSection";
+
+  const msgdiv = document.createElement("div");
+  msgdiv.classname = "messageDiv";
+
+  // Create the <p> element for the message
+  const pmsg = document.createElement("p");
+  pmsg.className = "message";
+  pmsg.innerText = msg;
+
+  // Append the <p> message to the <section>
+  msgdiv.appendChild(pmsg);
+  msgsec.appendChild(msgdiv);
+
+  // Append the <section> to the body or another container in the document
+  const bd = document.querySelector("body");
+  bd.appendChild(msgsec); 
+
+  // Wait for 5 seconds
+  setTimeout(() => {
+    // Apply the slide-up animation
+    msgsec.style.animation = "disappear 0.5s forwards";
+    
+    // Wait for the animation to finish before removing the message
+    msgsec.addEventListener("animationend", () => {
+      msgsec.remove();
+    });
+  }, 5000);
+}
+
 export function setClickAll(selector, callback) {
   const btns = document.querySelectorAll(selector);
   btns.forEach(btn => {
@@ -43,6 +101,7 @@ export async function addActions(action, event) {
   // const input = document.querySelector(button); 
   // const inputValue = input.value;
   let trainer;
+
   switch(action) {
     case "welcomeTrainer":
       document.querySelector("#trainer-num").style.display = "none";
@@ -50,8 +109,12 @@ export async function addActions(action, event) {
       break;
     case "addTrainer1":
       console.log("addTrainer1");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
       // Get name of Trainer1 & save to localStorage
       newTrainer(input.value);
+      // Set the name of the trainer1 to local storage
+      setupTrainers(input.value);
       // Get random Pokemon for Trainer1
       trainer = await storePokeData(10);
       // console.log(trainer);
@@ -64,6 +127,10 @@ export async function addActions(action, event) {
       break;
     case "loginTrainer1":
       console.log("loginTrainer1");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
+      // Set the name of the trainer1 to local storage
+      setupTrainers(input.value);
       document.querySelector("#trainer1Fieldset").style.display = "none";
       document.querySelector("#login1Fieldset").style.display = "block";
       break;
@@ -74,6 +141,8 @@ export async function addActions(action, event) {
       break;
     case "addTrainer1Login":
       console.log("addTrainer1Login");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
       document.querySelector("#login1Fieldset").style.display = "none";
       document.querySelector("#trainer2Fieldset").style.display = "block";
       break;
@@ -84,14 +153,21 @@ export async function addActions(action, event) {
       break;
     case "loginTrainer2":
       console.log("loginTrainer2");
-      
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
+      // Set the name of the trainer2 to local storage
+      addTrainer(input.value);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#login2Fieldset").style.display = "block";
       break;
     case "skirmish2":
       console.log("skirmish2");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
       // Get name of Trainer1 & save to localStorage
       newTrainer(input.value);
+      // Set the name of the trainer2 to local storage
+      addTrainer(input.value);
       // Get random Pokemon for Trainer1
       trainer = await storePokeData(10);
       // console.log(trainer);
@@ -102,6 +178,8 @@ export async function addActions(action, event) {
       break;
     case "skirmish2Login":
       console.log("skirmish2Login");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile.`);
       document.querySelector("#login2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
       break;
@@ -150,6 +228,55 @@ export function shuffleCards(cards) {
   return cards;
   // return cards.slice(0, 5);
 }
+
+// Check for real email
+export function checkEmail(email) {
+  const basicEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return basicEmailRegex.test(email);
+}
+
+// Check password meets basic requirements
+export function checkPass(pass) {
+  const basicPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return basicPassRegex.test(pass);
+}
+
+export function setupTrainers(trainer) {
+  // Get the list of current trainers from local storage
+  let ct = getLocalStorage("currentTrainers");
+  // If the list does not exist
+  if (!ct) {
+    // Create an array for the list
+    ct = new Array();
+    // ...and add the first trainer to the list
+    ct.push(trainer);
+  } else {
+    // If the list does exist, add the trainer to the first position
+    ct[0] = trainer;
+  }
+  // Save updated list to localstorage
+  setLocalStorage("currentTrainers", ct);
+}
+
+export function addTrainer(trainer) {
+  // Get the list of current trainers from local storage
+  let ct2 = getLocalStorage("currentTrainers");
+  // Update current trainers list
+  ct2[1] = trainer;
+  // Save updated list to localstorage
+  setLocalStorage("currentTrainers", ct2);
+}
+
+// Create a password hash with bcrypt.js
+// https://github.com/dcodeIO/bcrypt.js
+// Potential password hashing
+// const bcrypt = require('bcrypt');
+
+// export async function hashPass() {
+//   const salt = await bcrypt.genSaltSync(10);
+//   const hash = await bcrypt.hashSync(password, salt);
+//   return hash;
+// }
 
 export function getParam(param) {
   const queryString = window.location.search;

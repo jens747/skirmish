@@ -3,18 +3,18 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Endgame</title>
+    <title>Game Over</title>
     <link rel="stylesheet" href="../css/style.css">
     <!-- Google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap" rel="stylesheet">
-    <script src="../js/endgame.js" type="module"></script>
+    <!-- <script src="../js/gameover.js" type="module"></script> -->
     <!-- <script type="module" src="js/utils.mjs"></script> -->
   </head>
-  <body id="defaultBody">
+  <body>
     <main id="winMain">
-      <h1>You Won! Congratulations!</h1>
+      <h1>Sorry, you didn't win.</h1>
       <section>
         <h2>Skirmishes Won</h2>
       </section>
@@ -22,26 +22,21 @@
         <h2>Skirmishes Lost</h2>
       </section>
       <section class="trainer-modal">
-        <form class="trainer-form" id="winForm" name="winForm" action="../gameover/index.html" method="post">
-          <fieldset class="modal-fieldset" id="winFieldset">
-            <legend class="modal-legend" id="winLegend">Register</legend>
-            <!-- <p>Register to save your progress.</p>
-            <p>* required</p> -->
-            <label class="trainer-label" id="winEmailLabel">
+        <form action="../index.html" method="post" class="trainer-form" id="lossForm" name="lossForm">
+          <fieldset class="modal-fieldset" id="lossFieldset">
+            <legend class="modal-legend" id="lossLegend">Register here to save your progress</legend>
+            <label class="trainer-label" id="lossEmailLabel">
               <span class="label-span">Email* </span>
-              <input class="trainer-input" id="winEmail" type="email" name="winForm" placeholder="email@example.com" autofocus />
+              <input class="trainer-input" id="lossEmail" type="email" name="lossForm" placeholder="email@example.com"/>
             </label>
-            <label class="trainer-label" id="winPassLabel">
+            <label class="trainer-label" id="lossPassLabel">
               <span class="label-span">Password* </span>
-              <input class="trainer-input" id="winPass" type="password" name="winForm" placeholder="password" />
+              <input class="trainer-input" id="lossPass" type="password" name="lossForm" placeholder="password"/>
             </label>
           </fieldset>
   
-          <input type="submit" value="Advance to next page" id="winAdvBtn" />
+          <input type="submit" value="Return to home page" id="lossAdvBtn" />
         </form>
-      </section>
-      <section>
-        <p id="message"></p>
       </section>
     </main>
     <footer id="poke-footer"></footer>

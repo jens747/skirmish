@@ -2,15 +2,16 @@ import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage, shuffleCards } from "./utils.mjs";
 
 export default function skirmishLoop() {
-  const t1 = getLocalStorage("Jim");
-  const t2 = getLocalStorage("Pam");
+  const ct = getLocalStorage("currentTrainers");
+  const t1 = getLocalStorage(ct[0]);
+  const t2 = getLocalStorage(ct[1]);
   // Get trainer data
-  const t1Deck = getTrainerDeck("Jim");
-  const t2Deck = getTrainerDeck("Pam");
+  const t1Deck = getTrainerDeck(ct[0]);
+  const t2Deck = getTrainerDeck(ct[1]);
 
   // Variables for trainer's Win/Loss Round record
-  let t1Record = [0, 0, 0];
-  let t2Record = [0, 0, 0];
+  let t1Record = [0, 0, 0, {"win": [], "lose": [], "draw": []}];
+  let t2Record = [0, 0, 0, {"win": [], "lose": [], "draw": []}];
 
   // Cycle through trainer card data
   // for (let i = t1Deck.length - 1; i > 0; i--) {
@@ -56,6 +57,9 @@ export default function skirmishLoop() {
         // add a loss to trainer1 and a win to trainer2
         t1Record[1] = updateRecord(t1Record[1]);
         t2Record[0] = updateRecord(t2Record[0]);
+        // add t1's Skiremon to their "lose" list & t2's to thier "win" list
+        t1Record[3].lose.push(t1Deck[i].name);
+        t2Record[3].win.push(t2Deck[i].name);
         // update the trainer's current poke card t2 won, t1 lost
         updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "win");
         updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "lose");
@@ -66,6 +70,9 @@ export default function skirmishLoop() {
         // add a loss to trainer2 and a win to trainer1
         t2Record[1] = updateRecord(t2Record[1]);
         t1Record[0] = updateRecord(t1Record[0]);
+        // add t1's Skiremon to their "win" list & t2's to thier "lose" list
+        t2Record[3].lose.push(t2Deck[i].name);
+        t1Record[3].win.push(t1Deck[i].name);
         // update the trainer's current poke card t1 won, t2 lost
         updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "win");
         updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "lose");
@@ -79,6 +86,9 @@ export default function skirmishLoop() {
       updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "win");
       t2Record[1] = updateRecord(t2Record[1]);
       updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "lose");
+      // add t1's Skiremon to their "win" list & t2's to thier "lose" list
+      t2Record[3].lose.push(t2Deck[i].name);
+      t1Record[3].win.push(t1Deck[i].name);
     }
     // After 3 turns if no one faints, check if trainer2 did more damage
     if (trainer2.hp2 > trainer1.hp1 && trainer1.hp1 > 0 && trainer1.diff1 !== trainer2.diff2) {
@@ -86,6 +96,9 @@ export default function skirmishLoop() {
       updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "win");
       t1Record[1] = updateRecord(t1Record[1]);
       updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "lose");
+      // add t1's Skiremon to their "lose" list & t2's to thier "win" list
+      t1Record[3].lose.push(t1Deck[i].name);
+      t2Record[3].win.push(t2Deck[i].name);
     }
     // Game is a draw if both players do equal/no damage
     if (trainer1.diff1 === trainer2.diff2) {
@@ -94,6 +107,9 @@ export default function skirmishLoop() {
       updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord);
       t2Record[2] = updateRecord(t2Record[2]);
       updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord);
+      // add t1's & t2's Skiremon to their "draw" list
+      t2Record[3].draw.push(t2Deck[i].name);
+      t1Record[3].draw.push(t1Deck[i].name);
     }
   }
 
@@ -104,14 +120,16 @@ export default function skirmishLoop() {
   t2.losses = updateRecord(t2.losses, t2Record[1]);
   t1.draws = updateRecord(t1.draws, t1Record[2]);
   t2.draws = updateRecord(t2.draws, t2Record[2]);
+  t1.currentGame = t1Record[3];
+  t2.currentGame = t2Record[3];
 
-  setLocalStorage("Jim", t1);
-  setLocalStorage("Pam", t2);
-  console.log(`Jim's Record: Wins ${t1Record[0]}, Losses ${t1Record[1]}, Draws ${t1Record[2]}`);
-  console.log(`Pam's Record: Wins ${t2Record[0]}, Losses ${t2Record[1]}, Draws ${t2Record[2]}`);
+  setLocalStorage(ct[0], t1);
+  setLocalStorage(ct[1], t2);
+  console.log(`${ct[0]}'s Record: Wins ${t1Record[0]}, Losses ${t1Record[1]}, Draws ${t1Record[2]}`);
+  console.log(`${ct[1]}'s Record: Wins ${t2Record[0]}, Losses ${t2Record[1]}, Draws ${t2Record[2]}`);
 
   try {
-    endgame(t1Record, t2Record);
+    location.assign("/endgame/index.html");
   } catch (error) {
     console.error("Error loading page: ", error);
   }
@@ -229,7 +247,7 @@ export function updateRecord(name, amount = 1, add = true) {
   return record;
 }
 
-function updateTrainerCard(trainer, trainerCard, rivalCard, callback, outcome = "draw") {
+export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, outcome = "draw") {
   const COIN = 2;
   const BONUS = 5;
   // check both card levels
@@ -252,6 +270,7 @@ function updateTrainerCard(trainer, trainerCard, rivalCard, callback, outcome = 
       if (trainerCard.nextLevel <= 0) {
         trainerCard.level = updateRecord(trainerCard.level);
         trainerCard.nextLevel = trainerCard.level;
+        levelUpCard(trainerCard);
       }
     // If player loses update trainerCard losses
     } else if (outcome === "lose") {
@@ -269,4 +288,38 @@ function updateTrainerCard(trainer, trainerCard, rivalCard, callback, outcome = 
   }
   console.log(trainer.skirmishCards[[trainerCard.name]]);
   console.log(trainerCard);
+}
+
+export function levelUpCard(card) {
+  const STATS = Array.from({ length: 6 }, () => Math.floor(Math.random() * 3));
+  // console.log(STATS);
+
+  console.log(`
+    Name: ${card.name},
+    HP: ${card.hp} + ${STATS[0]},
+    Attack: ${card.attack} + ${STATS[1]},
+    Defense: ${card.defense} + ${STATS[2]}, 
+    Sp. Attack: ${card.specialAttack} + ${STATS[3]},
+    Sp. Defense: ${card.specialDefense} + ${STATS[4]},
+    Speed: ${card.speed} + ${STATS[5]}
+  `);
+
+  card.hp += STATS[0];
+  card.attack += STATS[1];
+  card.defense += STATS[2];
+  card.specialAttack += STATS[3];
+  card.specialDefense += STATS[4];
+  card.speed += STATS[5];
+
+  console.log(`
+    Name: ${card.name},
+    HP: ${card.hp},
+    Attack: ${card.attack},
+    Defense: ${card.defense}, 
+    Sp. Attack: ${card.specialAttack},
+    Sp. Defense: ${card.specialDefense},
+    Speed: ${card.speed}
+  `);
+  console.log(card);
+  return card;
 }

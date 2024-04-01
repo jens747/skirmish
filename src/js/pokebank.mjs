@@ -1,4 +1,7 @@
 export async function fetchPokeData(pokeId, pokeCategory) {
+  // Let the user know we are waiting for a response
+  document.body.style.cursor = "progress";
+
   try {
       // Fetching data for the Pokémon by its ID or name
       const response = await fetch(`https://pokeapi.co/api/v2/${pokeCategory}/${pokeId}/`);
@@ -13,6 +16,9 @@ export async function fetchPokeData(pokeId, pokeCategory) {
   } catch (error) {
       return null;
       // console.error("Pokémon not found:", error);
+  } finally {
+    // When we have a response revert cursor to default
+    document.body.style.cursor = "default";
   }
 }
 
