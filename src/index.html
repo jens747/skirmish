@@ -25,14 +25,10 @@
     <main>
       <h1 id="main-h1">Skirmish</h1>
       <section class="trainer-modal">
-        <form class="trainer-form">
+        <form class="trainer-form" name="trainer-form" action="game/index.html" method="post">
           <fieldset class="modal-fieldset" id="trainer-num">
             <legend class="modal-legend">Welcome to Skirmish!</legend>
             <label class="trainer-label">
-              <!-- <span class="label-span">How many trainers are there? </span>
-              <input type="text" id="trainer-name" name="name" autofocus required/>
-              <button class="modal-btn prime-btn" id="single-btn" type="button" onclick="single()">One Trainer</button>
-              <button class="modal-btn prime-btn" id="multi-btn" type="button" onclick="multi()">Two Trainers</button> -->
               <button type="button" class="modal-btn prime-btn" data-action="welcomeTrainer">Click to continue</button>
             </label>
           </fieldset>
@@ -41,7 +37,8 @@
             <legend class="modal-legend">Trainer 1</legend>
             <label class="trainer-label" id="trainer1Label">
               <span class="label-span">What is your name? </span>
-              <input class="trainer-input" type="text" id="trainer1Name" name="trainer1Name" autofocus required/>
+              <!-- <input class="trainer-input" type="text" id="trainer1Name" name="trainer1Name" autofocus required/> -->
+              <input class="trainer-input" type="text" id="trainer1Name" name="trainer1Name" autofocus/>
               <button class="modal-btn prime-btn another-btn" name="trainer1Name" data-action="addTrainer1" type="button">Add another trainer</button>
               <button class="modal-btn prime-btn already-btn" name="trainer1Name" data-action="loginTrainer1" type="button">Already have an account</button>
               <button class="modal-btn prime-btn ready-btn"  name="trainer1Name" data-action="skirmish1" type="button">Ready to play</button>
@@ -52,11 +49,13 @@
             <legend class="modal-legend">Trainer 1 Login</legend>
             <label class="trainer-label" id="label1Name">
               <span class="label-span">Name </span>
-              <input class="trainer-input" type="text" id="login1Name" name="login1Name" autofocus required/>
+              <!-- <input class="trainer-input" type="text" id="login1Name" name="login1Name" autofocus required/> -->
+              <input class="trainer-input" type="text" id="login1Name" name="login1Name" />
             </label>
             <label class="trainer-label" id="label1Pass">
               <span class="label-span">Password </span>
-              <input class="trainer-input" type="password" id="login1Pass" name="login1Pass" required/>
+              <!-- <input class="trainer-input" type="password" id="login1Pass" name="login1Pass" required/> -->
+              <input class="trainer-input" type="password" id="login1Pass" name="login1Pass" />
             </label>
             <button class="modal-btn prime-btn another-btn" name="login1Name" data-action="addTrainer1Login" type="button">Add another trainer</button>
             <button class="modal-btn prime-btn ready-btn" name="login1Name" data-action="skirmish1Login" type="button">Ready to play</button>
@@ -66,7 +65,8 @@
             <legend class="modal-legend">Trainer 2</legend>
             <label class="trainer-label" id="trainer2Label">
               <span class="label-span">What is your name? </span>
-              <input class="trainer-input" type="text" id="trainer2Name" name="trainer2Name" autofocus required/>
+              <!-- <input class="trainer-input" type="text" id="trainer2Name" name="trainer2Name" autofocus required/> -->
+              <input class="trainer-input" type="text" id="trainer2Name" name="trainer2Name" />
               <button class="modal-btn prime-btn already-btn" name="trainer2Name" data-action="loginTrainer2" type="button">Already have an account</button>
               <button class="modal-btn prime-btn ready-btn" name="trainer2Name" data-action="skirmish2" type="button">Ready to play</button>
             </label>
@@ -76,11 +76,13 @@
             <legend class="modal-legend">Trainer 2 Login</legend>
             <label class="trainer-label" id="label2Name">
               <span class="label-span">Name </span>
-              <input class="trainer-input" type="text" id="login2Name" name="login2Name" autofocus required/>
+              <!-- <input class="trainer-input" type="text" id="login2Name" name="login2Name" autofocus required/> -->
+              <input class="trainer-input" type="text" id="login2Name" name="login2Name" />
             </label>
             <label class="trainer-label" id="label2Pass">
               <span class="label-span">Password </span>
-              <input class="trainer-input" type="password" id="login2Pass" name="login2Pass" required/>
+              <!-- <input class="trainer-input" type="password" id="login2Pass" name="login2Pass" required/> -->
+              <input class="trainer-input" type="password" id="login2Pass" name="login2Pass" />
             </label>
             <button class="modal-btn prime-btn" name="login2Name" data-action="skirmish2Login" type="button">Ready to play</button>
           </fieldset>

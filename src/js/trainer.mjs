@@ -1,8 +1,22 @@
-import { getLocalStorage, setLocalStorage, renderWithTemplate, setClick } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, renderWithTemplate, setClick, shuffleCards } from "./utils.mjs";
 
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {
   const p = getLocalStorage(name.toLowerCase());
+  // class Trainer {
+  //   constructor(name, pass, wins, losses, coins, roundsWon, roundsLost, skirmishCards) {
+  //     this.name = name;
+  //     this.pass = pass;
+  //     this.wins = wins;
+  //     this.losses = losses;
+  //     this.coins = coins;
+  //     this.roundsWon = roundsWon;
+  //     this.roundsLost = roundsLost;
+  //     this.skirmishCards = skirmishCards;
+  //   }
+
+
+  // }
   try {
     if (!p || p.name === "") {
       setLocalStorage(name, {
@@ -10,7 +24,10 @@ export default async function newTrainer(name, pass = "secret") {
         "pass": pass,
         "wins": 0,
         "losses": 0,
+        "draws": 0,
         "coins": 0, 
+        "roundsWon": 0, 
+        "roundsLost": 0, 
         "skirmishCards": {}
       });
       // Clear data if user has not completed registration 
@@ -43,6 +60,17 @@ export async function updateSkirmishCards(name, pokeData, poke) {
   } else {
     console.log(`${name} not in localstorage.`);
   }
+}
+
+export function getTrainerDeck(name) {
+  // Get trainer data from localstorage
+  const trainer = getLocalStorage(name);
+  // Place trainer cards in array
+  const tCards = Object.values(trainer.skirmishCards).flatMap(card => Object.values(card));
+  // Randomize player deck
+  const tDeck = shuffleCards(tCards);
+  
+  return tDeck;
 }
 
 // Remove registration modal if user declines registration

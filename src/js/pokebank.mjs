@@ -1,4 +1,7 @@
 export async function fetchPokeData(pokeId, pokeCategory) {
+  // Let the user know we are waiting for a response
+  document.body.style.cursor = "progress";
+
   try {
       // Fetching data for the Pokémon by its ID or name
       const response = await fetch(`https://pokeapi.co/api/v2/${pokeCategory}/${pokeId}/`);
@@ -13,6 +16,9 @@ export async function fetchPokeData(pokeId, pokeCategory) {
   } catch (error) {
       return null;
       // console.error("Pokémon not found:", error);
+  } finally {
+    // When we have a response revert cursor to default
+    document.body.style.cursor = "default";
   }
 }
 
@@ -92,19 +98,21 @@ export async function storePokeData(idx) {
       "level": 1,
       "wins": 0, 
       "losses": 0,
-      "next-level": 1,
+      "draws": 0,
+      "nextLevel": 1,
       "hp": bag.poke.stats[0].base_stat,
       "attack": bag.poke.stats[1].base_stat,
       "defense": bag.poke.stats[2].base_stat,
-      "special-attack": bag.poke.stats[3].base_stat,
-      "special-defense": bag.poke.stats[4].base_stat,
+      "specialAttack": bag.poke.stats[3].base_stat,
+      "specialDefense": bag.poke.stats[4].base_stat,
+      "speed": bag.poke.stats[5].base_stat,
       "types": bag.poke.types.map(typeInfo => typeInfo.type.name),
-      "double-damage-to": bag.type.double_damage_to.map(dmg => dmg.name),
-      "double-damage-from": bag.type.double_damage_from.map(dmg => dmg.name),
-      "half-damage-to": bag.type.half_damage_to.map(dmg => dmg.name),
-      "half-damage-from": bag.type.half_damage_from.map(dmg => dmg.name),
-      "no-damage-to": bag.type.no_damage_to.map(dmg => dmg.name),
-      "no-damage-from": bag.type.no_damage_from.map(dmg => dmg.name),
+      "doubleDamageTo": bag.type.double_damage_to.map(dmg => dmg.name),
+      "doubleDamageFrom": bag.type.double_damage_from.map(dmg => dmg.name),
+      "halfDamageTo": bag.type.half_damage_to.map(dmg => dmg.name),
+      "halfDamageFrom": bag.type.half_damage_from.map(dmg => dmg.name),
+      "noDamageTo": bag.type.no_damage_to.map(dmg => dmg.name),
+      "noDamageFrom": bag.type.no_damage_from.map(dmg => dmg.name),
       "sprites": bag.poke.sprites
     }
   }));

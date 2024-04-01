@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endgame</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <script src="../js/endgame.js" type="module"></script>
+    <!-- <script type="module" src="js/utils.mjs"></script> -->
+  </head>
+  <body id="defaultBody">
+    <main id="winMain">
+      <h1>You Won! Congratulations!</h1>
+      <section>
+        <h2>Skirmishes Won</h2>
+      </section>
+      <section>
+        <h2>Skirmishes Lost</h2>
+      </section>
+      <section class="trainer-modal">
+        <form class="trainer-form" id="winForm" name="winForm" action="../gameover/index.html" method="post">
+          <fieldset class="modal-fieldset" id="winFieldset">
+            <legend class="modal-legend" id="winLegend">Register</legend>
+            <!-- <p>Register to save your progress.</p>
+            <p>* required</p> -->
+            <label class="trainer-label" id="winEmailLabel">
+              <span class="label-span">Email* </span>
+              <input class="trainer-input" id="winEmail" type="email" name="winForm" placeholder="email@example.com" autofocus />
+            </label>
+            <label class="trainer-label" id="winPassLabel">
+              <span class="label-span">Password* </span>
+              <input class="trainer-input" id="winPass" type="password" name="winForm" placeholder="password" />
+            </label>
+          </fieldset>
+  
+          <input type="submit" value="Advance to next page" id="winAdvBtn" />
+        </form>
+      </section>
+      <section>
+        <p id="message"></p>
+      </section>
+    </main>
+    <footer id="poke-footer"></footer>
+  </body>
+</html>
