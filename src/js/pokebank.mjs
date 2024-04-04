@@ -134,12 +134,8 @@ export async function setPokeData(data) {
   const section = document.createElement("section");
   section.className = "poke-card";
 
-  // const heroImg = data.sprites.other.showdown.front_default;
-  let heroImg = data.sprites.other.dream_world.front_default;
-
-  if (heroImg === null) {
-    heroImg = data.sprites.other.home.front_default;
-  }
+  // Get the hero image
+  let heroImg = getHeroImg(data);
 
   // const main = document.querySelector("main");
   const picture = document.createElement("picture");
@@ -189,4 +185,14 @@ export async function setPokeData(data) {
   // stats.forEach(stat => {
   //     console.log(`${stat.name}: ${stat.value}`);
   // });
+}
+
+export function getHeroImg(skiremon) {
+  // const heroImg = data.sprites.other.showdown.front_default;
+  let heroImg = skiremon.sprites.other.dream_world.front_default;
+
+  if (heroImg === null) {
+    heroImg = skiremon.sprites.other.home.front_default;
+  }
+  return heroImg;
 }

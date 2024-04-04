@@ -14,34 +14,26 @@
   </head>
   <body id="defaultBody">
     <main id="winMain">
-      <h1>You Won! Congratulations!</h1>
-      <section>
-        <h2>Skirmishes Won</h2>
-      </section>
-      <section>
-        <h2>Skirmishes Lost</h2>
-      </section>
       <section class="trainer-modal">
         <form class="trainer-form" id="winForm" name="winForm" action="../gameover/index.html" method="post">
           <fieldset class="modal-fieldset" id="winFieldset">
             <legend class="modal-legend" id="winLegend">Register</legend>
-            <!-- <p>Register to save your progress.</p>
-            <p>* required</p> -->
-            <label class="trainer-label" id="winEmailLabel">
-              <span class="label-span">Email* </span>
-              <input class="trainer-input" id="winEmail" type="email" name="winForm" placeholder="email@example.com" autofocus />
-            </label>
+            <p>Create a password to register and save your Trainer.</p>
             <label class="trainer-label" id="winPassLabel">
-              <span class="label-span">Password* </span>
-              <input class="trainer-input" id="winPass" type="password" name="winForm" placeholder="password" />
+              <span class="label-span">Password </span>
+              <input class="trainer-input" id="winPass" type="password" name="winForm" placeholder="password" autofocus />
+              <button class="modal-btn prime-btn ready-btn savBtn" id="winSavBtn" name="winForm" data-action="regWinTrainer" type="button">Save</button>
             </label>
           </fieldset>
+
+          <div class="regDiv">
+            <p class="regThanks">
+              Thanks for Registering!
+            </p>
+          </div>
   
-          <input type="submit" value="Advance to next page" id="winAdvBtn" />
+          <input class="modal-btn prime-btn ready-btn advBtn" type="submit" value="Advance to next page" id="winAdvBtn" />
         </form>
-      </section>
-      <section>
-        <p id="message"></p>
       </section>
     </main>
     <footer id="poke-footer"></footer>

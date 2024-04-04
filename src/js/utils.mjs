@@ -24,28 +24,24 @@ export function setBlur(selector, callback) {
   document.querySelector(selector).addEventListener("blur", callback);
 }
 
-export function hasContent(message = "#message", trainerInput = ".trainer-input") {
-  let inputs = document.querySelectorAll(trainerInput);
-  let msg = document.querySelector(message);
-  msg.textContent = "";
-  
-  inputs.map(input => {
+export function hasContent(trainerInput = ".trainer-input") {
+  document.querySelectorAll(".trainer-input").forEach(input => {
     // Check if input field is empty
     if (!input) {
-      msg.textContent += "Please fill out each field.";
-      msg.style.display = "block";
-    }
+      // If there's an error message, prevent form submission
+      // if (msg.textContent) {
+      //   return false;
+      // }
 
-    // If there's an error message, prevent form submission
-    if (msg.textContent) {
-      return false;
+      // return true;
+      displayMessage("Please fill out each field if you want to register.", 3000);
     }
-
-    return true;
-  })
+  });
+  // let msg = document.querySelector(message);
+  // msg.textContent = "";
 }
 
-export function displayMessage(msg) {
+export function displayMessage(msg, time = 5000) {
   // Create the <section> element
   const msgsec = document.createElement("section");
   msgsec.className = "messageSection";
@@ -75,7 +71,7 @@ export function displayMessage(msg) {
     msgsec.addEventListener("animationend", () => {
       msgsec.remove();
     });
-  }, 5000);
+  }, time);
 }
 
 export function setClickAll(selector, callback) {
@@ -108,9 +104,14 @@ export async function addActions(action, event) {
       document.querySelector("#trainer1Fieldset").style.display = "block";
       break;
     case "addTrainer1":
+      // Check to see if trainer already exists
+      if (getLocalStorage(input.value)) { 
+        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+        break;
+      }
       console.log("addTrainer1");
       // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
+      displayMessage(`Generating ${input.value}'s profile.`);
       // Get name of Trainer1 & save to localStorage
       newTrainer(input.value);
       // Set the name of the trainer1 to local storage
@@ -135,6 +136,11 @@ export async function addActions(action, event) {
       document.querySelector("#login1Fieldset").style.display = "block";
       break;
     case "skirmish1":
+      // Check to see if trainer already exists
+      if (getLocalStorage(input.value)) { 
+        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+        break;
+      }
       console.log("skirmish1");
       document.querySelector("#trainer1Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
@@ -142,7 +148,7 @@ export async function addActions(action, event) {
     case "addTrainer1Login":
       console.log("addTrainer1Login");
       // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
+      displayMessage(`Generating ${input.value}'s profile.`);
       document.querySelector("#login1Fieldset").style.display = "none";
       document.querySelector("#trainer2Fieldset").style.display = "block";
       break;
@@ -161,9 +167,14 @@ export async function addActions(action, event) {
       document.querySelector("#login2Fieldset").style.display = "block";
       break;
     case "skirmish2":
+      // Check to see if trainer already exists
+      if (getLocalStorage(input.value)) { 
+        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+        break;
+      }
       console.log("skirmish2");
       // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
+      displayMessage(`Generating ${input.value}'s profile.`);
       // Get name of Trainer1 & save to localStorage
       newTrainer(input.value);
       // Set the name of the trainer2 to local storage
@@ -182,6 +193,19 @@ export async function addActions(action, event) {
       displayMessage(`Loading ${input.value}'s profile.`);
       document.querySelector("#login2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
+      break;
+    case "regWinTrainer":
+      console.log(input.value);
+      document.querySelector("#winFieldset").style.display = "none";
+      document.querySelectorAll(".regDiv")[0].style.display = "block";
+      console.log(getWinner);
+      savePass(input.value, true);
+      break;
+    case "regLossTrainer":
+      console.log(event.target);
+      document.querySelector("#lossFieldset").style.display = "none";
+      document.querySelectorAll(".regDiv")[0].style.display = "block";
+      savePass(event.target, false);
       break;
     default:
       console.error(`Error: bad ${event}`);
@@ -239,6 +263,39 @@ export function checkEmail(email) {
 export function checkPass(pass) {
   const basicPassRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return basicPassRegex.test(pass);
+}
+
+// Saves the trainer's password
+export function savePass(pass, state) {
+  // Set to winning or losing trainer depending on who is registering
+  let trainer;
+  state ? trainer = getWinner() : trainer = getLoser();
+  // Get trainer's info from local storage
+  const trainerInfo = getLocalStorage(trainer.name);
+  // Update trainer's password
+  trainerInfo.pass = pass;
+  // Set trainer's info with updated password to localstorage
+  setLocalStorage(trainer.name, trainerInfo);
+}
+
+export function getWinner() {
+  const ct = getLocalStorage("currentTrainers")
+  const t1 = getLocalStorage(ct[0]);
+  const t2 = getLocalStorage(ct[1]);
+  let winner;
+
+  (t1.wins >= t2.wins) ? winner = t1 : winner = t2;
+  return winner;
+}
+
+export function getLoser() {
+  const ct = getLocalStorage("currentTrainers")
+  const t1 = getLocalStorage(ct[0]);
+  const t2 = getLocalStorage(ct[1]);
+  let loser;
+
+  (t1.wins < t2.wins) ? loser = t1 : loser = t2;
+  return loser;
 }
 
 export function setupTrainers(trainer) {

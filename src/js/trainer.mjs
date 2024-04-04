@@ -21,7 +21,7 @@ export default async function newTrainer(name, pass = "secret") {
     if (!p || p.name === "") {
       setLocalStorage(name, {
         "name": name,
-        "pass": pass,
+        "pass": pass, 
         "wins": 0,
         "losses": 0,
         "draws": 0,
