@@ -1,4 +1,4 @@
-import { displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, startAtk } from "./gamelayout.mjs";
+import { displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, vtAtk, hzAtk } from "./gamelayout.mjs";
 import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
@@ -34,7 +34,7 @@ export default async function skirmishLoop() {
     // continue the skirmish for 3 rounds
     for (let round = 1; round <= 3; round++) {
       // Display & update skirmish round banner
-      displayBanner(i, round, t1Deck[i], t2Deck[i]);
+      displayBanner(i, round, t1Deck[i], t2Deck[i], t1, t2, t1Record[0], t2Record[0]);
 
       // Wait for both players to move
       const t1move = displayT1Cards(t1Deck[i], trainer1);
@@ -45,7 +45,11 @@ export default async function skirmishLoop() {
 
       // Promise.all waits for promises to resolve
       const moves = await Promise.all([t1move, t2move]);
-      await startAtk(trainer1, trainer2);
+
+      // Get the viewing width to determine which animation to run
+      const viewWidth = window.innerWidth;
+
+      (viewWidth < 720) ? await vtAtk(trainer1, trainer2) : await hzAtk(trainer1, trainer2);
 
       // If trainer2 speed is higher than trainer1
       if (t1Deck[i].speed < t2Deck[i].speed) {
@@ -136,6 +140,8 @@ export default async function skirmishLoop() {
       t2Record[3].draw.push(t2Deck[i].name);
       t1Record[3].draw.push(t1Deck[i].name);
     }
+    // Pop new cards into view
+    popCards();
   }
 
   // update win/loss/draw for trainer 1 & 2
@@ -155,7 +161,7 @@ export default async function skirmishLoop() {
 
   try {
     // *****UNCOMMENT TO RUN GAME*****
-    // location.assign("/endgame/index.html");
+    location.assign("/endgame/index.html");
   } catch (error) {
     console.error("Error loading page: ", error);
   }

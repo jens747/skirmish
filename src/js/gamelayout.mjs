@@ -1,7 +1,7 @@
 import { qs, ce, setClick, rmClick } from "./utils.mjs";
 import { setPokeData, getHeroImg } from "./pokebank.mjs";
 
-export function displayBanner(match, round, t1, t2) {
+export function displayBanner(match, round, t1, t2, trainer1, trainer2, t1Score, t2Score) {
   // Get the selector for main
   const smain = qs("#skirmishMain");
   // Check for the matchSec selector
@@ -23,12 +23,24 @@ export function displayBanner(match, round, t1, t2) {
   matchh2.textContent = `Match ${match + 1} Round ${round}`;
 
   // Create the banner to display the current skiremon skirmishing
+  const matchScore = ce("h3");
+  matchScore.id = "matchScore";
+  console.log(t2Score);
+  // if (t1Score.wins === undefined) {
+  //   matchScore.textContent = `${trainer1.name} 0 : ${trainer2.name} 0`;
+  // } else {
+    matchScore.textContent = `${trainer1.name} ${t1Score} : ${trainer2.name} ${t2Score}`;
+  // }
+  
+
+  // Create the banner to display the current skiremon skirmishing
   const matchVs = ce("h3");
   matchVs.id = "matchVs";
   matchVs.textContent = `${t1.name} vs. ${t2.name}`;
 
   // Append the banner and skiremon names to the matchSec section
   matchSec.appendChild(matchh2);
+  matchSec.appendChild(matchScore);
   matchSec.appendChild(matchVs);
 }
 
@@ -342,16 +354,6 @@ export function displayT2Cards(t2, trainer) {
     t2Sec.style.background = "var(--light-color)";
   }
 
-  // const faint = ce("div");
-  //     faint.textContent = "fainted";
-  //     faint.classList.add("fainted");
-  //     t2Sec.appendChild(faint);
-  // const cords = t2Sec.getBoundingClientRect();
-  // const x = cords.left;
-  // const y = cords.right;
-  //   faint.style.left = `${x}px`;
-  //   faint.style.right = `${y}px`;
-
   // Create the div for the id, type, & lv
   const skireDivTop2 = ce("div");
   skireDivTop2.className = "skireDivTop";
@@ -625,8 +627,8 @@ export function endOfAnimation(elm, tag) {
   });
 }
 
-// Function to start the animation
-export async function startAtk(t1, t2) {
+// Function to starts the vertical attack animation
+export async function vtAtk(t1, t2) {
   const s1 = document.querySelector("#t1Sec");
   const s2 = document.querySelector("#t2Sec");
 
@@ -641,6 +643,18 @@ export async function startAtk(t1, t2) {
   s2.classList.add("downAtk");
 
   await Promise.all([endOfAnimation(s1, "upAtk"), endOfAnimation(s2, "downAtk")]);
+}
+
+// Function to starts the horizontal attack animation
+export async function hzAtk() {
+  const s1 = document.querySelector("#t1Sec");
+  const s2 = document.querySelector("#t2Sec");
+
+  // Apply classes to start the animation
+  s1.classList.add("rightAtk");
+  s2.classList.add("leftAtk");
+
+  await Promise.all([endOfAnimation(s1, "rightAtk"), endOfAnimation(s2, "leftAtk")]);
 }
 
 // Function to animate damage taken
