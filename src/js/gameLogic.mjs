@@ -1,7 +1,8 @@
+import { displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, startAtk } from "./gamelayout.mjs";
 import { getTrainerDeck } from "./trainer.mjs";
-import { getLocalStorage, setLocalStorage, shuffleCards } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
-export default function skirmishLoop() {
+export default async function skirmishLoop() {
   const ct = getLocalStorage("currentTrainers");
   const t1 = getLocalStorage(ct[0]);
   const t2 = getLocalStorage(ct[1]);
@@ -13,12 +14,11 @@ export default function skirmishLoop() {
   let t1Record = [0, 0, 0, {"win": [], "lose": [], "draw": []}];
   let t2Record = [0, 0, 0, {"win": [], "lose": [], "draw": []}];
 
+  window.trainerAtkdmg;
+
   // Cycle through trainer card data
   // for (let i = t1Deck.length - 1; i > 0; i--) {
-  for (let i = 0; i < t1Deck.length - 1; i++) {
-    console.log("*****Next Skirmish*****");
-    console.log(`Round ${i}: ${t1Deck[i].name} vs. ${t2Deck[i].name}\n`);
-
+  for (let i = 0; i <= t1Deck.length - 1; i++) {
     // set temp trainer cards for hp, damage, and damage taken
     let trainer1 = {
       "hp1": t1Deck[i].hp,
@@ -32,17 +32,36 @@ export default function skirmishLoop() {
       "diff2": 0
     }
     // continue the skirmish for 3 rounds
-    // while (hp1 > 0 && hp2 > 0) {
     for (let round = 1; round <= 3; round++) {
+      // Display & update skirmish round banner
+      displayBanner(i, round, t1Deck[i], t2Deck[i]);
+
+      // Wait for both players to move
+      const t1move = displayT1Cards(t1Deck[i], trainer1);
+      const t2move = displayT2Cards(t2Deck[i], trainer2);
+
+      const t1Card = document.querySelector("#t1Sec");
+      const t2Card = document.querySelector("#t2Sec");
+
+      // Promise.all waits for promises to resolve
+      const moves = await Promise.all([t1move, t2move]);
+      await startAtk(trainer1, trainer2);
+
+      // If trainer2 speed is higher than trainer1
       if (t1Deck[i].speed < t2Deck[i].speed) {
-        trainer1.hp1 = planAttack(t2Deck, t1Deck, trainer1.hp1, i);
+        trainer1.hp1 = planAttack(t2Deck, t1Deck, trainer1.hp1, i, moves[1], t1Card);
+        await dmgTaken(t1Card, window.trainerAtkdmg);
         if (trainer1.hp1 > 0) {
-          trainer2.hp2 = planAttack(t1Deck, t2Deck, trainer2.hp2, i);
+          trainer2.hp2 = planAttack(t1Deck, t2Deck, trainer2.hp2, i, moves[0], t2Card);
+          await dmgTaken(t2Card, window.trainerAtkdmg);
         }
+      // If trainer1 speed is higher than trainer2
       } else {
-        trainer2.hp2 = planAttack(t1Deck, t2Deck, trainer2.hp2, i);
+        trainer2.hp2 = planAttack(t1Deck, t2Deck, trainer2.hp2, i, moves[0], t2Card);
+        await dmgTaken(t2Card, window.trainerAtkdmg);
         if (trainer2.hp2 > 0) {
-          trainer1.hp1 = planAttack(t2Deck, t1Deck, trainer1.hp1, i);
+          trainer1.hp1 = planAttack(t2Deck, t1Deck, trainer1.hp1, i, moves[1], t1Card);
+          await dmgTaken(t1Card, window.trainerAtkdmg);
         }
       }
       
@@ -52,6 +71,8 @@ export default function skirmishLoop() {
       // set damage equal to hp for next round
       trainer1.dmg1 = trainer1.hp1;
       trainer2.dmg2 = trainer2.hp2;
+
+
       // Update round record for trainer1 if they lose
       if (trainer1.hp1 <= 0 && trainer2.hp2 > 0) { 
         // add a loss to trainer1 and a win to trainer2
@@ -63,6 +84,8 @@ export default function skirmishLoop() {
         // update the trainer's current poke card t2 won, t1 lost
         updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "win");
         updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "lose");
+        // Pop new cards into view
+        popCards();
         break;
       }
       // Update round record for trainer2 if they lose
@@ -76,6 +99,8 @@ export default function skirmishLoop() {
         // update the trainer's current poke card t1 won, t2 lost
         updateTrainerCard(t1, t1Deck[i], t2Deck[i], updateRecord, "win");
         updateTrainerCard(t2, t2Deck[i], t1Deck[i], updateRecord, "lose");
+        // Pop new cards into view
+        popCards();
         break;
       }
     }
@@ -129,22 +154,24 @@ export default function skirmishLoop() {
   console.log(`${ct[1]}'s Record: Wins ${t2Record[0]}, Losses ${t2Record[1]}, Draws ${t2Record[2]}`);
 
   try {
-    location.assign("/endgame/index.html");
+    // *****UNCOMMENT TO RUN GAME*****
+    // location.assign("/endgame/index.html");
   } catch (error) {
     console.error("Error loading page: ", error);
   }
 }
 
-export function planAttack(trainer, rival, hp, idx) {
-  console.log(`*****NEXT TURN*****`);
+export function planAttack(trainer, rival, hp, idx, trainermove, card) {
+  // console.log(`*****NEXT TURN*****`);
   let rivalHp = hp;
 
   // variables to set trainer attack and defense stats
   let trainerAtk, rivalDef;
     
-  const trainermove = prompt("Press 'a' for attack, or 's' for sp. attack: ");
+  // const trainermove = prompt("Press 'a' for attack, or 's' for sp. attack: ");
 
-  if (trainermove === "a") {
+  // Attack if true
+  if (trainermove) {
     trainerAtk = trainer[idx].attack;
     // console.log("Trainer Atack");
     // console.log(trainerAtk);
@@ -158,7 +185,8 @@ export function planAttack(trainer, rival, hp, idx) {
     // console.log(rivalDef);
   }
 
-  if (trainermove === "s") {
+  // Special attack if false
+  if (!trainermove) {
     trainerAtk = trainer[idx].specialAttack;
     trainerAtk = addTypeEffectsModifier(trainer[idx], rival[idx], trainerAtk);
     rivalDef = rival[idx].specialDefense;
@@ -169,21 +197,23 @@ export function planAttack(trainer, rival, hp, idx) {
   console.log(`${rival[idx].name} HP: ${rivalHp} Defense: ${rivalDef}`);
   console.log(`${trainer[idx].name} Attack: ${trainerAtk}`);
   // Create variable for damage level of the current attack
-  let trainerAtkdmg;
+  // let trainerAtkdmg;
 
   // If the attack is greater than defense 
   // Subtract the defense from the attack 
   if(trainerAtk > rivalDef) {
-    trainerAtkdmg = trainerAtk - rivalDef;
-    console.log(`${rival[idx].name} damage: ${trainerAtkdmg}`);
+    window.trainerAtkdmg = trainerAtk - rivalDef;
+    // dmgTaken(card, trainerAtkdmg);
+    console.log(`${rival[idx].name} damage: ${window.trainerAtkdmg}`);
   } else {
     // If attack is less than defense, player takes no damage
-    trainerAtkdmg = 0;
+    window.trainerAtkdmg = 0;
+    // dmgTaken(card, trainerAtkdmg);
     console.log("no damage");
   }
   
   // Subtract any remaining attack from the rival hp
-  rivalHp -= trainerAtkdmg;
+  rivalHp -= window.trainerAtkdmg;
   console.log(`${rival[idx].name} HP: ${rivalHp}`);
 
   // If the rival's hp is less than or equal to zero

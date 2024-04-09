@@ -9,33 +9,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&display=swap" rel="stylesheet">
-    <!-- <script src="../js/gameover.js" type="module"></script> -->
+    <script src="../js/gameover.js" type="module"></script>
     <!-- <script type="module" src="js/utils.mjs"></script> -->
   </head>
   <body>
-    <main id="winMain">
-      <h1>Sorry, you didn't win.</h1>
-      <section>
-        <h2>Skirmishes Won</h2>
-      </section>
-      <section>
-        <h2>Skirmishes Lost</h2>
-      </section>
+    <main id="lossMain">
       <section class="trainer-modal">
         <form action="../index.html" method="post" class="trainer-form" id="lossForm" name="lossForm">
           <fieldset class="modal-fieldset" id="lossFieldset">
-            <legend class="modal-legend" id="lossLegend">Register here to save your progress</legend>
-            <label class="trainer-label" id="lossEmailLabel">
-              <span class="label-span">Email* </span>
-              <input class="trainer-input" id="lossEmail" type="email" name="lossForm" placeholder="email@example.com"/>
-            </label>
+            <legend class="modal-legend" id="lossLegend">Create a password to save your trainer</legend>
             <label class="trainer-label" id="lossPassLabel">
-              <span class="label-span">Password* </span>
-              <input class="trainer-input" id="lossPass" type="password" name="lossForm" placeholder="password"/>
+              <span class="label-span">Password </span>
+              <input class="trainer-input" id="lossPass" type="password" name="lossForm" placeholder="password" autofocus />
+              <button class="modal-btn prime-btn ready-btn savBtn" id="lossSavBtn" name="lossForm" data-action="regLossTrainer" type="button">Save</button>
             </label>
           </fieldset>
-  
-          <input type="submit" value="Return to home page" id="lossAdvBtn" />
+
+          <div class="regDiv">
+            <p class="regThanks">
+              Thanks for Registering!
+            </p>
+          </div>
+
+          <button class="modal-btn prime-btn another-btn" id="playAgainBtn" name="lossForm" type="button">Play again</button>
+          <input class="modal-btn prime-btn ready-btn advBtn" type="submit" value="Return to home page" id="lossAdvBtn" />
         </form>
       </section>
     </main>
