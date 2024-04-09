@@ -1,7 +1,7 @@
 // getLocalStorage, setLocalStorage, setClick, and getParam, renderWithTemplate, loadTemplate, loadHeaderFooter sourced from WDD330 Team Website project
 
-import { storePokeData } from "./pokebank.mjs";
-import newTrainer, { updateSkirmishCards } from "./trainer.mjs";
+import { createSkireData } from "./pokebank.mjs";
+import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
@@ -11,13 +11,19 @@ export function getLocalStorage(key) {
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-// set a listener for both touchend and click
+// set a listener for touchend and click
 export function setClick(selector, callback) {
   document.querySelector(selector).addEventListener("touchend", (event) => {
     event.preventDefault();
     callback();
   });
   document.querySelector(selector).addEventListener("click", callback);
+}
+
+// remove event listeners for touchend and click
+export function rmClick(selector, callback) {
+  selector.removeEventListener("touchend", callback);
+  selector.removeEventListener("click", callback);
 }
 
 export function setBlur(selector, callback) {
@@ -89,7 +95,18 @@ export function setClickAll(selector, callback) {
   });
 }
 
+// QuerySelector shorthand, returns matching element
+export const qs = (selector, parent = document) => parent.querySelector(selector);
+
+// CreateElement shorthand, returns matching element
+export const ce = (selector, parent = document) => parent.createElement(selector);
+
+// SetAttribute shorthand, returns matching element
+// export const sa = (selector, parent = document) => parent.setAttribute(selector);
+
 export async function addActions(action, event) {
+  // const trainerFormElement = document.querySelector(".trainer-form");
+  // const trainerFormObj = new FormData(trainerFormElement);
   const buttonName = event.target.name;
   const input = document.querySelector(`.trainer-input[name="${buttonName}"]`);
   // const fieldset = button.closest(".modal-fieldset"); 
@@ -103,6 +120,7 @@ export async function addActions(action, event) {
       document.querySelector("#trainer-num").style.display = "none";
       document.querySelector("#trainer1Fieldset").style.display = "block";
       break;
+    // Create new Trainer1, move to create trainer2 ()
     case "addTrainer1":
       // Check to see if trainer already exists
       if (getLocalStorage(input.value)) { 
@@ -117,7 +135,7 @@ export async function addActions(action, event) {
       // Set the name of the trainer1 to local storage
       setupTrainers(input.value);
       // Get random Pokemon for Trainer1
-      trainer = await storePokeData(10);
+      trainer = await createSkireData(10);
       // console.log(trainer);
       // Add Pokemon to Trainer1 profile
       updateSkirmishCards(input.value, trainer);
@@ -126,47 +144,71 @@ export async function addActions(action, event) {
       // Show Trainer2Fieldset
       document.querySelector("#trainer2Fieldset").style.display = "block";
       break;
+    // Move to Trainer1 log in form (addTrainer1Login)
     case "loginTrainer1":
       console.log("loginTrainer1");
-      // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
-      // Set the name of the trainer1 to local storage
-      setupTrainers(input.value);
       document.querySelector("#trainer1Fieldset").style.display = "none";
       document.querySelector("#login1Fieldset").style.display = "block";
       break;
+    // Move to start 1-player game from creating Trainer1
     case "skirmish1":
-      // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
-        break;
-      }
       console.log("skirmish1");
-      document.querySelector("#trainer1Fieldset").style.display = "none";
-      document.querySelector("#start-btn").style.display = "block";
+      displayMessage("Single-player is not yet available.");
+      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
+      // Check to see if trainer already exists
+      // if (getLocalStorage(input.value)) { 
+      //   displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      //   break;
+      // }
+      // document.querySelector("#trainer1Fieldset").style.display = "none";
+      // document.querySelector("#start-btn").style.display = "block";
       break;
+    // Log-in Trainer1 & move to add Trainer2 (skirmish2)
     case "addTrainer1Login":
       console.log("addTrainer1Login");
-      // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile.`);
-      document.querySelector("#login1Fieldset").style.display = "none";
-      document.querySelector("#trainer2Fieldset").style.display = "block";
-      break;
+      // Check for Trainer name
+      if (getLocalStorage(input.value)) { 
+        // Check if Trainer password matches provided password
+        if (qs("#login1Pass").value === getLocalStorage(input.value).pass) {
+          // Set the name of the trainer1 to current trainers
+          setupTrainers(input.value);
+          // Message user that their profile is loading
+          displayMessage(`Loading ${input.value}'s profile.`);
+          // Switch to display log in menu for trainer2
+          document.querySelector("#login1Fieldset").style.display = "none";
+          document.querySelector("#trainer2Fieldset").style.display = "block";
+          break;
+        } else {
+          // Tell user if log in name or password are incorrect
+          displayMessage("Invalid name or password. Please try again.");
+          break;
+        }
+      } else {
+        // Display message to load trainer's profile
+        displayMessage("Enter your name & password to log-in.");
+        break;
+      }
+    // Move to start 1-player game after Trainer1 logs in
     case "skirmish1Login":
       console.log("skirmish1Login");
-      document.querySelector("#login1Fieldset").style.display = "none";
-      document.querySelector("#start-btn").style.display = "block";
+      displayMessage("Single-player is not yet available.");
+      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
+      // document.querySelector("#login1Fieldset").style.display = "none";
+      // document.querySelector("#start-btn").style.display = "block";
       break;
+    // Move to trainer 2 log in form (skirmish2Login)
     case "loginTrainer2":
       console.log("loginTrainer2");
-      // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
-      // Set the name of the trainer2 to local storage
-      addTrainer(input.value);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#login2Fieldset").style.display = "block";
       break;
+    // Move to start 2-player game
     case "skirmish2":
+      // Check for empty input
+      if (input.value === "") {
+        displayMessage("Please enter a valid name.");
+        break;
+      }
       // Check to see if trainer already exists
       if (getLocalStorage(input.value)) { 
         displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
@@ -175,37 +217,54 @@ export async function addActions(action, event) {
       console.log("skirmish2");
       // Display message to load trainer's profile
       displayMessage(`Generating ${input.value}'s profile.`);
-      // Get name of Trainer1 & save to localStorage
+      // Get name of Trainer2 & save to localStorage
       newTrainer(input.value);
       // Set the name of the trainer2 to local storage
       addTrainer(input.value);
-      // Get random Pokemon for Trainer1
-      trainer = await storePokeData(10);
-      // console.log(trainer);
-      // Add Pokemon to Trainer1 profile
+      // Get random Pokemon for Trainer2
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer2 profile
       updateSkirmishCards(input.value, trainer);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
       break;
     case "skirmish2Login":
       console.log("skirmish2Login");
-      // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile.`);
-      document.querySelector("#login2Fieldset").style.display = "none";
-      document.querySelector("#start-btn").style.display = "block";
-      break;
+      // Check for Trainer name
+      if (getLocalStorage(input.value)) { 
+        // Check if Trainer password matches provided password
+        if (qs("#login2Pass").value === getLocalStorage(input.value).pass) {
+          // Set the name of the trainer2 to current trainers
+          addTrainer(input.value);
+          // Message user that their profile is loading
+          displayMessage(`Loading ${input.value}'s profile.`);
+          // Switch to display log in menu for trainer2
+          document.querySelector("#login2Fieldset").style.display = "none";
+          document.querySelector("#start-btn").style.display = "block";
+          break;
+        } else {
+          // Tell user if log in name or password are incorrect
+          displayMessage("Invalid name or password. Please try again.");
+          break;
+        }
+      } else {
+        // Display message to load trainer's profile
+        displayMessage("Enter your name & password to log-in.");
+        break;
+      }
     case "regWinTrainer":
-      console.log(input.value);
-      document.querySelector("#winFieldset").style.display = "none";
-      document.querySelectorAll(".regDiv")[0].style.display = "block";
-      console.log(getWinner);
-      savePass(input.value, true);
+      if (checkPass(input.value)) {
+        document.querySelector("#winFieldset").style.display = "none";
+        document.querySelectorAll(".regDiv")[0].style.display = "block";
+        savePass(input.value, true);
+      }
       break;
     case "regLossTrainer":
-      console.log(event.target);
-      document.querySelector("#lossFieldset").style.display = "none";
-      document.querySelectorAll(".regDiv")[0].style.display = "block";
-      savePass(event.target, false);
+      if (checkPass(input.value)) {
+        document.querySelector("#lossFieldset").style.display = "none";
+        document.querySelectorAll(".regDiv")[0].style.display = "block";
+        savePass(input.value, false);
+      }
       break;
     default:
       console.error(`Error: bad ${event}`);
@@ -213,6 +272,16 @@ export async function addActions(action, event) {
   }
 }
 
+// If players choose to keep playing go back to the game screen
+export function playAgain() {
+  try {
+    location.assign("../game/index.html");
+  } catch (error) {
+    console.error(`Error URL: bad ${error}`);
+  }
+}
+
+// Run ball logo rotate animation at main screen
 export function loadAnimations() {
   setTimeout(() => {
     throwBall();
@@ -223,7 +292,7 @@ export function loadAnimations() {
   }, 3200);
 }
 
-// Example function to apply riseOffscreen animation
+// When the rotate animation ends throw the ball logo
 function throwBall() {
   document.querySelectorAll(".bg").forEach(element => {
     // Remove previous animation styles if necessary
@@ -250,7 +319,7 @@ export function shuffleCards(cards) {
   }
   // return the randomized deck
   return cards;
-  // return cards.slice(0, 5);
+  // return cards.slice(0, 9);
 }
 
 // Check for real email
@@ -278,24 +347,41 @@ export function savePass(pass, state) {
   setLocalStorage(trainer.name, trainerInfo);
 }
 
+// Get data for the winning player
 export function getWinner() {
-  const ct = getLocalStorage("currentTrainers")
+  // Get the names of the trainers from the current match
+  const ct = getLocalStorage("currentTrainers");
+  // Get the data for both trainers
   const t1 = getLocalStorage(ct[0]);
   const t2 = getLocalStorage(ct[1]);
   let winner;
-
+  // Return the data of the trainer with the most wins
   (t1.wins >= t2.wins) ? winner = t1 : winner = t2;
   return winner;
 }
 
+// Get data for the losing player
 export function getLoser() {
-  const ct = getLocalStorage("currentTrainers")
+  // Get the names of the trainers from the current match
+  const ct = getLocalStorage("currentTrainers");
+  // Get the data for both trainers
   const t1 = getLocalStorage(ct[0]);
   const t2 = getLocalStorage(ct[1]);
   let loser;
-
+  // Return the data of the trainer with the most losses
   (t1.wins < t2.wins) ? loser = t1 : loser = t2;
   return loser;
+}
+
+export function tieGame() {
+  // Get the names of the trainers from the current match
+  const ct = getLocalStorage("currentTrainers");
+  // Get the data for both trainers
+  const t1 = getLocalStorage(ct[0]);
+  const t2 = getLocalStorage(ct[1]);
+  // Return true if there is a tie, else return false
+  if (t1.wins === t2.wins) { return true; } 
+  return false;
 }
 
 export function setupTrainers(trainer) {
@@ -335,48 +421,48 @@ export function addTrainer(trainer) {
 //   return hash;
 // }
 
-export function getParam(param) {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  return urlParams.get(param);
-}
+// export function getParam(param) {
+//   const queryString = window.location.search;
+//   const urlParams = new URLSearchParams(queryString);
+//   return urlParams.get(param);
+// }
 
-export async function renderWithTemplate(
-  templateFn,
-  parentElement,
-  data,
-  callback,
-  position = "afterbegin",
-  clear = true
-) {
-  if (clear) {
-    parentElement.innerHTML = "";
-  }
-  const htmlString = await templateFn(data);
-  parentElement.insertAdjacentHTML(position, htmlString);
-  if (callback) {
-    callback(data);
-  }
-}
+// export async function renderWithTemplate(
+//   templateFn,
+//   parentElement,
+//   data,
+//   callback,
+//   position = "afterbegin",
+//   clear = true
+// ) {
+//   if (clear) {
+//     parentElement.innerHTML = "";
+//   }
+//   const htmlString = await templateFn(data);
+//   parentElement.insertAdjacentHTML(position, htmlString);
+//   if (callback) {
+//     callback(data);
+//   }
+// }
 
-function loadTemplate(path) {
-  // wait what?  we are returning a new function? this is called currying and can be very helpful.
-  return async function () {
-    const res = await fetch(path);
-    if (res.ok) {
-      const html = await res.text();
-      return html;
-    }
-  };
-}
+// function loadTemplate(path) {
+//   // currying 
+//   return async function () {
+//     const res = await fetch(path);
+//     if (res.ok) {
+//       const html = await res.text();
+//       return html;
+//     }
+//   };
+// }
 
-export async function loadHeaderFooter() {
+// export async function loadHeaderFooter() {
   // headerTemplate and footerTemplate remember path passed in when created 
-  // The renderWithTemplate function is expecting a template function...if we sent it a string it would break, if we changed it to expect a string then it would become less flexible.
-  const headerTemplateFn = loadTemplate("/partials/header.html");
-  const footerTemplateFn = loadTemplate("/partials/footer.html");
-  const headerEl = document.querySelector("#main-header");
-  const footerEl = document.querySelector("#main-footer");
-  renderWithTemplate(headerTemplateFn, headerEl);
-  renderWithTemplate(footerTemplateFn, footerEl);
-}
+  // The renderWithTemplate function is expecting a template function
+//   const headerTemplateFn = loadTemplate("/partials/header.html");
+//   const footerTemplateFn = loadTemplate("/partials/footer.html");
+//   const headerEl = document.querySelector("#main-header");
+//   const footerEl = document.querySelector("#main-footer");
+//   renderWithTemplate(headerTemplateFn, headerEl);
+//   renderWithTemplate(footerTemplateFn, footerEl);
+// }

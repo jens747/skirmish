@@ -85,7 +85,7 @@ export async function catchRandPoke(idx) {
   return pokeBag;
 }
 
-export async function storePokeData(idx) {
+export async function createSkireData(idx) {
   // Get random pokemon data
   const pokeBag = catchRandPoke(idx);
 

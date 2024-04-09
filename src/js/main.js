@@ -1,5 +1,5 @@
 import { loadAnimations, addActions, setClickAll } from "./utils.mjs";
-import { catchRandPoke, setPokeData, storePokeData } from "./pokebank.mjs";
+import { catchRandPoke, setPokeData, createSkireData } from "./pokebank.mjs";
 
 // document.querySelector("#trainer-form").addEventListener("submit", function(event) {
 //   event.preventDefault();
@@ -21,8 +21,8 @@ document.forms["trainer-form"].addEventListener("submit", (e) => {
 loadAnimations();
 setClickAll(".prime-btn", addActions);
 const data = await catchRandPoke(10);
-// console.log(data);
+
 data.map(dat => setPokeData(dat.poke));
-const pokeTeam = await storePokeData(10);
+const pokeTeam = await createSkireData(10);
 console.log(pokeTeam);
 

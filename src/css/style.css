@@ -51,6 +51,15 @@ body {
   color: var(--dark-color);
 }
 
+#skirmishBody {
+  max-width: 640px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+
 #main-h1 {
   opacity: 0;
 }
@@ -59,7 +68,8 @@ form {
   display: none;
 }
 
-#winForm {
+#winForm,
+#lossForm {
   display: block;
 }
 
@@ -307,6 +317,13 @@ body, html {
 
 .modal-legend {
   font-size: var(--xl-font);
+  background: var(--light-red);
+  background: var(--dark-blue);
+  background: var(--light-yellow);
+  border-radius: 22px;
+  color: var(--light-color);
+  font-size: var(--large-font);
+  padding: 1em .6em;
 }
 
 .trainer-input {
@@ -349,7 +366,7 @@ body, html {
   background: var(--dark-green);
 }
 
-
+#lossAdvBtn, 
 #winAdvBtn {
   background: var(--primary-color);
   display: block;
@@ -357,12 +374,15 @@ body, html {
   min-width: 16em;
 }
 
-#winSavBtn {
+#lossSavBtn, 
+#winSavBtn, 
+#playAgainBtn {
   display: block;
   margin: 1em auto;
   min-width: 16em;
 }
 
+#lossAdvBtn:hover, 
 #winAdvBtn:hover,
 .another-btn:hover, 
 .already-btn:hover, 
@@ -408,9 +428,480 @@ body, html {
 
 /* End PokeCard Styles */
 
+/* Skirmish Match Styles */
+
+#skirmishMain {
+  margin: 1em;
+}
+
+.skireSec {
+  border: 8px inset var(--light-blue);
+  background: var(--light-color);
+  border-radius: 24px;
+  padding: .6rem;
+  max-width: 364px;
+  max-width: 258px;
+  box-shadow: 4px 4px 10px lightgray;
+  z-index: 100;
+}
+
+.popSec {
+  animation: popForm 0.5s forwards;
+}
+
+#matchh1 {
+  color: var(--tertiary-color);
+  text-shadow: 2px 2px var(--dark-color);
+  z-index: 100;
+}
+
+#matchh1,
+#matchh2 {
+  margin: 0;
+}
+
+#matchSec {
+  transform: rotate(-5deg);
+  color: var(--light-color);
+  background: var(--dark-purple);
+  border: .4em outset var(--light-color);
+  box-shadow: 2px 2px 8px black;
+  margin: 1.2rem 0;
+  padding: .4rem;
+  z-index: -1;
+}
+
+#matchScore {
+  margin-bottom: 0;
+}
+
+#matchVs {
+  margin: 0;
+  max-width: 246px;
+  margin: auto;
+}
+
+#matchh2, 
+#matchScore, 
+#matchVs {
+  font-weight: normal;
+}
+
+@keyframes hzAttackRight {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25%, 75% {
+    transform: translateX(7%); 
+  }
+  50% {
+    transform: translateX(3%); 
+  }
+}
+
+@keyframes hzAttackLeft {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25%, 75% {
+    transform: translateX(-7%); 
+  }
+  50% {
+    transform: translateX(-3%); 
+  }
+}
+
+.rightAtk {
+  animation: hzAttackRight 540ms ease forwards;
+}
+
+.leftAtk {
+  animation: hzAttackLeft 540ms ease forwards;
+}
+
+@keyframes vertAttackDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25%, 75% {
+    transform: translateY(-7%); 
+  }
+  50% {
+    transform: translateY(-3%); 
+  }
+}
+
+.downAtk {
+  animation: vertAttackDown 540ms ease forwards;
+}
+
+@keyframes vertAttackUp {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25%, 75% {
+    transform: translateY(7%); 
+  }
+  50% {
+    transform: translateY(3%); 
+  }
+}
+
+.upAtk {
+  animation: vertAttackUp 540ms ease forwards;
+}
+
+@keyframes displayDmg {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(24px); 
+    opacity: 0;
+  }
+}
+
+.showDmg {
+  animation: displayDmg 1.4s ease forwards;
+}
+
+.container {
+  position: relative;
+  /* Ensure the container has a defined size */
+  width: 100%;
+  height: 100%;
+}
+
+.fainted {
+  position: absolute;
+  transform: translate(0%, 360%) rotate(12deg);
+  color: var(--dark-color);
+  background-color: var(--dark-green);
+  padding: .4rem 1rem;
+  box-shadow: 2px 2px 6px var(--dark-color);
+  font-size: 26px;
+  margin-top: -5rem;
+  text-align: center;
+  font-size: 18px;  
+  animation: showFaint 0.5s ease forwards;
+}
+
+@keyframes showFaint {
+  0% {
+    transform: translate(0%, 360%) rotate(12deg) scale(0.25);
+    display: none; 
+  }
+  50% {
+    transform: translate(0%, 360%) rotate(12deg) scale(1.3);
+    display: block; 
+  }
+  75% {
+    transform: translate(0%, 360%) rotate(12deg) scale(0.9);
+  }
+  100% {
+    transform: translate(0%, 360%) rotate(12deg) scale(1);
+  }
+}
+
+.skireDivTop {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.skireTopType {
+  /* background: var(--light-blue); */
+  /* border: 3px outset var(--light-blue); */
+  padding: 0 .2em;
+  align-content: end;
+  text-align: center;
+  min-width: 53px;
+  margin: 0 .1rem;
+  height: 15.6px;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.skireId,
+.skireLevel {
+  margin: 0;
+  font-size: medium;
+  font-size: 13px;
+}
+
+.skirePic {
+  display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 196px;
+    overflow: hidden;
+}
+
+.skireImg {
+  /* width: 58%; */
+  margin: auto;
+  padding-top: .2rem;
+  padding-top: .2rem;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    margin: auto;
+}
+
+.skireName {
+  font-size: xx-large;
+  text-align: center;
+  margin: 0;
+  font-size: 24px;
+}
+
+.skireRecord {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0;
+  height: 2em;
+  height: 12.6px;
+  font-size: 14px;
+  display: none;
+}
+
+/* .skireType, */
+.skireStrength,
+.skireWeakness {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: small;
+  font-size: 10px;
+}
+
+/* .skireType li, */
+.skireStrength li,
+.skireWeakness li {
+  height: 2em;
+  /* background: var(--light-blue); */
+  /* border: 3px outset var(--light-blue); */
+  padding: .1rem;
+  align-content: center;
+  text-align: center;
+  min-width: 53px;
+  margin: .1rem 0;
+  height: 15.6px;
+}
+
+.skireAtkBtn, 
+.skireSpAtkBtn, 
+#skireAtkBtn, 
+#skireSpAtkBtn {
+  padding: 1em 1.2em;
+  border: none;
+  border-radius: 22px;
+  font-family: "Luckiest Guy", cursive;
+  font-style: normal;
+  color: var(--dark-color);
+  font-size: 18px;
+  box-shadow: 2px 2px 6px lightgray;
+  width: 49%;
+  /* display: inline; */
+  /* height: 64px; */
+  margin: auto;
+  background: var(--light-yellow);
+}
+
+.skireAtkBtn:hover, 
+.skireSpAtkBtn:hover, 
+#skireAtkBtn:hover, 
+#skireSpAtkBtn:hover {
+  background: var(--mid-blue);
+}
+
+.skireAtkBtn {
+  margin-right: 2px;
+}
+
+.skireSpAtkBtn {
+  margin-left: 2px;
+}
+
+.skireHeaders {
+  display: inline;
+  font-size: medium;
+  margin: 0;
+  align-self: center;
+  font-size: 12.4px;
+}
+
+/* Type color source: https://bulbapedia.bulbagarden.net/wiki/Type */
+.normal {
+  background: #9FA19F;
+  border: 3px outset #9FA19F;
+}
+
+.fire {
+  background: #E62829;
+  border: 3px outset #E62829;
+}
+
+.fighting {
+  background: #FF8000;
+  border: 3px outset #FF8000;
+}
+
+.water {
+  background: #2980EF;
+  border: 3px outset #2980EF;
+}
+
+.flying {
+  background: #81B9EF;
+  border: 3px outset #81B9EF;
+}
+
+.grass {
+  background: #3FA129;
+  border: 3px outset #3FA129;
+}
+
+.poison {
+  background: #9141CB;
+  border: 3px outset #9141CB;
+}
+
+.electric {
+  background: #FAC000;
+  border: 3px outset #FAC000;
+}
+
+.ground {
+  background: #915121;
+  border: 3px outset #915121;
+}
+
+.psychic {
+  background: #EF4179;
+  border: 3px outset #EF4179;
+}
+
+.rock {
+  background: #AFA981;
+  border: 3px outset #AFA981;
+}
+
+.ice {
+  background: #3DCEF3;
+  border: 3px outset #3DCEF3;
+}
+
+.bug {
+  background: #91A119;
+  border: 3px outset #91A119;
+}
+
+.dragon {
+  background: #5060E1;
+  border: 3px outset #5060E1;
+}
+
+.ghost {
+  background: #704170;
+  border: 3px outset #704170;
+}
+
+.dark {
+  background: #624D4E;
+  border: 3px outset #624D4E;
+}
+
+.steel {
+  background: #60A1B8;
+  border: 3px outset #60A1B8;
+}
+
+.fairy {
+  background: #EF70EF;
+  border: 3px outset #EF70EF;
+}
+
+.stellar {
+  background: #44628D;
+  border: 3px outset #44628D;
+}
+
+.question {
+  background: #68A090;
+  border: 3px outset #68A090;
+}
+
+.skireLife {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.skireHp,
+.skireDmg, 
+.skireSpd {
+  margin: 0;
+}
+
+.skireDmg {
+  margin-left: -20px;
+  /* display: none; */
+}
+
+.skireSpan {
+  font-size: xx-large;
+  padding: 0 0.2rem;
+  font-size: 25px;
+}
+
+.spanHp, 
+#spanHp {
+  font-size: 3rem;
+  font-size: 32px;
+}
+
+.skireDmg span {
+  color: var(--mid-red);
+}
+
+.skireAtkTypes,
+.skireDefTypes {
+  width: 46%;
+  display: inline-block;
+  text-align: end;
+  display: none;
+}
+
+.skireAtk,
+.skireSpAtk,
+.skireDef,
+.skirSpDef {
+  margin: 0;
+}
+
+#vsh2 {
+  text-align: center;
+  margin: 1rem;
+  max-width: 226px;
+  background: var(--dark-red);
+  border-radius: 50%;
+}
+
+/* End Skirmish Match Styles */
+
 /* SkireCard Results Styles */
-.winH1,
-.winner {
+.h1,
+.winner, 
+.loser {
   width: 80vw;
   max-width: 640px;
   margin: auto;
@@ -472,10 +963,89 @@ body, html {
   }
 }
 
+@media (min-width: 720px) {
+  #skirmishMain {
+    display: grid;
+    /* grid-template-columns: repeat(3, 1fr); */
+    margin: auto;
+    align-items: center;
+    justify-items: end;
+  }
+
+  #matchh1 {
+    grid-row: 1;
+    grid-column: 1 / 4;
+    justify-self: center;
+    font-size: 4em;
+    /* z-index: 100; */
+  }
+
+  #matchSec {
+    grid-row: 2;
+    grid-column: 1 / 4;
+    justify-self: center;
+    margin: 0;
+    padding: .4rem 2rem;
+  }
+
+  #t1Sec {
+    grid-row: 3;
+    grid-column: 1;
+  }
+
+  #vsSec {
+    grid-row: 3;
+    grid-column: 2;
+    background: var(--dark-red);
+    border-radius: 50%;
+    z-index: 200;
+  }
+
+  #t2Sec {
+    grid-row: 3;
+    grid-column: 3;
+  }
+
+  .skireTypes {
+    min-height: 80px;
+  }
+}
+
 @media (max-width: 775px) {
   .modal-btn {
     display: block; 
     margin: 1em auto;
     min-width: 16em;
+  }
+}
+
+@media (max-width: 720px) {
+  .skireTypes {
+    display: none;
+  }
+  
+  .skireAtkBtn, 
+  .skireSpAtkBtn, 
+  #skireAtkBtn, 
+  #skireSpAtkBtn {
+    padding: .6em .8em;
+    font-size: 14px;
+    width: 49%;
+  }
+
+  .skirePic {
+    height: 96px;
+  }
+
+  .skireName,
+  .spanHp,
+  .skireSpan {
+    font-size: 21px;
+  }
+}
+
+@media (min-width: 720px) {
+  .skireSec {
+    min-width: 302px;
   }
 }
