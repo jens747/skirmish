@@ -1,4 +1,4 @@
-// getLocalStorage, setLocalStorage, setClick, and getParam, renderWithTemplate, loadTemplate, loadHeaderFooter sourced from WDD330 Team Website project
+// getLocalStorage, setLocalStorage, and setClick sourced from WDD330 Team Website project
 
 import { createSkireData } from "./pokebank.mjs";
 import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
@@ -419,42 +419,4 @@ export function addTrainer(trainer) {
 //   const salt = await bcrypt.genSaltSync(10);
 //   const hash = await bcrypt.hashSync(password, salt);
 //   return hash;
-// }
-
-// export async function renderWithTemplate(
-//   templateFn,
-//   parentElement,
-//   data,
-//   callback,
-//   position = "afterbegin",
-//   clear = true
-// ) {
-//   if (clear) {
-//     parentElement.innerHTML = "";
-//   }
-//   const htmlString = await templateFn(data);
-//   parentElement.insertAdjacentHTML(position, htmlString);
-//   if (callback) {
-//     callback(data);
-//   }
-// }
-
-// function loadTemplate(path) {
-//   // currying 
-//   return async function () {
-//     const res = await fetch(path);
-//     if (res.ok) {
-//       const html = await res.text();
-//       return html;
-//     }
-//   };
-// }
-
-// export async function loadFooter() {
-//   // const headerTemplateFn = loadTemplate("/partials/header.html");
-//   const footerTemplateFn = loadTemplate("/partials/footer.html");
-//   // const headerEl = document.querySelector("#main-header");
-//   const footerEl = document.querySelector("#skire-footer");
-//   // renderWithTemplate(headerTemplateFn, headerEl);
-//   renderWithTemplate(footerTemplateFn, footerEl);
 // }

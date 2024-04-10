@@ -1,8 +1,6 @@
 import { loadAnimations, addActions, setClickAll } from "./utils.mjs";
 // import { catchRandPoke, setPokeData, createSkireData } from "./pokebank.mjs";
 
-// import { updateTime } from "./last-modified.mjs";
-
 document.forms["trainer-form"].addEventListener("submit", (e) => {
   console.log("submitted");
   try {
@@ -19,6 +17,3 @@ setClickAll(".prime-btn", addActions);
 // data.map(dat => setPokeData(dat.poke));
 // const pokeTeam = await createSkireData(10);
 // console.log(pokeTeam);
-
-// loadFooter();
-// updateTime();
