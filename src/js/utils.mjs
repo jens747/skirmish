@@ -421,48 +421,40 @@ export function addTrainer(trainer) {
 //   return hash;
 // }
 
-// export function getParam(param) {
-//   const queryString = window.location.search;
-//   const urlParams = new URLSearchParams(queryString);
-//   return urlParams.get(param);
-// }
+export async function renderWithTemplate(
+  templateFn,
+  parentElement,
+  data,
+  callback,
+  position = "afterbegin",
+  clear = true
+) {
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+  const htmlString = await templateFn(data);
+  parentElement.insertAdjacentHTML(position, htmlString);
+  if (callback) {
+    callback(data);
+  }
+}
 
-// export async function renderWithTemplate(
-//   templateFn,
-//   parentElement,
-//   data,
-//   callback,
-//   position = "afterbegin",
-//   clear = true
-// ) {
-//   if (clear) {
-//     parentElement.innerHTML = "";
-//   }
-//   const htmlString = await templateFn(data);
-//   parentElement.insertAdjacentHTML(position, htmlString);
-//   if (callback) {
-//     callback(data);
-//   }
-// }
+function loadTemplate(path) {
+  // currying 
+  return async function () {
+    const res = await fetch(path);
+    if (res.ok) {
+      const html = await res.text();
+      return html;
+    }
+  };
+}
 
-// function loadTemplate(path) {
-//   // currying 
-//   return async function () {
-//     const res = await fetch(path);
-//     if (res.ok) {
-//       const html = await res.text();
-//       return html;
-//     }
-//   };
-// }
-
-// export async function loadHeaderFooter() {
-  // headerTemplate and footerTemplate remember path passed in when created 
-  // The renderWithTemplate function is expecting a template function
-//   const headerTemplateFn = loadTemplate("/partials/header.html");
-//   const footerTemplateFn = loadTemplate("/partials/footer.html");
-//   const headerEl = document.querySelector("#main-header");
-//   const footerEl = document.querySelector("#main-footer");
-//   renderWithTemplate(headerTemplateFn, headerEl);
-//   renderWithTemplate(footerTemplateFn, footerEl);
-// }
+export async function loadFooter() {
+  // const headerTemplateFn = loadTemplate("/partials/header.html");
+  const footerTemplateFn = loadTemplate("/partials/footer.html");
+  // const headerEl = document.querySelector("#main-header");
+  const footerEl = document.querySelector("#poke-footer");
+  // renderWithTemplate(headerTemplateFn, headerEl);
+  renderWithTemplate(footerTemplateFn, footerEl);
+}
