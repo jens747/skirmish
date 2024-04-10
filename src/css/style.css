@@ -83,7 +83,7 @@ form {
 }
 
 /*  */
-/* Pokeball animations */
+/* Skireball animations */
 /*  */
 body, html {
   margin: 0;
@@ -265,7 +265,7 @@ body, html {
 }
 
 /*  */
-/* End Pokeball animations */
+/* End Skireball animations */
 /*  */
 
 /* Message styles */
@@ -414,7 +414,7 @@ body, html {
   display: none;
 }
 
-/* PokeCard Styles */
+/* SkireCard Styles */
 
 .poke-card {
   width: 64vw;
@@ -435,7 +435,7 @@ body, html {
   color: var(--dark-red);
 }
 
-/* End PokeCard Styles */
+/* End SkireCard Styles */
 
 /* Skirmish Match Styles */
 
