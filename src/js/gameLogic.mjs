@@ -161,7 +161,10 @@ export default async function skirmishLoop() {
 
   try {
     // *****UNCOMMENT TO RUN GAME*****
-    location.assign("/endgame/index.html");
+    // local development
+    // location.assign("/endgame/index.html");
+    // hosting on github pages
+    location.assign("/skirmish/src/endgame/index.html");
   } catch (error) {
     console.error("Error loading page: ", error);
   }

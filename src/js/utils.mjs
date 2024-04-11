@@ -276,6 +276,7 @@ export async function addActions(action, event) {
 export function playAgain() {
   try {
     location.assign("../game/index.html");
+    // location.assign("/skirmish/src/game/index.html");
   } catch (error) {
     console.error(`Error URL: bad ${error}`);
   }
