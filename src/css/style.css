@@ -406,6 +406,10 @@ body, html {
   justify-content: center;
 }
 
+#start-btn {
+  margin: auto;
+}
+
 #trainer1Fieldset, 
 #trainer2Fieldset, 
 #login1Fieldset, 
