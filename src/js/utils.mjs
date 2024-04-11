@@ -275,8 +275,8 @@ export async function addActions(action, event) {
 // If players choose to keep playing go back to the game screen
 export function playAgain() {
   try {
-    // location.assign("../game/index.html");
-    location.assign("/skirmish/src/game/index.html");
+    location.assign("../game/index.html");
+    // location.assign("/skirmish/src/game/index.html");
   } catch (error) {
     console.error(`Error URL: bad ${error}`);
   }
