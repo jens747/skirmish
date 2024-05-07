@@ -60,6 +60,7 @@ footer {
   text-align: center;
 }
 
+#tradesBody, 
 #skirmishBody {
   max-width: 640px;
   text-align: center;
@@ -94,6 +95,10 @@ body, html {
 #defaultBody { 
   padding: 1em;
   overflow: scroll;
+}
+
+#homeBody {
+  overflow: hidden;
 }
 
 .top-slide, .bottom-slide {
@@ -268,6 +273,104 @@ body, html {
 /* End Skireball animations */
 /*  */
 
+/*  */
+/* Image Banner Styles */
+
+#imgBanner {
+  /* position: relative; */
+  width: 50vh;
+  height: 50vw;
+  margin: auto;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.mainSkireImg {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  margin: auto;
+  /* max-width: 70%; */
+  max-height: 100%;
+  object-fit: contain;
+  z-index: 50;
+}
+
+.randomMoveAndFadeE {
+  animation: randomMoveAndFadeE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeE {
+  0% { opacity: 0; transform: translate(0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%); }
+}
+
+.randomMoveAndFadeW {
+  animation: randomMoveAndFadeW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeW {
+  0% { opacity: 0; transform: translate(0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%); }
+}
+
+.randomMoveAndFadeSE {
+  animation: randomMoveAndFadeSE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeSE {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%, -25%); }
+}
+
+.randomMoveAndFadeNW {
+  animation: randomMoveAndFadeNW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeNW {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%, 25%); }
+}
+
+.randomMoveAndFadeSW {
+  animation: randomMoveAndFadeSW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeSW {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%, -25%); }
+}
+
+.randomMoveAndFadeNE {
+  animation: randomMoveAndFadeNE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeNE {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%, 25%); }
+}
+
+/* End Image Banner Styles */
+
 /* Message styles */
 @keyframes appear {
   from {
@@ -289,7 +392,7 @@ body, html {
 
 .messageSection {
   position: fixed;
-  top: 0;
+  top: 50px;
   width: 100%;
   animation: appear 0.5s forwards;
 }
@@ -304,7 +407,7 @@ body, html {
   text-align: center;
   color: var(--light-color);
   background: var(--dark-color);
-  box-shadow: 10px 6px 16px lightgray;
+  box-shadow: 10px 6px 16px var(--dark-color);
   border-radius: 1em;
   animation: appear 0.5s forwards;
 }
@@ -314,12 +417,18 @@ body, html {
 }
 
 /* Modal styles */
+.trainer-modal {
+  position: relative;
+  z-index: 1000;
+}
+
 .modal-fieldset {
   width: 80vw;
   max-width: 640px;
   margin: 2em auto;
-  box-shadow: 10px 6px 16px lightgray;
+  /* box-shadow: 10px 6px 16px lightgray; */
   border: 6px outset var(--tertiary-color);
+  background: rgba(250, 250, 250, .8);
   border-radius: 24px;
   padding: 1em;
 }
@@ -408,6 +517,7 @@ body, html {
 
 #start-btn {
   margin: auto;
+  box-shadow: none;
 }
 
 #trainer1Fieldset, 
@@ -421,11 +531,13 @@ body, html {
 /* SkireCard Styles */
 
 .poke-card {
+  position: relative;
   width: 64vw;
   min-width: 216px;
   max-width: 320px;
   margin: 2em auto;
   border: 5px outset var(--dark-green);
+  border: 5px outset var(--light-blue);
   padding: 1em;
   border-radius: 32px;
   box-shadow: 2px 2px 8px gray;
@@ -440,6 +552,164 @@ body, html {
 }
 
 /* End SkireCard Styles */
+
+/* Trade Page Styles */
+
+.tradesMenuH1 {
+  width: 100vw;
+  max-width: 640px;
+  color: var(--tertiary-color);
+  text-shadow: 2px 2px var(--dark-color);
+  font-weight: normal;
+  /* margin-top: 64px; */
+  margin: 0;
+}
+
+#tUl {
+  display: flex;
+  list-style: none;
+  background: var(--mid-blue);
+  /* justify-content: end; */
+  padding: .4em 1em;
+  margin: 0;
+  align-items: end;
+  position: fixed;
+  width: 100vw;
+  max-width: 640px;
+  top: 0px;
+  z-index: 100;
+}
+
+#tradesBack {
+  position: fixed;
+  bottom: 16px;
+  right: -42px;
+  background: var(--mid-green);
+  text-shadow: 2px 2px var(--dark-color);
+  box-shadow: 4px 4px 10px var(--dark-color);
+  z-index: 100;
+}
+
+#tCoinIcon {
+  width: 32px;
+  height: 32px;
+  background: var(--tertiary-color);
+  border-radius: 50%;
+  box-shadow: 2px 2px var(--light-yellow);
+  color: var(--dark-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#tCoins {
+  font-size: 22px;
+  padding: 0 .6em 0 .4em;
+  color: var(--light-color);
+  text-shadow: 2px 2px var(--dark-color);
+}
+
+#tCost {
+  padding: 0 .6em 0 .4em;
+  padding: 0 .6em;
+  color: var(--mid-red);
+  text-shadow: 1px 1px var(--dark-color);
+  /* border-radius: 50%;
+  background: whitesmoke; */
+}
+
+.shineCoin {
+  animation: shineCoin 0.8s ease forwards;
+}
+
+@keyframes shineCoin {
+  0% {
+    background: var(--tertiary-color);
+    box-shadow: 2px 2px var(--light-yellow);
+    color: var(--dark-yellow);
+  }
+  50% {
+    color: navajowhite;
+    background: floralwhite;
+    box-shadow: 2px 2px navajowhite;
+  }
+  100% {
+    background: var(--tertiary-color);
+    box-shadow: 2px 2px var(--light-yellow);
+    color: var(--dark-yellow);
+  }
+}
+
+.skireCostDiv {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  position: relative;
+  top: -8px;
+}
+
+.skireCostCoin {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  background: var(--tertiary-color);
+  border-radius: 50%;
+  box-shadow: 2px 2px var(--light-yellow);
+  color: var(--dark-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skireCostValue {
+  margin: 0 .4em;
+}
+
+.skireAtkStats,
+.skireDefStats {
+  width: 48%;
+  display: inline-block;
+  text-align: end;
+  margin: 4px 2px;
+  padding: 0 4px;
+  /* background: var(--tertiary-color); */
+  /* border: 4px outset var(--light-yellow); */
+  /* border: 4px inset lightgray; */
+  border: 4px outset;
+}
+ 
+/* .skireDefStats {
+  background: var(--dark-color);
+  padding: 0 4px;
+  border: 4px outset var(--dark-color);
+  color: var(--light-color);
+} */
+
+.buySkireCard {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  height: 104%;
+  width: 108%;
+  opacity: 0;
+  border: none;
+  border-radius: 32px;
+}
+
+.boughtCard {
+  opacity: 0.8;
+  background: var(--primary-color);
+  color: var(--tertiary-color);
+  font-family: inherit;
+  font-size: xx-large;
+}
+
+.shopkeeper {
+  max-width: 100%;
+  margin-top: 46px;
+}
+
+/* End Trade Page Styles */
 
 /* Skirmish Match Styles */
 
@@ -876,6 +1146,10 @@ body, html {
   font-size: 25px;
 }
 
+.skireSpanStats {
+  font-size: 16px;
+}
+
 .spanHp, 
 #spanHp {
   font-size: 3rem;
@@ -897,7 +1171,7 @@ body, html {
 .skireAtk,
 .skireSpAtk,
 .skireDef,
-.skirSpDef {
+.skireSpDef {
   margin: 0;
 }
 
@@ -1019,7 +1293,8 @@ body, html {
     grid-column: 3;
   }
 
-  .skireTypes {
+  .skireTypes,
+  .skireCardTypes {
     min-height: 80px;
   }
 }
@@ -1054,6 +1329,10 @@ body, html {
   .spanHp,
   .skireSpan {
     font-size: 21px;
+  }
+
+  .skireSpanStats {
+    font-size: 12px;
   }
 }
 

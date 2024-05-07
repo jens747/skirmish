@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
 
 // Set up new trainers
@@ -80,10 +80,22 @@ export function displayTrainerStats(trainer, state, result) {
   const h2 = document.createElement("h2");
   h2.className = "h2";
   draw
+    // Trainer won
     ? h2.textContent = `Great game ${trainer.name}!`
       : result
+        // Trainer lost
         ? h2.textContent = `${trainer.name} is the winner!`
         : h2.textContent = `You lost this round ${trainer.name}.`; 
+
+  // Display button to visit trader and get more cards
+  const tradeBtn = ce("button");
+  tradeBtn.type = "button";
+  tradeBtn.className = "modal-btn prime-btn";
+  tradeBtn.textContent = `Trade (${trainer.coins} coins)`;
+  tradeBtn.addEventListener("click", () => {
+    setLocalStorage("trading", trainer.name);
+    window.location.href = "/trader/index.html";
+  });
 
   // Display the skiremon who won their match
   const secwin = document.createElement("section");
@@ -125,6 +137,7 @@ export function displayTrainerStats(trainer, state, result) {
 
   // Append content to the section
   section.appendChild(h2);
+  section.appendChild(tradeBtn);
 
   // Display the Skiremon who lost their match
   const secloss = document.createElement("section");

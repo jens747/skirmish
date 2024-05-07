@@ -1,5 +1,5 @@
 import { qs, ce, setClick, rmClick } from "./utils.mjs";
-import { setPokeData, getHeroImg } from "./pokebank.mjs";
+import { getHeroImg } from "./pokebank.mjs";
 
 export function displayBanner(match, round, t1, t2, trainer1, trainer2, t1Score, t2Score) {
   // Get the selector for main

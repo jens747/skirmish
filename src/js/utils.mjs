@@ -1,6 +1,6 @@
 // getLocalStorage, setLocalStorage, and setClick sourced from WDD330 Team Website project
 
-import { createSkireData } from "./pokebank.mjs";
+import { createSkireData, getHeroImg } from "./pokebank.mjs";
 import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
@@ -308,6 +308,79 @@ function throwBall() {
   const form = document.querySelector("form");
   // form.style.display = "block";
   form.style.animation = "popForm .4s forwards";
+}
+
+// Display images of random Skiremon
+export async function moveAndFadeImg(imgAr) {
+  const imgBanner = qs("#imgBanner"); 
+  const anime = [
+    "randomMoveAndFadeE",
+    "randomMoveAndFadeW",
+    "randomMoveAndFadeSE",
+    "randomMoveAndFadeNW",
+    "randomMoveAndFadeSW",
+    "randomMoveAndFadeNE"
+  ];
+
+  for (let i = 0; i < imgAr.length; i++) {
+    const LIMIT = 8;
+    const img = imgAr[i];
+    let fadeImgURL, key;
+    try {
+      // Get images taken from API
+      fadeImgURL = getHeroImg(img.poke);
+    } catch (error) {
+      // Catch the error without displaying it
+      // console.log(error);
+    } finally {
+      // Get images from localstorage if able
+      key = Object.keys(img)[0];
+      // console.log(key);
+      // console.log(img[key]);
+      // console.log(img[key].sprites.other);
+      fadeImgURL = getHeroImg(img[key]);
+    }
+     
+
+    // Remove existing image if present
+    if (imgBanner.firstChild) {
+      imgBanner.removeChild(imgBanner.firstChild);
+    }
+    
+    const rand = Math.floor(Math.random() * (anime.length));
+
+    // Create new image element
+    const skireImg = document.createElement("img");
+    skireImg.src = fadeImgURL;
+    
+    try {
+      // Use if images were taken from API
+      skireImg.alt = `Image of a ${img.poke.name}`;
+    } catch (error) {
+      // Catch the error without displaying it
+      // console.log(error);
+    } finally {
+      // Use if images were taken from localstorage
+      skireImg.alt = `Image of a ${img[key].name}`;
+    }
+    skireImg.classList.add("mainSkireImg");
+    skireImg.classList.add(`${anime[rand]}`); 
+    imgBanner.appendChild(skireImg);
+
+    // console.log(`i: ${i}`);
+    if (i > LIMIT) { i = 0; }
+    // Random movement settings
+    // const xMove = Math.random() * 100 - 50;
+    // const yMove = Math.random() * 100 - 50;
+    // skireImg.style.transform = `translate(${xMove}%, ${yMove}%)`;
+    // skireImg.classList.add = anime[rand];
+    // console.log(anime[rand]);
+    // console.log(rand);
+    // skireImg.style.animation = "randomMoveAndFadeNE 6s linear forwards;"
+
+    // Wait for a specific time before moving to the next image
+    await new Promise(resolve => setTimeout(resolve, 3000)); 
+  }
 }
 
 export function shuffleCards(cards) {
