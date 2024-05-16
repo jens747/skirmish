@@ -100,6 +100,7 @@ export async function createSkireData(idx) {
       "level": 1,
       "wins": 0, 
       "losses": 0,
+      "levelUp": {},
       "draws": 0,
       "nextLevel": 1,
       "hp": bag.poke.stats[0].base_stat,
@@ -123,7 +124,7 @@ export async function createSkireData(idx) {
   return pokeObj;
 }
 
-export async function setSkireData(data) {
+export async function setSkireData(data, trade = true) {
   // Getting the name of the skiremon
   const skireKey = Object.keys(data)[0];
   // Extracting the name, types, and stats
@@ -133,18 +134,20 @@ export async function setSkireData(data) {
   const section = document.createElement("section");
   section.className = "poke-card";
 
-  const trading = getLocalStorage("trading");
-  const trader = getLocalStorage(trading);
-  
-  // console.log(Object.keys(trader.skirmishCards));
-  Object.keys(trader.skirmishCards).map(name => {
-    // Hide the card if Trainer already has one
-    if(name === skiremon.name) {
-      // console.log(skiremon.name);
-      // console.log(name);
-      section.style.display = "none";
-    }
-  });
+  if (trade) {
+    const trading = getLocalStorage("trading");
+    const trader = getLocalStorage(trading);
+    
+    // console.log(Object.keys(trader.skirmishCards));
+    Object.keys(trader.skirmishCards).map(name => {
+      // Hide the card if Trainer already has one
+      if(name === skiremon.name) {
+        // console.log(skiremon.name);
+        // console.log(name);
+        section.style.display = "none";
+      }
+    });
+  } 
 
   // Create the price div for the skiremon cards
   const skireCostDiv = ce("div");
@@ -217,6 +220,40 @@ export async function setSkireData(data) {
   t1Name.textContent = skiremon.name;
   section.appendChild(t1Name);
 
+  if (!trade) {
+    // Create a list for the skiremon record
+    const skireRecord1 = ce("ul");
+    skireRecord1.className = "skireRecord";
+    section.appendChild(skireRecord1);
+
+    // Add list item for wins
+    const skireWins1 = ce("li");
+    skireWins1.className = "skireWins";
+    skireWins1.textContent = `W: ${skiremon.wins}`;
+    skireRecord1.appendChild(skireWins1);
+
+    // Add list item for losses
+    const skireLosses1 = ce("li");
+    skireLosses1.className = "skireLosses";
+    skireLosses1.textContent = `L: ${skiremon.losses}`;
+    skireRecord1.appendChild(skireLosses1);
+
+    // Add list item for draws
+    const skireDraws1 = ce("li");
+    skireDraws1.className = "skireDraws";
+    skireDraws1.textContent = `D: ${skiremon.draws}`;
+    skireRecord1.appendChild(skireDraws1);
+
+    // Add list item for next level
+    const skireNext1 = ce("li");
+    skireNext1.className = "skireNextLv";
+    skireNext1.textContent = `L🠝: ${skiremon.nextLevel}`;
+    skireRecord1.appendChild(skireNext1);
+
+    // If not trading remove coin value
+    skireCostDiv.style.display = "none";
+  }
+
   // Create div for hp & dmg tags
   const skireLife1 = ce("div");
   skireLife1.className = "skireLife";
@@ -253,29 +290,6 @@ export async function setSkireData(data) {
   skireSpdSpan1.className = "skireSpan";
   skireSpdSpan1.textContent = `${skiremon.speed}`;
   skireSpd1.appendChild(skireSpdSpan1);
-
-  // Create a list for the skiremon record
-  // const skireRecord1 = ce("ul");
-  // skireRecord1.className = "skireRecord";
-  // section.appendChild(skireRecord1);
-
-  // Add list item for wins
-  // const skireWins1 = ce("li");
-  // skireWins1.className = "skireWins";
-  // skireWins1.textContent = `Wins: ${skiremon.wins}`;
-  // skireRecord1.appendChild(skireWins1);
-
-  // Add list item for losses
-  // const skireLosses1 = ce("li");
-  // skireLosses1.className = "skireLosses";
-  // skireLosses1.textContent = `Losses: ${skiremon.losses}`;
-  // skireRecord1.appendChild(skireLosses1);
-
-  // Add list item for draws
-  // const skireDraws1 = ce("li");
-  // skireDraws1.className = "skireDraws";
-  // skireDraws1.textContent = `Wins: ${skiremon.draws}`;
-  // skireRecord1.appendChild(skireDraws1);
 
   // Create div for action buttons
   // const skireAction1 = ce("div");

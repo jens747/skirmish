@@ -168,7 +168,7 @@ export function displayT1Cards(t1, trainer) {
   // Add list item for draws
   const skireDraws1 = ce("li");
   skireDraws1.className = "skireDraws";
-  skireDraws1.textContent = `Wins: ${t1.draws}`;
+  skireDraws1.textContent = `Draws: ${t1.draws}`;
   skireRecord1.appendChild(skireDraws1);
 
   // Create div for action buttons
@@ -455,7 +455,7 @@ export function displayT2Cards(t2, trainer) {
   // Add list item for draws
   const skireDraws2 = ce("li");
   skireDraws2.className = "skireDraws";
-  skireDraws2.textContent = `Wins: ${t2.draws}`;
+  skireDraws2.textContent = `Draws: ${t2.draws}`;
   skireRecord2.appendChild(skireDraws2);
 
   // Create div for action buttons

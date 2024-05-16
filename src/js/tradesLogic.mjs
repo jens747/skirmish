@@ -51,12 +51,16 @@ export function getTradesMenu() {
   const shopKeepImg = [
     "../img/femShopkeep1ChatGPTDall-E.webp",
     "../img/femShopkeep2ChatGPTDall-E.webp",
+    "../img/femShopkeep3ChatGPTDall-E.webp",
+    "../img/femShopkeep4ChatGPTDall-E.webp",
+    "../img/femShopkeep5ChatGPTDall-E.webp",
+    "../img/femShopkeep6ChatGPTDall-E.webp",
     "../img/maleShopkeep1ChatGPTDall-E.webp",
+    "../img/maleShopkeep2ChatGPTDall-E.webp",
     "../img/maleShopkeep3ChatGPTDall-E.webp",
     "../img/maleShopkeep4ChatGPTDall-E.webp",
     "../img/maleShopkeep5ChatGPTDall-E.webp",
-    "../img/maleShopkeep6ChatGPTDall-E.webp",
-    "../img/maleShopkeep7ChatGPTDall-E.webp"
+    "../img/maleShopkeep6ChatGPTDall-E.webp"
   ];
   const rand = Math.floor(Math.random() * (shopKeepImg.length - 1));
 

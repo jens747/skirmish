@@ -1,5 +1,6 @@
 // getLocalStorage, setLocalStorage, and setClick sourced from WDD330 Team Website project
 
+import { resetTrainer } from "./gameLogic.mjs";
 import { createSkireData, getHeroImg } from "./pokebank.mjs";
 import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
@@ -13,7 +14,8 @@ export function setLocalStorage(key, data) {
 }
 // set a listener for touchend and click
 export function setClick(selector, callback) {
-  document.querySelector(selector).addEventListener("touchend", (event) => {
+  // document.querySelector(selector).addEventListener("touchend", (event) => {
+  document.querySelector(selector).addEventListener("touchstart", (event) => {
     event.preventDefault();
     callback();
   });
@@ -83,7 +85,8 @@ export function displayMessage(msg, time = 5000) {
 export function setClickAll(selector, callback) {
   const btns = document.querySelectorAll(selector);
   btns.forEach(btn => {
-    btn.addEventListener("touchend", (event) => {
+    // btn.addEventListener("touchend", (event) => {
+    btn.addEventListener("touchstart", (event) => {
       event.preventDefault();
       const action = btn.getAttribute("data-action");
       callback(action, event);
@@ -97,6 +100,9 @@ export function setClickAll(selector, callback) {
 
 // QuerySelector shorthand, returns matching element
 export const qs = (selector, parent = document) => parent.querySelector(selector);
+
+// QuerySelector shorthand, returns matching element
+export const qsa = (selector, parent = document) => parent.querySelectorAll(selector);
 
 // CreateElement shorthand, returns matching element
 export const ce = (selector, parent = document) => parent.createElement(selector);
@@ -275,6 +281,20 @@ export async function addActions(action, event) {
 // If players choose to keep playing go back to the game screen
 export function playAgain() {
   try {
+    const trainers = getLocalStorage("currentTrainers");
+    const trainerA = getLocalStorage(trainers[0]);
+    const trainerB = getLocalStorage(trainers[1]);
+
+    // Reset Trainer A current game stats
+    resetTrainer(trainers[0]);
+    // trainerA.roundsWon = 0;
+    // trainerA.roundsLost = 0;
+    setLocalStorage(trainers[0], trainerA);
+    // Reset Trainer B current game stats
+    resetTrainer(trainers[1]);
+    // trainerB.roundsWon = 0;
+    // trainerB.roundsLost = 0;
+    setLocalStorage(trainers[1], trainerB);
     location.assign("../game/index.html");
     // location.assign("/skirmish/src/game/index.html");
   } catch (error) {
@@ -430,7 +450,7 @@ export function getWinner() {
   const t2 = getLocalStorage(ct[1]);
   let winner;
   // Return the data of the trainer with the most wins
-  (t1.wins >= t2.wins) ? winner = t1 : winner = t2;
+  (t1.roundsWon >= t2.roundsWon) ? winner = t1 : winner = t2;
   return winner;
 }
 
@@ -443,7 +463,7 @@ export function getLoser() {
   const t2 = getLocalStorage(ct[1]);
   let loser;
   // Return the data of the trainer with the most losses
-  (t1.wins < t2.wins) ? loser = t1 : loser = t2;
+  (t1.roundsWon < t2.roundsWon) ? loser = t1 : loser = t2;
   return loser;
 }
 

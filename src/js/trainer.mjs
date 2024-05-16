@@ -14,8 +14,10 @@ export default async function newTrainer(name, pass = "secret") {
         "losses": 0,
         "draws": 0,
         "coins": 0, 
+        "coinsEarned": 0, 
         "roundsWon": 0, 
         "roundsLost": 0, 
+        "roundDraws": 0, 
         "skirmishCards": {}
       });
       // Clear data if user has not completed registration 
@@ -87,14 +89,43 @@ export function displayTrainerStats(trainer, state, result) {
         ? h2.textContent = `${trainer.name} is the winner!`
         : h2.textContent = `You lost this round ${trainer.name}.`; 
 
+  // Create a container for the game stats
+  const resultSec = ce("section");
+  resultSec.id = "resultSec";
+  // section.appendChild(resultSec);
+
+  // Display current game wins-losses-draws
+  const resultRec = ce("h3");
+  resultRec.id = "resultRec";
+  resultRec.textContent = `Won: ${trainer.roundsWon} Lost: ${trainer.roundsLost} Drew: ${trainer.roundDraws}`;
+  resultSec.appendChild(resultRec);
+
+  // Display coins earned
+  const resultCoins = ce("p");
+  resultCoins.id = "resultCoins";
+  resultCoins.innerHTML = `Earned <span id="smCoinIcon">C</span> ${trainer.coinsEarned} coins`;
+  resultSec.appendChild(resultCoins);
+
   // Display button to visit trader and get more cards
   const tradeBtn = ce("button");
   tradeBtn.type = "button";
-  tradeBtn.className = "modal-btn prime-btn";
-  tradeBtn.textContent = `Trade (${trainer.coins} coins)`;
+  tradeBtn.className = "modal-btn prime-btn opt-btn";
+  tradeBtn.id = "trade-btn";
+  tradeBtn.innerHTML = `Trade <span id="smCoinIcon">C</span> ${trainer.coins} coins`;
   tradeBtn.addEventListener("click", () => {
     setLocalStorage("trading", trainer.name);
     window.location.href = "/trader/index.html";
+  });
+
+  // Display button to view card collection
+  const collectBtn = ce("button");
+  collectBtn.type = "button";
+  collectBtn.className = "modal-btn prime-btn opt-btn";
+  collectBtn.id = "collect-btn";
+  collectBtn.textContent = "Your Collection";
+  collectBtn.addEventListener("click", () => {
+    setLocalStorage("collecting", trainer.name);
+    window.location.href = "/collection/index.html";
   });
 
   // Display the skiremon who won their match
@@ -137,7 +168,12 @@ export function displayTrainerStats(trainer, state, result) {
 
   // Append content to the section
   section.appendChild(h2);
-  section.appendChild(tradeBtn);
+  section.appendChild(resultSec);
+
+  // Append buttons to the form
+  const trainerModal = qs(".trainer-modal");
+  trainerModal.appendChild(tradeBtn);
+  trainerModal.appendChild(collectBtn);
 
   // Display the Skiremon who lost their match
   const secloss = document.createElement("section");
