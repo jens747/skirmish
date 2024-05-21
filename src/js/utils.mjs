@@ -107,6 +107,21 @@ export const qsa = (selector, parent = document) => parent.querySelectorAll(sele
 // CreateElement shorthand, returns matching element
 export const ce = (selector, parent = document) => parent.createElement(selector);
 
+export function emptyObj(obj) {
+  // Check if obj is null or undefined first
+  if (obj == null) {
+    return true; 
+  }
+
+  // Check if obj, array, or null
+  if (typeof obj === "object" && !Array.isArray(obj)) {
+      return Object.keys(obj).length === 0;
+  }
+
+  // Throw an error when obj is not an object
+  throw new TypeError("Variable is not an object.");
+}
+
 // SetAttribute shorthand, returns matching element
 // export const sa = (selector, parent = document) => parent.setAttribute(selector);
 
@@ -282,16 +297,16 @@ export async function addActions(action, event) {
 export function playAgain() {
   try {
     const trainers = getLocalStorage("currentTrainers");
-    const trainerA = getLocalStorage(trainers[0]);
-    const trainerB = getLocalStorage(trainers[1]);
+    let trainerA = getLocalStorage(trainers[0]);
+    let trainerB = getLocalStorage(trainers[1]);
 
     // Reset Trainer A current game stats
-    resetTrainer(trainers[0]);
+    trainerA = resetTrainer(trainers[0]);
     // trainerA.roundsWon = 0;
     // trainerA.roundsLost = 0;
     setLocalStorage(trainers[0], trainerA);
     // Reset Trainer B current game stats
-    resetTrainer(trainers[1]);
+    trainerB = resetTrainer(trainers[1]);
     // trainerB.roundsWon = 0;
     // trainerB.roundsLost = 0;
     setLocalStorage(trainers[1], trainerB);

@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
 
 // Set up new trainers
@@ -145,9 +145,9 @@ export function displayTrainerStats(trainer, state, result) {
 
   currentGame.win.map(w => {
     const skiremon = trainer.skirmishCards[[w]][w];
-    console.log(skiremon);
-    console.log(skiremon.name);
-    console.log(getHeroImg(skiremon));
+    // console.log(skiremon);
+    // console.log(skiremon.name);
+    // console.log(getHeroImg(skiremon));
     const winli = document.createElement("li");
     winli.className = "skire";
     winli.textContent = skiremon.name;
@@ -164,6 +164,32 @@ export function displayTrainerStats(trainer, state, result) {
     winimg.setAttribute("alt", `Image of a ${skiremon.name}`);
     winimg.className = "winImg";
     winpic.appendChild(winimg);
+
+    const upgrade = skiremon.levelUp;
+
+    // Check to see if skiremon leveled up
+    if (!emptyObj(upgrade)) {
+      // const lvUpList = ce("ul");
+      // lvUpList.className = "lvUpList"
+
+      // const lvUpLv = ce("p");
+      // lvUpLv.className = "lvUpLv";
+      // lvUpLv.innerHTML = "Level Up <span id='lvUpSpan'>{$lv}</span>";
+
+      const upDiv = ce("div");
+      upDiv.className = "upDiv";
+      upDiv.innerHTML = `
+        <p class="lvUp lvUpLv">Level Up <span class="lvUp lvUpShine shineGet">${skiremon.level}</span></p>
+        <p class="lvUp lvUpHp">HP: ${skiremon.hp} <span class="lvUpSpan">🠝${upgrade.hp}</span></p>
+        <p class="lvUp lvUpAtk">Atk: ${skiremon.attack} <span class="lvUpSpan">🠝${upgrade.attack}</span></p>
+        <p class="lvUp lvUpDef">Def: ${skiremon.defense} <span class="lvUpSpan">🠝${upgrade.defense}</span></p>
+        <p class="lvUp lvUpSpAtk">Sp Atk: ${skiremon.specialAttack} <span class="lvUpSpan">🠝${upgrade.specialAttack} </span></p>
+        <p class="lvUp lvUpSpDef">Sp Def: ${skiremon.specialDefense} <span class="lvUpSpan">🠝${upgrade.specialDefense}</span></p>
+        <p class="lvUp lvUpSpd">Speed: ${skiremon.speed} <span class="lvUpSpan">🠝${upgrade.speed}</span></p>
+      `;
+
+      winli.appendChild(upDiv);
+    }
   });
 
   // Append content to the section
@@ -216,6 +242,8 @@ export function displayTrainerStats(trainer, state, result) {
   main.prepend(h1);
   main.appendChild(secwin);
   main.appendChild(secloss);
+
+  chkAttribute();
 }
 
 export function registerTrainer(event) {
@@ -235,4 +263,15 @@ export function registerTrainer(event) {
   } else {
     displayMessage("Please use a more complex password.");
   }
+}
+
+export function chkAttribute() {
+  const lvUpSpan = qsa(".lvUpSpan");
+  console.log(lvUpSpan);
+  lvUpSpan.forEach(span => {
+    let num = span.outerText.charAt(span.outerText.length - 1);
+    if (num <= 0) {
+      span.style.opacity = 0;
+    }
+  });
 }

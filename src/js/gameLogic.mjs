@@ -3,9 +3,17 @@ import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 export default async function skirmishLoop() {
+  // Get names of trainers for this game
   const ct = getLocalStorage("currentTrainers");
+
+  // Reset trainer stats from previous game
   const t1 = resetTrainer(ct[0]);
   const t2 = resetTrainer(ct[1]);
+
+  // Set stats to local storage
+  setLocalStorage(ct[0], t1);
+  setLocalStorage(ct[1], t2);
+
   const GAMEROUNDS = 9;
   // Get trainer data
   const t1Deck = getTrainerDeck(ct[0]);
@@ -391,6 +399,14 @@ export function resetTrainer(record) {
   trainer.roundsLost = 0;
   trainer.roundsWon = 0;
   trainer.coinsEarned = 0;
+
+  Object.values(trainer.skirmishCards).map(card => {
+    const keys = Object.keys(card)[0];
+    // card[keys].levelUp = {};
+    // console.log(card[keys].levelUp);
+    trainer.skirmishCards[keys][keys].levelUp = {};
+    // console.log(trainer.skirmishCards[keys][keys]);
+  });
 
   return trainer;
 }

@@ -190,5 +190,5 @@ export function getCollection() {
 
   Object.values(trainer.skirmishCards).map(card => {
     setSkireData(card, false);
-  })
+  });
 }
