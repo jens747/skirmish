@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
 
 // Set up new trainers
@@ -14,8 +14,10 @@ export default async function newTrainer(name, pass = "secret") {
         "losses": 0,
         "draws": 0,
         "coins": 0, 
+        "coinsEarned": 0, 
         "roundsWon": 0, 
         "roundsLost": 0, 
+        "roundDraws": 0, 
         "skirmishCards": {}
       });
       // Clear data if user has not completed registration 
@@ -80,10 +82,51 @@ export function displayTrainerStats(trainer, state, result) {
   const h2 = document.createElement("h2");
   h2.className = "h2";
   draw
+    // Trainer won
     ? h2.textContent = `Great game ${trainer.name}!`
       : result
+        // Trainer lost
         ? h2.textContent = `${trainer.name} is the winner!`
         : h2.textContent = `You lost this round ${trainer.name}.`; 
+
+  // Create a container for the game stats
+  const resultSec = ce("section");
+  resultSec.id = "resultSec";
+  // section.appendChild(resultSec);
+
+  // Display current game wins-losses-draws
+  const resultRec = ce("h3");
+  resultRec.id = "resultRec";
+  resultRec.textContent = `Won: ${trainer.roundsWon} Lost: ${trainer.roundsLost} Drew: ${trainer.roundDraws}`;
+  resultSec.appendChild(resultRec);
+
+  // Display coins earned
+  const resultCoins = ce("p");
+  resultCoins.id = "resultCoins";
+  resultCoins.innerHTML = `Earned <span id="smCoinIcon">C</span> ${trainer.coinsEarned} coins`;
+  resultSec.appendChild(resultCoins);
+
+  // Display button to visit trader and get more cards
+  const tradeBtn = ce("button");
+  tradeBtn.type = "button";
+  tradeBtn.className = "modal-btn prime-btn opt-btn";
+  tradeBtn.id = "trade-btn";
+  tradeBtn.innerHTML = `Trade <span id="smCoinIcon">C</span> ${trainer.coins} coins`;
+  tradeBtn.addEventListener("click", () => {
+    setLocalStorage("trading", trainer.name);
+    window.location.href = "/trader/index.html";
+  });
+
+  // Display button to view card collection
+  const collectBtn = ce("button");
+  collectBtn.type = "button";
+  collectBtn.className = "modal-btn prime-btn opt-btn";
+  collectBtn.id = "collect-btn";
+  collectBtn.textContent = "Your Collection";
+  collectBtn.addEventListener("click", () => {
+    setLocalStorage("collecting", trainer.name);
+    window.location.href = "/collection/index.html";
+  });
 
   // Display the skiremon who won their match
   const secwin = document.createElement("section");
@@ -102,9 +145,9 @@ export function displayTrainerStats(trainer, state, result) {
 
   currentGame.win.map(w => {
     const skiremon = trainer.skirmishCards[[w]][w];
-    console.log(skiremon);
-    console.log(skiremon.name);
-    console.log(getHeroImg(skiremon));
+    // console.log(skiremon);
+    // console.log(skiremon.name);
+    // console.log(getHeroImg(skiremon));
     const winli = document.createElement("li");
     winli.className = "skire";
     winli.textContent = skiremon.name;
@@ -121,10 +164,42 @@ export function displayTrainerStats(trainer, state, result) {
     winimg.setAttribute("alt", `Image of a ${skiremon.name}`);
     winimg.className = "winImg";
     winpic.appendChild(winimg);
+
+    const upgrade = skiremon.levelUp;
+
+    // Check to see if skiremon leveled up
+    if (!emptyObj(upgrade)) {
+      // const lvUpList = ce("ul");
+      // lvUpList.className = "lvUpList"
+
+      // const lvUpLv = ce("p");
+      // lvUpLv.className = "lvUpLv";
+      // lvUpLv.innerHTML = "Level Up <span id='lvUpSpan'>{$lv}</span>";
+
+      const upDiv = ce("div");
+      upDiv.className = "upDiv";
+      upDiv.innerHTML = `
+        <p class="lvUp lvUpLv">Level Up <span class="lvUp lvUpShine shineGet">${skiremon.level}</span></p>
+        <p class="lvUp lvUpHp">HP: ${skiremon.hp} <span class="lvUpSpan">🠝${upgrade.hp}</span></p>
+        <p class="lvUp lvUpAtk">Atk: ${skiremon.attack} <span class="lvUpSpan">🠝${upgrade.attack}</span></p>
+        <p class="lvUp lvUpDef">Def: ${skiremon.defense} <span class="lvUpSpan">🠝${upgrade.defense}</span></p>
+        <p class="lvUp lvUpSpAtk">Sp Atk: ${skiremon.specialAttack} <span class="lvUpSpan">🠝${upgrade.specialAttack} </span></p>
+        <p class="lvUp lvUpSpDef">Sp Def: ${skiremon.specialDefense} <span class="lvUpSpan">🠝${upgrade.specialDefense}</span></p>
+        <p class="lvUp lvUpSpd">Speed: ${skiremon.speed} <span class="lvUpSpan">🠝${upgrade.speed}</span></p>
+      `;
+
+      winli.appendChild(upDiv);
+    }
   });
 
   // Append content to the section
   section.appendChild(h2);
+  section.appendChild(resultSec);
+
+  // Append buttons to the form
+  const trainerModal = qs(".trainer-modal");
+  trainerModal.appendChild(tradeBtn);
+  trainerModal.appendChild(collectBtn);
 
   // Display the Skiremon who lost their match
   const secloss = document.createElement("section");
@@ -167,6 +242,8 @@ export function displayTrainerStats(trainer, state, result) {
   main.prepend(h1);
   main.appendChild(secwin);
   main.appendChild(secloss);
+
+  chkAttribute();
 }
 
 export function registerTrainer(event) {
@@ -186,4 +263,15 @@ export function registerTrainer(event) {
   } else {
     displayMessage("Please use a more complex password.");
   }
+}
+
+export function chkAttribute() {
+  const lvUpSpan = qsa(".lvUpSpan");
+  console.log(lvUpSpan);
+  lvUpSpan.forEach(span => {
+    let num = span.outerText.charAt(span.outerText.length - 1);
+    if (num <= 0) {
+      span.style.opacity = 0;
+    }
+  });
 }

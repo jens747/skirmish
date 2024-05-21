@@ -3,9 +3,18 @@ import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 
 export default async function skirmishLoop() {
+  // Get names of trainers for this game
   const ct = getLocalStorage("currentTrainers");
-  const t1 = getLocalStorage(ct[0]);
-  const t2 = getLocalStorage(ct[1]);
+
+  // Reset trainer stats from previous game
+  const t1 = resetTrainer(ct[0]);
+  const t2 = resetTrainer(ct[1]);
+
+  // Set stats to local storage
+  setLocalStorage(ct[0], t1);
+  setLocalStorage(ct[1], t2);
+
+  const GAMEROUNDS = 9;
   // Get trainer data
   const t1Deck = getTrainerDeck(ct[0]);
   const t2Deck = getTrainerDeck(ct[1]);
@@ -18,7 +27,8 @@ export default async function skirmishLoop() {
 
   // Cycle through trainer card data
   // for (let i = t1Deck.length - 1; i > 0; i--) {
-  for (let i = 0; i <= t1Deck.length - 1; i++) {
+  // for (let i = 0; i <= t1Deck.length - 1; i++) {
+  for (let i = 0; i <= GAMEROUNDS; i++) {
     // set temp trainer cards for hp, damage, and damage taken
     let trainer1 = {
       "hp1": t1Deck[i].hp,
@@ -296,14 +306,21 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
     // Depending on the outcome add 1 to card win/lose/draw stats
     if (outcome === "win") {
       trainerCard.wins = updateRecord(trainerCard.wins);
+      trainer.roundsWon = updateRecord(trainer.roundsWon);
       // If trainer won...
       if (trainerCard.level >= rivalCard.level) {
         // If level is greater than rival, give 2 coins, decrease nextLevel by 1
         trainer.coins = updateRecord(trainer.coins, COIN);
+        // Update current game coin count
+        trainer.coinsEarned = updateRecord(trainer.coinsEarned, COIN);
+
         trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, 1, false);
       // If level is less than rival, give 5 coins, decrease nextLevel by 2
       } else {
         trainer.coins = updateRecord(trainer.coins, BONUS);
+        // Update current game coin count
+        trainer.coinsEarned = updateRecord(trainer.coinsEarned, BONUS);
+        
         trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, COIN, false);
       }
       // If nextLevel reaches 0, trainerCard levels up, resets nextLevel
@@ -315,9 +332,11 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
     // If player loses update trainerCard losses
     } else if (outcome === "lose") {
       trainerCard.losses = updateRecord(trainerCard.losses);
+      trainer.roundsLost = updateRecord(trainer.roundsLost);
     // If round is a draw, update trainerCard draws
     } else if (outcome) {
       trainerCard.draws = updateRecord(trainerCard.draws);
+      // trainer.roundDraws = updateRecord(trainer.roundDraws);
     }
     // Update the poke card in the trainer's hand
     trainer.skirmishCards[[trainerCard.name]] = { 
@@ -326,8 +345,8 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
   } catch (error) {
     console.error(`Can not update card: ${error}`);
   }
-  console.log(trainer.skirmishCards[[trainerCard.name]]);
-  console.log(trainerCard);
+  // console.log(trainer.skirmishCards[[trainerCard.name]]);
+  // console.log(trainerCard);
 }
 
 export function levelUpCard(card) {
@@ -343,6 +362,15 @@ export function levelUpCard(card) {
     Sp. Defense: ${card.specialDefense} + ${STATS[4]},
     Speed: ${card.speed} + ${STATS[5]}
   `);
+
+  card.levelUp = {
+    hp: STATS[0],
+    attack: STATS[1],
+    defense: STATS[2],
+    specialAttack: STATS[3],
+    specialDefense: STATS[4],
+    speed: STATS[5]
+  }
 
   card.hp += STATS[0];
   card.attack += STATS[1];
@@ -362,4 +390,23 @@ export function levelUpCard(card) {
   `);
   console.log(card);
   return card;
+}
+
+export function resetTrainer(record) {
+  let trainer = getLocalStorage(record);
+
+  trainer.roundDraws = 0;
+  trainer.roundsLost = 0;
+  trainer.roundsWon = 0;
+  trainer.coinsEarned = 0;
+
+  Object.values(trainer.skirmishCards).map(card => {
+    const keys = Object.keys(card)[0];
+    // card[keys].levelUp = {};
+    // console.log(card[keys].levelUp);
+    trainer.skirmishCards[keys][keys].levelUp = {};
+    // console.log(trainer.skirmishCards[keys][keys]);
+  });
+
+  return trainer;
 }

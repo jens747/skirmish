@@ -1,6 +1,7 @@
 // getLocalStorage, setLocalStorage, and setClick sourced from WDD330 Team Website project
 
-import { createSkireData } from "./pokebank.mjs";
+import { resetTrainer } from "./gameLogic.mjs";
+import { createSkireData, getHeroImg } from "./pokebank.mjs";
 import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
@@ -13,7 +14,8 @@ export function setLocalStorage(key, data) {
 }
 // set a listener for touchend and click
 export function setClick(selector, callback) {
-  document.querySelector(selector).addEventListener("touchend", (event) => {
+  // document.querySelector(selector).addEventListener("touchend", (event) => {
+  document.querySelector(selector).addEventListener("touchstart", (event) => {
     event.preventDefault();
     callback();
   });
@@ -83,7 +85,8 @@ export function displayMessage(msg, time = 5000) {
 export function setClickAll(selector, callback) {
   const btns = document.querySelectorAll(selector);
   btns.forEach(btn => {
-    btn.addEventListener("touchend", (event) => {
+    // btn.addEventListener("touchend", (event) => {
+    btn.addEventListener("touchstart", (event) => {
       event.preventDefault();
       const action = btn.getAttribute("data-action");
       callback(action, event);
@@ -98,8 +101,26 @@ export function setClickAll(selector, callback) {
 // QuerySelector shorthand, returns matching element
 export const qs = (selector, parent = document) => parent.querySelector(selector);
 
+// QuerySelector shorthand, returns matching element
+export const qsa = (selector, parent = document) => parent.querySelectorAll(selector);
+
 // CreateElement shorthand, returns matching element
 export const ce = (selector, parent = document) => parent.createElement(selector);
+
+export function emptyObj(obj) {
+  // Check if obj is null or undefined first
+  if (obj == null) {
+    return true; 
+  }
+
+  // Check if obj, array, or null
+  if (typeof obj === "object" && !Array.isArray(obj)) {
+      return Object.keys(obj).length === 0;
+  }
+
+  // Throw an error when obj is not an object
+  throw new TypeError("Variable is not an object.");
+}
 
 // SetAttribute shorthand, returns matching element
 // export const sa = (selector, parent = document) => parent.setAttribute(selector);
@@ -275,6 +296,20 @@ export async function addActions(action, event) {
 // If players choose to keep playing go back to the game screen
 export function playAgain() {
   try {
+    const trainers = getLocalStorage("currentTrainers");
+    let trainerA = getLocalStorage(trainers[0]);
+    let trainerB = getLocalStorage(trainers[1]);
+
+    // Reset Trainer A current game stats
+    trainerA = resetTrainer(trainers[0]);
+    // trainerA.roundsWon = 0;
+    // trainerA.roundsLost = 0;
+    setLocalStorage(trainers[0], trainerA);
+    // Reset Trainer B current game stats
+    trainerB = resetTrainer(trainers[1]);
+    // trainerB.roundsWon = 0;
+    // trainerB.roundsLost = 0;
+    setLocalStorage(trainers[1], trainerB);
     location.assign("../game/index.html");
     // location.assign("/skirmish/src/game/index.html");
   } catch (error) {
@@ -308,6 +343,79 @@ function throwBall() {
   const form = document.querySelector("form");
   // form.style.display = "block";
   form.style.animation = "popForm .4s forwards";
+}
+
+// Display images of random Skiremon
+export async function moveAndFadeImg(imgAr) {
+  const imgBanner = qs("#imgBanner"); 
+  const anime = [
+    "randomMoveAndFadeE",
+    "randomMoveAndFadeW",
+    "randomMoveAndFadeSE",
+    "randomMoveAndFadeNW",
+    "randomMoveAndFadeSW",
+    "randomMoveAndFadeNE"
+  ];
+
+  for (let i = 0; i < imgAr.length; i++) {
+    const LIMIT = 8;
+    const img = imgAr[i];
+    let fadeImgURL, key;
+    try {
+      // Get images taken from API
+      fadeImgURL = getHeroImg(img.poke);
+    } catch (error) {
+      // Catch the error without displaying it
+      // console.log(error);
+    } finally {
+      // Get images from localstorage if able
+      key = Object.keys(img)[0];
+      // console.log(key);
+      // console.log(img[key]);
+      // console.log(img[key].sprites.other);
+      fadeImgURL = getHeroImg(img[key]);
+    }
+     
+
+    // Remove existing image if present
+    if (imgBanner.firstChild) {
+      imgBanner.removeChild(imgBanner.firstChild);
+    }
+    
+    const rand = Math.floor(Math.random() * (anime.length));
+
+    // Create new image element
+    const skireImg = document.createElement("img");
+    skireImg.src = fadeImgURL;
+    
+    try {
+      // Use if images were taken from API
+      skireImg.alt = `Image of a ${img.poke.name}`;
+    } catch (error) {
+      // Catch the error without displaying it
+      // console.log(error);
+    } finally {
+      // Use if images were taken from localstorage
+      skireImg.alt = `Image of a ${img[key].name}`;
+    }
+    skireImg.classList.add("mainSkireImg");
+    skireImg.classList.add(`${anime[rand]}`); 
+    imgBanner.appendChild(skireImg);
+
+    // console.log(`i: ${i}`);
+    if (i > LIMIT) { i = 0; }
+    // Random movement settings
+    // const xMove = Math.random() * 100 - 50;
+    // const yMove = Math.random() * 100 - 50;
+    // skireImg.style.transform = `translate(${xMove}%, ${yMove}%)`;
+    // skireImg.classList.add = anime[rand];
+    // console.log(anime[rand]);
+    // console.log(rand);
+    // skireImg.style.animation = "randomMoveAndFadeNE 6s linear forwards;"
+
+    // Wait for a specific time before moving to the next image
+    await new Promise(resolve => setTimeout(resolve, 3000)); 
+  }
 }
 
 export function shuffleCards(cards) {
@@ -357,7 +465,7 @@ export function getWinner() {
   const t2 = getLocalStorage(ct[1]);
   let winner;
   // Return the data of the trainer with the most wins
-  (t1.wins >= t2.wins) ? winner = t1 : winner = t2;
+  (t1.roundsWon >= t2.roundsWon) ? winner = t1 : winner = t2;
   return winner;
 }
 
@@ -370,7 +478,7 @@ export function getLoser() {
   const t2 = getLocalStorage(ct[1]);
   let loser;
   // Return the data of the trainer with the most losses
-  (t1.wins < t2.wins) ? loser = t1 : loser = t2;
+  (t1.roundsWon < t2.roundsWon) ? loser = t1 : loser = t2;
   return loser;
 }
 

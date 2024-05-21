@@ -60,6 +60,8 @@ footer {
   text-align: center;
 }
 
+#collectBody, 
+#tradesBody, 
 #skirmishBody {
   max-width: 640px;
   text-align: center;
@@ -75,6 +77,11 @@ footer {
 
 form {
   display: none;
+}
+
+#winMain, 
+#lossMain {
+  text-align: center;
 }
 
 #winForm,
@@ -94,6 +101,10 @@ body, html {
 #defaultBody { 
   padding: 1em;
   overflow: scroll;
+}
+
+#homeBody {
+  overflow: hidden;
 }
 
 .top-slide, .bottom-slide {
@@ -268,6 +279,104 @@ body, html {
 /* End Skireball animations */
 /*  */
 
+/*  */
+/* Image Banner Styles */
+
+#imgBanner {
+  /* position: relative; */
+  width: 50vh;
+  height: 50vw;
+  margin: auto;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+}
+
+.mainSkireImg {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  margin: auto;
+  /* max-width: 70%; */
+  max-height: 100%;
+  object-fit: contain;
+  z-index: 50;
+}
+
+.randomMoveAndFadeE {
+  animation: randomMoveAndFadeE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeE {
+  0% { opacity: 0; transform: translate(0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%); }
+}
+
+.randomMoveAndFadeW {
+  animation: randomMoveAndFadeW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeW {
+  0% { opacity: 0; transform: translate(0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%); }
+}
+
+.randomMoveAndFadeSE {
+  animation: randomMoveAndFadeSE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeSE {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%, -25%); }
+}
+
+.randomMoveAndFadeNW {
+  animation: randomMoveAndFadeNW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeNW {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%, 25%); }
+}
+
+.randomMoveAndFadeSW {
+  animation: randomMoveAndFadeSW 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeSW {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-25%, -25%); }
+}
+
+.randomMoveAndFadeNE {
+  animation: randomMoveAndFadeNE 6s linear forwards;
+}
+
+@keyframes randomMoveAndFadeNE {
+  0% { opacity: 0; transform: translate(0%, 0%); }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate(25%, 25%); }
+}
+
+/* End Image Banner Styles */
+
 /* Message styles */
 @keyframes appear {
   from {
@@ -289,9 +398,10 @@ body, html {
 
 .messageSection {
   position: fixed;
-  top: 0;
+  top: 50px;
   width: 100%;
   animation: appear 0.5s forwards;
+  z-index: 1000;
 }
 
 .messageSection div {
@@ -304,7 +414,7 @@ body, html {
   text-align: center;
   color: var(--light-color);
   background: var(--dark-color);
-  box-shadow: 10px 6px 16px lightgray;
+  box-shadow: 10px 6px 16px var(--dark-color);
   border-radius: 1em;
   animation: appear 0.5s forwards;
 }
@@ -314,12 +424,18 @@ body, html {
 }
 
 /* Modal styles */
+.trainer-modal {
+  position: relative;
+  z-index: 1000;
+}
+
 .modal-fieldset {
   width: 80vw;
   max-width: 640px;
   margin: 2em auto;
-  box-shadow: 10px 6px 16px lightgray;
+  /* box-shadow: 10px 6px 16px lightgray; */
   border: 6px outset var(--tertiary-color);
+  background: rgba(250, 250, 250, .8);
   border-radius: 24px;
   padding: 1em;
 }
@@ -367,20 +483,33 @@ body, html {
   background: var(--dark-red);
 }
 
+#collect-btn, 
 .already-btn {
   background: var(--dark-yellow);
 }
 
+#trade-btn, 
 .ready-btn {
   background: var(--dark-green);
+}
+
+#trade-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lossAdvBtn, 
+#winAdvBtn, 
+.opt-btn {
+  display: block;
+  margin: 1em auto;
+  min-width: 16em;
 }
 
 #lossAdvBtn, 
 #winAdvBtn {
   background: var(--primary-color);
-  display: block;
-  margin: 1em auto;
-  min-width: 16em;
 }
 
 #lossSavBtn, 
@@ -393,6 +522,8 @@ body, html {
 
 #lossAdvBtn:hover, 
 #winAdvBtn:hover,
+#trade-btn:hover, 
+#collect-btn:hover, 
 .another-btn:hover, 
 .already-btn:hover, 
 .ready-btn:hover, 
@@ -408,6 +539,7 @@ body, html {
 
 #start-btn {
   margin: auto;
+  box-shadow: none;
 }
 
 #trainer1Fieldset, 
@@ -418,21 +550,116 @@ body, html {
   display: none;
 }
 
+.lvUp {
+  font-size: 24px;
+  margin: 4px;
+}
+
+.upDiv {
+  display: grid;
+  grid-gap: 0 8px;
+  width: 100%;
+  max-width: 396px;
+}
+
+.lvUpLv {
+  grid-row: 1;
+  grid-column: 1 / 3;
+  font-size: 32px;
+}
+
+.lvUpShine {
+  font-size: 32px;
+  color: var(--dark-yellow);
+}
+
+/* Displays a diagonal sheen to the text */
+.shineGet {
+  margin: 0 6px;
+  position: absolute;
+  overflow: hidden; /* Ensures the reflection doesn't go outside the bounds */
+}
+
+.shineGet::before {
+  content: "";
+  position: absolute;
+  top: -50%;    /* Starting above the element */
+  left: -50%;
+  width: 200%;  /* Wide enough to cover the diagonal length */
+  height: 200%; /* Tall enough to ensure full coverage */
+  background: linear-gradient(60deg, transparent 45%, rgba(255, 255, 255, 0.5) 50%, transparent 55%);
+  /* Adjust the middle values (45%, 50%, 55%) to make the band narrower or wider */
+  animation: shine 2.4s linear infinite;
+}
+
+@keyframes shine {
+  0%, 78% { 
+      transform: translateX(-50%);
+  }
+  100% {
+      transform: translateX(100%);
+  }
+}
+
+.lvUpSpAtk {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.lvUpSpDef {
+  grid-row: 3;
+  grid-column: 2;
+}
+
+.lvUpSpd {
+  grid-row: 4;
+  grid-column: 2;
+}
+
+@keyframes bounce {
+  0%, 50% {
+    transform: translateY(0) scaleY(1); 
+    animation-timing-function: ease-in;
+  }
+  25% {
+    transform: translateY(-6px); 
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    transform: scaleY(.8);
+    animation-timing-function: ease-in;
+  }
+}
+
+.lvUpSpan {
+  display: inline-block;
+  font-size: 20px;
+  color: var(--mid-green);
+  animation: bounce .9s infinite;
+}
+
 /* SkireCard Styles */
 
 .poke-card {
+  position: relative;
   width: 64vw;
   min-width: 216px;
   max-width: 320px;
   margin: 2em auto;
   border: 5px outset var(--dark-green);
+  border: 5px outset var(--light-blue);
   padding: 1em;
   border-radius: 32px;
   box-shadow: 2px 2px 8px gray;
 }
 
 .pokeImg {
-  width: 100%;
+  /* width: 100%; */
+  width: auto;
+  height: auto;
+  max-height: 160px;
+  max-width: 196px;
+  padding: 4px 0;
 }
 
 .poke-name {
@@ -440,6 +667,326 @@ body, html {
 }
 
 /* End SkireCard Styles */
+
+/* Trade Page Styles */
+
+.collectMenuH1, 
+.tradesMenuH1 {
+  width: 100vw;
+  max-width: 640px;
+  color: var(--tertiary-color);
+  text-shadow: 2px 2px var(--dark-color);
+  font-weight: normal;
+  /* margin-top: 64px; */
+  margin: 0;
+}
+
+#cUl, 
+#tUl {
+  display: flex;
+  list-style: none;
+  background: var(--mid-blue);
+  /* justify-content: end; */
+  padding: .4em 1em;
+  margin: 0;
+  align-items: end;
+  position: fixed;
+  width: 100vw;
+  max-width: 640px;
+  top: 0px;
+  z-index: 100;
+}
+
+#collectBack, 
+#tradesBack {
+  position: fixed;
+  bottom: 16px;
+  right: -24px;
+  background: var(--mid-green);
+  text-shadow: 2px 2px var(--dark-color);
+  box-shadow: 4px 4px 10px var(--dark-color);
+  z-index: 100;
+  min-width: 10em;
+}
+
+#resultCoins {
+  display: flex;
+  justify-content: center;
+}
+
+#smCoinIcon, 
+#cCoinIcon, 
+#tCoinIcon {
+  width: 32px;
+  height: 32px;
+  background: var(--tertiary-color);
+  border-radius: 50%;
+  box-shadow: 2px 2px var(--light-yellow);
+  color: var(--dark-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#smCoinIcon {
+  margin: auto 8px;
+  width: 20px;
+  height: 20px;
+}
+
+.cRecord, 
+#cCoins, 
+#tCoins {
+  font-size: 22px;
+  padding: 0 .6em 0 .4em;
+  color: var(--light-color);
+  text-shadow: 2px 2px var(--dark-color);
+}
+
+#tCost {
+  padding: 0 .6em 0 .4em;
+  padding: 0 .6em;
+  color: var(--mid-red);
+  text-shadow: 1px 1px var(--dark-color);
+  /* border-radius: 50%;
+  background: whitesmoke; */
+}
+
+.shineCoin {
+  animation: shineCoin 0.8s ease forwards;
+}
+
+@keyframes shineCoin {
+  0% {
+    background: var(--tertiary-color);
+    box-shadow: 2px 2px var(--light-yellow);
+    color: var(--dark-yellow);
+  }
+  50% {
+    color: navajowhite;
+    background: floralwhite;
+    box-shadow: 2px 2px navajowhite;
+  }
+  100% {
+    background: var(--tertiary-color);
+    box-shadow: 2px 2px var(--light-yellow);
+    color: var(--dark-yellow);
+  }
+}
+
+.skireCostDiv {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  position: relative;
+  top: -8px;
+}
+
+.skireCostCoin {
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  background: var(--tertiary-color);
+  border-radius: 50%;
+  box-shadow: 2px 2px var(--light-yellow);
+  color: var(--dark-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skireCostValue {
+  margin: 0 .4em;
+}
+
+.skireAtkStats,
+.skireDefStats {
+  width: 48%;
+  display: inline-block;
+  text-align: end;
+  margin: 4px 2px;
+  padding: 0 4px;
+  /* background: var(--tertiary-color); */
+  /* border: 4px outset var(--light-yellow); */
+  /* border: 4px inset lightgray; */
+  border: 4px outset;
+}
+ 
+/* .skireDefStats {
+  background: var(--dark-color);
+  padding: 0 4px;
+  border: 4px outset var(--dark-color);
+  color: var(--light-color);
+} */
+
+.buySkireCard {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  height: 104%;
+  width: 108%;
+  opacity: 0;
+  border: none;
+  border-radius: 32px;
+}
+
+.boughtCard {
+  opacity: 0.8;
+  background: var(--primary-color);
+  color: var(--tertiary-color);
+  font-family: inherit;
+  font-size: xx-large;
+}
+
+.shopkeeper {
+  max-width: 100%;
+  margin-top: 46px;
+}
+
+/* End Trade Page Styles */
+
+/* Collection Page Styles */
+
+#collectStyle {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  top: -8px;
+  left: 270px;
+  z-index: 100;
+}
+
+#collectMain {
+  padding-bottom: 4em;
+}
+
+#collectList, 
+#collectGrid {
+  padding: 1em;
+  border: none;
+  /* box-shadow: 4px 4px 10px var(--dark-color); */
+  /* background: var(--dark-purple); */
+  margin: 1em .2em;
+  padding: .5em;
+  background: var(--light-red);
+}
+
+#collectList:hover, 
+#collectGrid:hover {
+  /* transform: scale(1.088); */
+  cursor: pointer;
+  background-color: var(--dark-color);
+}
+
+#collectList:active, 
+#collectGrid:active {
+  transform: translateX(-1px) translateY(-1px) scale(.88);
+}
+
+#collectGridDiv {
+  display: flex;
+  flex-wrap: wrap;
+  width: 20px;
+}
+
+.collectText {
+  display: none;
+}
+
+.collectRect {
+  height: 4px;
+  width: 24px;
+  /* background: var(--dark-yellow); */
+  background: var(--light-color);
+  box-shadow: 2px 2px var(--dark-color);
+  margin: 2px 0;
+}
+
+.collectSqr {
+  height: 6px;
+  width: 6px;
+  /* background: var(--dark-yellow); */
+  background: var(--light-color);
+  box-shadow: 2px 2px var(--dark-color);
+  margin: 2px;
+}
+
+.collectMenuH1 {
+  margin-top: 56px;
+}
+
+#cUl {
+  background: var(--light-red);
+}
+
+.listBuySkireCard {
+  display: none;
+}
+
+.listPoke-card {
+  display: grid;
+  grid-gap: 0 6px;
+  max-width: 600px;
+  min-width: 96%;
+  margin: .6em auto;
+}
+
+.listSkireDivTop {
+  grid-column: 2/3;
+}
+
+.listPicture {
+  grid-column: 1;
+  grid-row: 1/5;
+}
+
+.listImg {
+  max-width: 64px;
+}
+
+.listSkireName {
+  grid-row: 3;
+  grid-column: 2/3;
+}
+
+.listSkireRecord {
+  grid-row: 1;
+  grid-column: 4/5;
+}
+
+.listSkireLife {
+  grid-column: 2/3;
+  grid-row: 4;
+}
+
+.listSkireAtkStats, 
+.listSkireDefStats {
+  display: grid;
+  grid-row: 3;
+  grid-column: 3/5;
+  min-width: 100%;
+}
+
+.listSkireDefStats {
+  grid-row: 4;
+}
+
+.listSkireAtk, 
+.listSkireDef {
+  grid-column: 1;
+}
+
+.listSkireSpAtk, 
+.listSkireSpDef {
+  grid-column: 2;
+}
+
+.listSkireCardTypes {
+  display: none;
+}
+
+/* End Collection Page Styles */
 
 /* Skirmish Match Styles */
 
@@ -675,13 +1222,13 @@ body, html {
   display: flex;
   list-style: none;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   padding: 0;
   margin: 0;
   height: 2em;
   height: 12.6px;
   font-size: 14px;
-  display: none;
+  /* display: none; */
 }
 
 /* .skireType, */
@@ -876,6 +1423,10 @@ body, html {
   font-size: 25px;
 }
 
+.skireSpanStats {
+  font-size: 16px;
+}
+
 .spanHp, 
 #spanHp {
   font-size: 3rem;
@@ -897,7 +1448,7 @@ body, html {
 .skireAtk,
 .skireSpAtk,
 .skireDef,
-.skirSpDef {
+.skireSpDef {
   margin: 0;
 }
 
@@ -1019,14 +1570,15 @@ body, html {
     grid-column: 3;
   }
 
-  .skireTypes {
+  .skireTypes,
+  .skireCardTypes {
     min-height: 80px;
   }
 }
 
 @media (max-width: 775px) {
   .modal-btn {
-    display: block; 
+    /* display: block;  */
     margin: 1em auto;
     min-width: 16em;
   }
@@ -1055,10 +1607,26 @@ body, html {
   .skireSpan {
     font-size: 21px;
   }
+
+  .skireSpanStats {
+    font-size: 12px;
+  }
 }
 
 @media (min-width: 720px) {
   .skireSec {
     min-width: 302px;
+  }
+}
+
+@media (max-width: 656px) {
+  #collectStyle {
+    display: none;
+  }
+}
+
+@media (max-width: 428px) {
+  .upDiv {
+    display: block;
   }
 }
