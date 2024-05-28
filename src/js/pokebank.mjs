@@ -90,12 +90,16 @@ export async function catchRandPoke(idx) {
 export async function createSkireData(idx) {
   // Get random pokemon data
   const pokeBag = catchRandPoke(idx);
+  console.log(pokeBag);
 
   // Create Pokemon object for easy access of data
   const pokeObj = (await pokeBag).map(bag => ({
     [bag.poke.name]: {
       "name": bag.poke.name,
       "evolutions": bag.poke.forms.map(form => form.name),
+      "cries": bag.poke.cries, 
+      // "forms": bag.poke.forms, 
+      // "moves": bag.poke.moves, 
       "id": bag.poke.id,
       "level": 1,
       "wins": 0, 
@@ -181,6 +185,7 @@ export async function setSkireData(data, trade = true) {
   skiremon.types.map(type => {
     const stt1 = ce("p");
     stt1.className = `skireTopType ${type}`;
+    section.classList.add(`${type}Border`);
     stt1.textContent = `${type}`;
     skireDivTop1.appendChild(stt1);
   });
@@ -215,7 +220,7 @@ export async function setSkireData(data, trade = true) {
 
   // Add h3 tag for skiremon name
   const t1Name = ce("h3");
-  t1Name.className = "skireName";
+  t1Name.className = "skireName tick";
   // t1Name.id = "t1Name";
   t1Name.textContent = skiremon.name;
   section.appendChild(t1Name);
@@ -390,7 +395,7 @@ export async function setSkireData(data, trade = true) {
     const li1 = ce("li");
     skireStrength1.appendChild(li1);
     const stp1 = ce("p");
-    stp1.className = `${type}`;
+    stp1.className = `skireP ${type}`;
     stp1.textContent = `${type}`;
     li1.appendChild(stp1);
   });
@@ -410,7 +415,7 @@ export async function setSkireData(data, trade = true) {
     const li1 = ce("li");
     skireWeakness1.appendChild(li1);
     const wtp1 = ce("p");
-    wtp1.className = `${type}`;
+    wtp1.className = `skireP ${type}`;
     wtp1.textContent = `${type}`;
     li1.appendChild(wtp1);
   });
@@ -421,6 +426,29 @@ export async function setSkireData(data, trade = true) {
   buyCard.type = "button";
   buyCard.textContent = "bought";
   section.appendChild(buyCard);
+
+  let multiType;
+
+  // p tags for the skiremon's types
+  skiremon.types.map(type => {
+    
+
+    if (t1Name.classList.contains("tick")) {
+      section.classList.add(`${type}Border`);
+      t1Name.classList.add(`${type}`);
+      t1Name.classList.remove("tick");
+    }
+
+    if (multiType) {
+      // section.classList.remove(`${type}Border`);
+      section.className = "";
+      section.className = `poke-card ${type}Border`;
+      // t1Name.classList.add(`${type}`);
+      multiType = false;
+    }
+
+    multiType = true;
+  });
 
   // Create the <h2> element for the name
   // const h2 = document.createElement("h2");

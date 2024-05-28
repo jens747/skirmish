@@ -2,7 +2,7 @@
 
 import { resetTrainer } from "./gameLogic.mjs";
 import { createSkireData, getHeroImg } from "./pokebank.mjs";
-import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
+import newTrainer, { cpuTrainer, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
@@ -177,12 +177,28 @@ export async function addActions(action, event) {
       displayMessage("Single-player is not yet available.");
       // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
       // Check to see if trainer already exists
-      // if (getLocalStorage(input.value)) { 
-      //   displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
-      //   break;
-      // }
-      // document.querySelector("#trainer1Fieldset").style.display = "none";
-      // document.querySelector("#start-btn").style.display = "block";
+      if (getLocalStorage(input.value)) { 
+        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+        break;
+      }
+      // Save CPU to localStorage
+      cpuTrainer("cpu");
+      // Set the name of the trainer1 to local storage
+      setupTrainers(input.value);
+      // Add CPU to current trainers
+      addTrainer("cpu");
+      
+      // Display message to load trainer's profile
+      displayMessage(`Generating ${input.value}'s profile and CPU trainer.`);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCards("cpu", trainer);
+      
+      // Hide trainer1Fieldset
+      document.querySelector("#trainer1Fieldset").style.display = "none";
+      // Show start-btn screen
+      document.querySelector("#start-btn").style.display = "block";
       break;
     // Log-in Trainer1 & move to add Trainer2 (skirmish2)
     case "addTrainer1Login":
@@ -214,8 +230,24 @@ export async function addActions(action, event) {
       console.log("skirmish1Login");
       displayMessage("Single-player is not yet available.");
       // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
-      // document.querySelector("#login1Fieldset").style.display = "none";
-      // document.querySelector("#start-btn").style.display = "block";
+      // Save CPU to localStorage
+      cpuTrainer("cpu");
+      // Set the name of the trainer1 to local storage
+      setupTrainers(input.value);
+      // Add CPU to current trainers
+      addTrainer("cpu");
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${input.value}'s profile and generating CPU trainer.`);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      await updateSkirmishCards("cpu", trainer);
+
+      // Change the cpu level to compete with user 
+      await setCpuLevel(input.value);
+
+      document.querySelector("#login1Fieldset").style.display = "none";
+      document.querySelector("#start-btn").style.display = "block";
       break;
     // Move to trainer 2 log in form (skirmish2Login)
     case "loginTrainer2":

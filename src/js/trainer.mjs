@@ -1,5 +1,6 @@
 import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
+import { levelUpCard } from "./gameLogic.mjs";
 
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {
@@ -30,19 +31,73 @@ export default async function newTrainer(name, pass = "secret") {
   }
 }
 
+// Set up new trainers
+export async function cpuTrainer(name) {
+  const p = getLocalStorage(name.toLowerCase());
+
+  try {
+    if (!p || p.name === "cpu") {
+      setLocalStorage(name, {
+        "name": name,
+        "pass": undefined, 
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "coins": 0, 
+        "coinsEarned": 0, 
+        "roundsWon": 0, 
+        "roundsLost": 0, 
+        "roundDraws": 0, 
+        "skirmishCards": {}
+      });
+    }
+  } catch (error) {
+    console.error("cpu already exists: ", error);
+  }
+}
+
+export async function setCpuLevel(user, difficulty = 0) {
+  // Get trainer data from local storage
+  const trainer = getLocalStorage(user);
+  const cpu = getLocalStorage("cpu");
+  
+  // Place the card levels in an array
+  const cardLevels = Object.values(trainer.skirmishCards).map(card => Object.values(card)[0].level);
+  // Get the maximum value from the array
+  const maxLv = Math.max(...cardLevels) + difficulty;
+
+  // Fill new array with random values up to max
+  const cpuLevel = cardLevels.map(() => Math.floor(Math.random() * maxLv + 1));
+
+  Object.values(cpu.skirmishCards).forEach((cardObj, idx) => {
+    // access the nested card object
+    const card = cardObj[Object.keys(cardObj)[0]];
+
+    // Update skire card level
+    card.level = cpuLevel[idx];
+    card.nextLevel = cpuLevel[idx];
+    // Cycle through each card in the deck
+    for (let i = 0; i < cpuLevel[idx]; i++) 
+      // Update skire card stats
+      levelUpCard(card);
+  });
+
+  setLocalStorage("cpu", cpu);
+}
+
 export async function updateSkirmishCards(name, pokeData, poke) {
   const trainer = getLocalStorage(name);
 
   if(trainer) {
     await pokeData.map(card => {
       const key = Object.keys(card);
-      console.log(key);
+      // console.log(key);
       // console.log(pokeData);
       
       if (key[0] in trainer.skirmishCards) {
         console.log(`${key[0]} already exists, cannot add.`);
       } else {
-        console.log(`Add ${key[0]}`);
+        // console.log(`Add ${key[0]}`);
         trainer.skirmishCards[key] = card;
       }
     });

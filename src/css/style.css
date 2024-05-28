@@ -803,13 +803,14 @@ body, html {
 .skireDefStats {
   width: 48%;
   display: inline-block;
-  text-align: end;
+  text-align: center;
   margin: 4px 2px;
   padding: 0 4px;
   /* background: var(--tertiary-color); */
   /* border: 4px outset var(--light-yellow); */
   /* border: 4px inset lightgray; */
-  border: 4px outset;
+  /* border: 4px inset; */
+  /* border-radius: 15px; */
 }
  
 /* .skireDefStats {
@@ -1179,10 +1180,11 @@ body, html {
   align-content: end;
   text-align: center;
   min-width: 53px;
-  margin: 0 .1rem;
-  height: 15.6px;
   font-size: 10px;
   margin-top: 2px;
+  border-radius: 15px;
+  margin: auto 0;
+  height: 18px;
 }
 
 .skireId,
@@ -1214,8 +1216,11 @@ body, html {
 .skireName {
   font-size: xx-large;
   text-align: center;
-  margin: 0;
+  margin: 4px 0;
+  border: 4px inset;
+  border-radius: 15px;
   font-size: 24px;
+  font-weight: 100;
 }
 
 .skireRecord {
@@ -1255,6 +1260,11 @@ body, html {
   min-width: 53px;
   margin: .1rem 0;
   height: 15.6px;
+}
+
+.skireP {
+  border-radius: 15px;
+  margin: auto;
 }
 
 .skireAtkBtn, 
@@ -1398,6 +1408,86 @@ body, html {
 .question {
   background: #68A090;
   border: 3px outset #68A090;
+}
+
+.normalBorder {
+  border: 5px outset #9FA19F;
+}
+
+.fireBorder {
+  border: 5px outset #E62829;
+}
+
+.fightingBorder {
+  border: 5px outset #FF8000;
+}
+
+.waterBorder {
+  border: 5px outset #2980EF;
+}
+
+.flyingBorder {
+  border: 5px outset #81B9EF;
+}
+
+.grassBorder {
+  border: 5px outset #3FA129;
+}
+
+.poisonBorder {
+  border: 5px outset #9141CB;
+}
+
+.electricBorder {
+  border: 5px outset #FAC000;
+}
+
+.groundBorder {
+  border: 5px outset #915121;
+}
+
+.psychicBorder {
+  border: 5px outset #EF4179;
+}
+
+.rockBorder {
+  border: 5px outset #AFA981;
+}
+
+.iceBorder {
+  border: 5px outset #3DCEF3;
+}
+
+.bugBorder {
+  border: 5px outset #91A119;
+}
+
+.dragonBorder {
+  border: 5px outset #5060E1;
+}
+
+.ghostBorder {
+  border: 5px outset #704170;
+}
+
+.darkBorder {
+  border: 5px outset #624D4E;
+}
+
+.steelBorder {
+  border: 5px outset #60A1B8;
+}
+
+.fairyBorder {
+  border: 5px outset #EF70EF;
+}
+
+.stellarBorder {
+  border: 5px outset #44628D;
+}
+
+.questionBorder {
+  border: 5px outset #68A090;
 }
 
 .skireLife {
