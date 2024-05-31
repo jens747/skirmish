@@ -1236,6 +1236,10 @@ body, html {
   /* display: none; */
 }
 
+.hide {
+  opacity: 0;
+}
+
 /* .skireType, */
 .skireStrength,
 .skireWeakness {
@@ -1289,7 +1293,8 @@ body, html {
 .skireAtkBtn:hover, 
 .skireSpAtkBtn:hover, 
 #skireAtkBtn:hover, 
-#skireSpAtkBtn:hover {
+#skireSpAtkBtn:hover, 
+.cpuBtnHover {
   background: var(--mid-blue);
 }
 

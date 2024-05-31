@@ -36,7 +36,7 @@ export async function cpuTrainer(name) {
   const p = getLocalStorage(name.toLowerCase());
 
   try {
-    if (!p || p.name === "cpu") {
+    if (!p || p.name === "cpu" || p.name === "oak") {
       setLocalStorage(name, {
         "name": name,
         "pass": undefined, 
@@ -56,10 +56,19 @@ export async function cpuTrainer(name) {
   }
 }
 
-export async function setCpuLevel(user, difficulty = 0) {
+export function getRandCpu() {
+  const randNum = Math.floor(Math.random() * 10) + 1; 
+  if (randNum % 2 === 0) {
+    return "cpu";
+  } else {
+    return "oak";
+  }
+}
+
+export async function setCpuLevel(user, cpuType, difficulty = 0) {
   // Get trainer data from local storage
   const trainer = getLocalStorage(user);
-  const cpu = getLocalStorage("cpu");
+  const cpu = getLocalStorage(cpuType);
   
   // Place the card levels in an array
   const cardLevels = Object.values(trainer.skirmishCards).map(card => Object.values(card)[0].level);
@@ -82,7 +91,7 @@ export async function setCpuLevel(user, difficulty = 0) {
       levelUpCard(card);
   });
 
-  setLocalStorage("cpu", cpu);
+  setLocalStorage(cpuType, cpu);
 }
 
 export async function updateSkirmishCards(name, pokeData, poke) {
@@ -301,6 +310,7 @@ export function displayTrainerStats(trainer, state, result) {
   chkAttribute();
 }
 
+// Registration form to save trainer stats
 export function registerTrainer(event) {
   let content = event.target;
   console.log(content.value);
@@ -320,6 +330,7 @@ export function registerTrainer(event) {
   }
 }
 
+// Hide card lv up stat if it is 0
 export function chkAttribute() {
   const lvUpSpan = qsa(".lvUpSpan");
   console.log(lvUpSpan);

@@ -98,8 +98,8 @@ export async function createSkireData(idx) {
       "name": bag.poke.name,
       "evolutions": bag.poke.forms.map(form => form.name),
       "cries": bag.poke.cries, 
-      // "forms": bag.poke.forms, 
-      // "moves": bag.poke.moves, 
+      "forms": bag.poke.forms, 
+      "moves": bag.poke.moves, 
       "id": bag.poke.id,
       "level": 1,
       "wins": 0, 
@@ -128,6 +128,7 @@ export async function createSkireData(idx) {
   return pokeObj;
 }
 
+// Create Skire cards to view in trades & collections
 export async function setSkireData(data, trade = true) {
   // Getting the name of the skiremon
   const skireKey = Object.keys(data)[0];
@@ -427,28 +428,7 @@ export async function setSkireData(data, trade = true) {
   buyCard.textContent = "bought";
   section.appendChild(buyCard);
 
-  let multiType;
-
-  // p tags for the skiremon's types
-  skiremon.types.map(type => {
-    
-
-    if (t1Name.classList.contains("tick")) {
-      section.classList.add(`${type}Border`);
-      t1Name.classList.add(`${type}`);
-      t1Name.classList.remove("tick");
-    }
-
-    if (multiType) {
-      // section.classList.remove(`${type}Border`);
-      section.className = "";
-      section.className = `poke-card ${type}Border`;
-      // t1Name.classList.add(`${type}`);
-      multiType = false;
-    }
-
-    multiType = true;
-  });
+  styleFromType(skiremon, t1Name, section);
 
   // Create the <h2> element for the name
   // const h2 = document.createElement("h2");
@@ -496,4 +476,29 @@ export function getHeroImg(skiremon) {
     heroImg = skiremon.sprites.other.home.front_default;
   }
   return heroImg;
+}
+
+export function styleFromType(skiremon, t1Name, section) {
+  let multiType;
+
+  // p tags for the skiremon's types
+  skiremon.types.map(type => {
+    
+
+    if (t1Name.classList.contains("tick")) {
+      section.classList.add(`${type}Border`);
+      t1Name.classList.add(`${type}`);
+      t1Name.classList.remove("tick");
+    }
+
+    if (multiType) {
+      // section.classList.remove(`${type}Border`);
+      section.className = "";
+      section.className = `poke-card ${type}Border`;
+      // t1Name.classList.add(`${type}`);
+      multiType = false;
+    }
+
+    multiType = true;
+  });
 }

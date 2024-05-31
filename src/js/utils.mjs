@@ -2,7 +2,7 @@
 
 import { resetTrainer } from "./gameLogic.mjs";
 import { createSkireData, getHeroImg } from "./pokebank.mjs";
-import newTrainer, { cpuTrainer, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
+import newTrainer, { cpuTrainer, getRandCpu, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
@@ -28,10 +28,12 @@ export function rmClick(selector, callback) {
   selector.removeEventListener("click", callback);
 }
 
+// blur event listener
 export function setBlur(selector, callback) {
   document.querySelector(selector).addEventListener("blur", callback);
 }
 
+// Display message if input field is empty
 export function hasContent(trainerInput = ".trainer-input") {
   document.querySelectorAll(".trainer-input").forEach(input => {
     // Check if input field is empty
@@ -49,6 +51,7 @@ export function hasContent(trainerInput = ".trainer-input") {
   // msg.textContent = "";
 }
 
+// Use to display a message onscreen
 export function displayMessage(msg, time = 5000) {
   // Create the <section> element
   const msgsec = document.createElement("section");
@@ -82,6 +85,7 @@ export function displayMessage(msg, time = 5000) {
   }, time);
 }
 
+// Add click eventListener to multiple tags
 export function setClickAll(selector, callback) {
   const btns = document.querySelectorAll(selector);
   btns.forEach(btn => {
@@ -125,18 +129,16 @@ export function emptyObj(obj) {
 // SetAttribute shorthand, returns matching element
 // export const sa = (selector, parent = document) => parent.setAttribute(selector);
 
+// Main menu actions
 export async function addActions(action, event) {
-  // const trainerFormElement = document.querySelector(".trainer-form");
-  // const trainerFormObj = new FormData(trainerFormElement);
   const buttonName = event.target.name;
   const input = document.querySelector(`.trainer-input[name="${buttonName}"]`);
-  // const fieldset = button.closest(".modal-fieldset"); 
-  // const input = fieldset.querySelector(".trainer-input");
-  // const input = document.querySelector(button); 
-  // const inputValue = input.value;
+
   let trainer;
+  let cpuType;
 
   switch(action) {
+    // Display welcom message
     case "welcomeTrainer":
       document.querySelector("#trainer-num").style.display = "none";
       document.querySelector("#trainer1Fieldset").style.display = "block";
@@ -175,25 +177,29 @@ export async function addActions(action, event) {
     case "skirmish1":
       console.log("skirmish1");
       displayMessage("Single-player is not yet available.");
-      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
+
       // Check to see if trainer already exists
       if (getLocalStorage(input.value)) { 
         displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
         break;
       }
+
+      // CPU name determines cpu behavior
+      cpuType = getRandCpu();
+
       // Save CPU to localStorage
-      cpuTrainer("cpu");
+      cpuTrainer(cpuType);
       // Set the name of the trainer1 to local storage
       setupTrainers(input.value);
       // Add CPU to current trainers
-      addTrainer("cpu");
+      addTrainer(cpuType);
       
       // Display message to load trainer's profile
       displayMessage(`Generating ${input.value}'s profile and CPU trainer.`);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
-      updateSkirmishCards("cpu", trainer);
+      updateSkirmishCards(cpuType, trainer);
       
       // Hide trainer1Fieldset
       document.querySelector("#trainer1Fieldset").style.display = "none";
@@ -229,22 +235,26 @@ export async function addActions(action, event) {
     case "skirmish1Login":
       console.log("skirmish1Login");
       displayMessage("Single-player is not yet available.");
-      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
+      
+      // CPU name determines cpu behavior
+      cpuType = getRandCpu();
+
       // Save CPU to localStorage
-      cpuTrainer("cpu");
+      console.log(cpuType);
+      cpuTrainer(cpuType);
       // Set the name of the trainer1 to local storage
       setupTrainers(input.value);
       // Add CPU to current trainers
-      addTrainer("cpu");
+      addTrainer(cpuType);
       // Display message to load trainer's profile
       displayMessage(`Loading ${input.value}'s profile and generating CPU trainer.`);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
-      await updateSkirmishCards("cpu", trainer);
+      await updateSkirmishCards(cpuType, trainer);
 
       // Change the cpu level to compete with user 
-      await setCpuLevel(input.value);
+      await setCpuLevel(input.value, cpuType);
 
       document.querySelector("#login1Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
@@ -402,9 +412,7 @@ export async function moveAndFadeImg(imgAr) {
     } finally {
       // Get images from localstorage if able
       key = Object.keys(img)[0];
-      // console.log(key);
-      // console.log(img[key]);
-      // console.log(img[key].sprites.other);
+      
       fadeImgURL = getHeroImg(img[key]);
     }
      
@@ -434,16 +442,7 @@ export async function moveAndFadeImg(imgAr) {
     skireImg.classList.add(`${anime[rand]}`); 
     imgBanner.appendChild(skireImg);
 
-    // console.log(`i: ${i}`);
     if (i > LIMIT) { i = 0; }
-    // Random movement settings
-    // const xMove = Math.random() * 100 - 50;
-    // const yMove = Math.random() * 100 - 50;
-    // skireImg.style.transform = `translate(${xMove}%, ${yMove}%)`;
-    // skireImg.classList.add = anime[rand];
-    // console.log(anime[rand]);
-    // console.log(rand);
-    // skireImg.style.animation = "randomMoveAndFadeNE 6s linear forwards;"
 
     // Wait for a specific time before moving to the next image
     await new Promise(resolve => setTimeout(resolve, 3000)); 
@@ -514,6 +513,7 @@ export function getLoser() {
   return loser;
 }
 
+// Get data for a tie game
 export function tieGame() {
   // Get the names of the trainers from the current match
   const ct = getLocalStorage("currentTrainers");
@@ -561,3 +561,48 @@ export function addTrainer(trainer) {
 //   const hash = await bcrypt.hashSync(password, salt);
 //   return hash;
 // }
+
+// *****Audio Functions*****
+// Battle animation audio
+export function doubleSmack() {
+  const smack = document.querySelector(".doubleSmack");
+  smack.play();
+}
+
+// Play audio for Skiremon calls
+export function playCallAudio(callObj, name) {
+  const callAudio = callObj[name];
+  if (callAudio) {
+      callAudio.play().catch(e => console.error("Failed to play audio:", e));
+  } else {
+      console.log("Call not found or not loaded");
+  }
+}
+
+// Load audio for Skiremon calls
+export function preloadCalls(t1Deck, t2Deck) {
+  let callObj = {};
+
+  fillObjFromDeck(t1Deck, callObj);
+  fillObjFromDeck(t2Deck, callObj);
+
+  Object.keys(callObj).forEach(key => {
+    const audio = new Audio(callObj[key]);
+    audio.preload = "auto";
+    callObj[key] = audio; 
+    console.log(audio);
+  });
+
+  console.log(callObj);
+  return callObj;
+}
+
+export function fillObjFromDeck(deck, obj) {
+  deck.forEach(key => {
+      try {
+          obj[key.name] = key.cries.latest;
+      } catch (error) {
+          // console.error(`No call available for ${key.name}: ${error}`);
+      }
+  });
+}
