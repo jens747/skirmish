@@ -192,3 +192,13 @@ export function getCollection() {
     setSkireData(card, false);
   });
 }
+
+export function orderAlpaDesc() {
+  const cards = qs(".poke-card");
+  console.log(cards);
+}
+
+export function orderIdDesc() {
+  const cards = qs(".poke-card");
+  console.log(cards);
+}

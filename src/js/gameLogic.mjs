@@ -56,6 +56,8 @@ export default async function skirmishLoop() {
       const t1move = displayT1Cards(t1Deck[i], trainer1);
       const t2move = displayT2Cards(t2Deck[i], t1Deck[i], trainer2, t2);
 
+      if (round === 1) popCards();
+
       const t1Card = document.querySelector("#t1Sec");
       const t2Card = document.querySelector("#t2Sec");
       
@@ -97,7 +99,7 @@ export default async function skirmishLoop() {
       // Update round record for trainer1 if they lose
       if (trainer1.hp1 <= 0 && trainer2.hp2 > 0) { 
         // Play the audio for the Skiremon that faints
-        playCallAudio(skireCalls, t1Deck.name);
+        // playCallAudio(skireCalls, t1Deck.name);
         // add a loss to trainer1 and a win to trainer2
         t1Record[1] = updateRecord(t1Record[1]);
         t2Record[0] = updateRecord(t2Record[0]);
@@ -114,7 +116,7 @@ export default async function skirmishLoop() {
       // Update round record for trainer2 if they lose
       if (trainer2.hp2 <= 0 && trainer1.hp1 > 0) {
         // Play the audio for the Skiremon that faints
-        playCallAudio(skireCalls, t2Deck[i].name);
+        // playCallAudio(skireCalls, t2Deck[i].name);
         // add a loss to trainer2 and a win to trainer1
         t2Record[1] = updateRecord(t2Record[1]);
         t1Record[0] = updateRecord(t1Record[0]);
@@ -345,9 +347,9 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
       trainerCard.losses = updateRecord(trainerCard.losses);
       trainer.roundsLost = updateRecord(trainer.roundsLost);
     // If round is a draw, update trainerCard draws
-    } else if (outcome) {
+    } else {
       trainerCard.draws = updateRecord(trainerCard.draws);
-      // trainer.roundDraws = updateRecord(trainer.roundDraws);
+      trainer.roundDraws = updateRecord(trainer.roundDraws);
     }
     // Update the poke card in the trainer's hand
     trainer.skirmishCards[[trainerCard.name]] = { 

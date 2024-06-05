@@ -563,10 +563,20 @@ export function addTrainer(trainer) {
 // }
 
 // *****Audio Functions*****
-// Battle animation audio
-export function doubleSmack() {
-  const smack = document.querySelector(".doubleSmack");
-  smack.play();
+// Play sound effect
+export function playSound(tag) {
+  const sound = document.querySelector(tag);
+  sound.play();
+}
+
+// Play sound effects in quick succession
+export function playDoubleSound(selector) {
+  let sound = document.querySelector(selector);
+  if (!sound.paused) {
+    // Reset the playback position
+    sound.currentTime = 0; 
+  }
+  sound.play();
 }
 
 // Play audio for Skiremon calls

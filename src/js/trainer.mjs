@@ -299,6 +299,40 @@ export function displayTrainerStats(trainer, state, result) {
     losspic.appendChild(lossimg);
   });
 
+  // Display the Skiremon who tied their match
+  const secdraw = document.createElement("section");
+  secdraw.className = "secdraw";
+
+  const secdrawh3 = document.createElement("h3");
+  secdrawh3.textContent = "Tied Skirmish";
+
+  secdraw.appendChild(secdrawh3);
+
+  const drawul = document.createElement("ul");
+  drawul.className = "skirelist";
+  secdraw.appendChild(drawul);
+
+  currentGame.draw.map(d => {
+    const skiremon = trainer.skirmishCards[[d]][d];
+
+    const drawli = document.createElement("li");
+    drawli.className = "skire skired";
+    drawli.textContent = skiremon.name;
+    drawul.appendChild(drawli);
+
+    // Append the skiremon image to the list
+    const drawpic = document.createElement("picture");
+    drawli.prepend(drawpic);
+
+    const drawimg = document.createElement("img");
+    // const lossimg = document.createElement("source");
+    drawimg.setAttribute("style", "max-width: 80px");
+    drawimg.setAttribute("src", getHeroImg(skiremon));
+    drawimg.setAttribute("alt", `Image of a ${skiremon.name}`);
+    drawimg.className = "drawImg";
+    drawpic.appendChild(drawimg);
+  });
+
   // Append the <section> to the body or another container in the document
   const main = document.querySelector("main");
   
@@ -306,6 +340,7 @@ export function displayTrainerStats(trainer, state, result) {
   main.prepend(h1);
   main.appendChild(secwin);
   main.appendChild(secloss);
+  main.appendChild(secdraw);
 
   chkAttribute();
 }

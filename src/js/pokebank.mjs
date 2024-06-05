@@ -1,4 +1,5 @@
 import { ce, getLocalStorage, setClick } from "./utils.mjs";
+import { popCards } from "./gamelayout.mjs";
 
 export async function fetchPokeData(pokeId, pokeCategory) {
   // Let the user know we are waiting for a response
@@ -428,7 +429,7 @@ export async function setSkireData(data, trade = true) {
   buyCard.textContent = "bought";
   section.appendChild(buyCard);
 
-  styleFromType(skiremon, t1Name, section);
+  setStyleByType(skiremon, t1Name, section, "poke-card");
 
   // Create the <h2> element for the name
   // const h2 = document.createElement("h2");
@@ -478,15 +479,15 @@ export function getHeroImg(skiremon) {
   return heroImg;
 }
 
-export function styleFromType(skiremon, t1Name, section) {
+export function setStyleByType(skiremon, t1Name, section, cardType) {
   let multiType;
 
   // p tags for the skiremon's types
   skiremon.types.map(type => {
-    
 
     if (t1Name.classList.contains("tick")) {
-      section.classList.add(`${type}Border`);
+      section.className = "";
+      section.className = `${cardType} ${type}Border`;
       t1Name.classList.add(`${type}`);
       t1Name.classList.remove("tick");
     }
@@ -494,7 +495,7 @@ export function styleFromType(skiremon, t1Name, section) {
     if (multiType) {
       // section.classList.remove(`${type}Border`);
       section.className = "";
-      section.className = `poke-card ${type}Border`;
+      section.className = `${cardType} ${type}Border`;
       // t1Name.classList.add(`${type}`);
       multiType = false;
     }

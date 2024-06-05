@@ -1,5 +1,5 @@
-import { qs, ce, setClick, rmClick, doubleSmack } from "./utils.mjs";
-import { getHeroImg, styleFromType } from "./pokebank.mjs";
+import { qs, ce, setClick, rmClick, playSound, playDoubleSound } from "./utils.mjs";
+import { getHeroImg, setStyleByType } from "./pokebank.mjs";
 
 export function displayBanner(match, round, t1, t2, trainer1, trainer2, t1Score, t2Score) {
   // Get the selector for main
@@ -237,7 +237,7 @@ export function displayT1Cards(t1, trainer) {
     li1.appendChild(wtp1);
   });
 
-  styleFromType(t1, t1Name, t1Sec);
+  setStyleByType(t1, t1Name, t1Sec, "skireSec", popCards);
 
   // Create div to show attack and sp. attack level
   const skireAtkTypes1 = ce("div");
@@ -526,7 +526,7 @@ export function displayT2Cards(t2, t1, trainer, trainer2) {
     li2.appendChild(wtp2);
   });
 
-  styleFromType(t2, t2Name, t2Sec);
+  setStyleByType(t2, t2Name, t2Sec, "skireSec", popCards);
 
   // Create div to show attack and sp. attack level
   const skireAtkTypes2 = ce("div");
@@ -732,7 +732,10 @@ export async function vtAtk(t1, t2) {
   s2.classList.add("downAtk");
 
   // Play attack sound effects
-  doubleSmack();
+  playSound("#punch5");
+  setTimeout(() => {
+    playSound("#punch4");
+  }, 250);
 
   await Promise.all([endOfAnimation(s1, "upAtk"), endOfAnimation(s2, "downAtk")]);
 }
@@ -747,7 +750,10 @@ export async function hzAtk() {
   s2.classList.add("leftAtk");
 
   // Play attack sound effects
-  doubleSmack();
+  playSound("#punch5");
+  setTimeout(() => {
+    playSound("#punch4");
+  }, 250);
 
   await Promise.all([endOfAnimation(s1, "rightAtk"), endOfAnimation(s2, "leftAtk")]);
 }

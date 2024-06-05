@@ -1589,8 +1589,13 @@ body, html {
   border: 6px outset var(--secondary-color);
 }
 
+.skired {
+  border: 6px outset var(--tertiary-color);
+}
+
 .winImg,
-.lossImg {
+.lossImg,
+.drawImg {
   max-width: 80px;
 }
 
@@ -1615,7 +1620,8 @@ body, html {
 /* End of modal styles */
 @media (min-width: 300px) {
   .secwin,
-  .secloss {
+  .secloss, 
+  .secdraw {
     width: 80vw;
     max-width: 640px;
     margin: auto;
