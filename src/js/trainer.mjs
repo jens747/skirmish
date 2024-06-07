@@ -1,5 +1,6 @@
 import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
+import { levelUpCard } from "./gameLogic.mjs";
 
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {
@@ -30,19 +31,84 @@ export default async function newTrainer(name, pass = "secret") {
   }
 }
 
+// Set up new trainers
+export async function cpuTrainer(name) {
+  const p = getLocalStorage(name.toLowerCase());
+
+  try {
+    if (!p || p.name === "prof elm" || p.name === "prof oak") {
+      setLocalStorage(name, {
+        "name": name,
+        "pass": undefined, 
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "coins": 0, 
+        "coinsEarned": 0, 
+        "roundsWon": 0, 
+        "roundsLost": 0, 
+        "roundDraws": 0, 
+        "skirmishCards": {}
+      });
+    }
+  } catch (error) {
+    console.error("cpu already exists: ", error);
+  }
+}
+
+export function getRandCpu() {
+  const randNum = Math.floor(Math.random() * 10) + 1; 
+  if (randNum % 2 === 0) {
+    return "prof elm";
+  } else {
+    return "prof oak";
+  }
+}
+
+export async function setCpuLevel(user, cpuType, difficulty = 0) {
+  // Get trainer data from local storage
+  const trainer = getLocalStorage(user);
+  const cpu = getLocalStorage(cpuType);
+  
+  console.log(trainer);
+  console.log(trainer.skirmishCards);
+  // Place the card levels in an array
+  const cardLevels = Object.values(trainer.skirmishCards).map(card => Object.values(card)[0].level);
+  // Get the maximum value from the array
+  const maxLv = Math.max(...cardLevels) + difficulty;
+
+  // Fill new array with random values up to max
+  const cpuLevel = cardLevels.map(() => Math.floor(Math.random() * maxLv + 1));
+
+  Object.values(cpu.skirmishCards).forEach((cardObj, idx) => {
+    // access the nested card object
+    const card = cardObj[Object.keys(cardObj)[0]];
+
+    // Update skire card level
+    card.level = cpuLevel[idx];
+    card.nextLevel = cpuLevel[idx];
+    // Cycle through each card in the deck
+    for (let i = 0; i < cpuLevel[idx]; i++) 
+      // Update skire card stats
+      levelUpCard(card);
+  });
+
+  setLocalStorage(cpuType, cpu);
+}
+
 export async function updateSkirmishCards(name, pokeData, poke) {
   const trainer = getLocalStorage(name);
 
   if(trainer) {
     await pokeData.map(card => {
       const key = Object.keys(card);
-      console.log(key);
+      // console.log(key);
       // console.log(pokeData);
       
       if (key[0] in trainer.skirmishCards) {
         console.log(`${key[0]} already exists, cannot add.`);
       } else {
-        console.log(`Add ${key[0]}`);
+        // console.log(`Add ${key[0]}`);
         trainer.skirmishCards[key] = card;
       }
     });
@@ -72,6 +138,7 @@ export function displayTrainerStats(trainer, state, result) {
 
   const h1 = document.createElement("h1");
   h1.className = "h1";
+
   draw 
     ? h1.textContent = "It's a draw." 
     : result 
@@ -88,6 +155,20 @@ export function displayTrainerStats(trainer, state, result) {
         // Trainer lost
         ? h2.textContent = `${trainer.name} is the winner!`
         : h2.textContent = `You lost this round ${trainer.name}.`; 
+
+  // Change the text if the player is plaing the CPU
+  if(trainer.name === "prof elm" || trainer.name === "prof oak") {
+    console.log("Step 1");
+    if(result) {
+      console.log("Step 2");
+      h1.textContent = "";
+      h2.textContent = `${trainer.name} is the winner.`;
+    } else {
+      console.log("Step 3");
+      h1.textContent = "";
+      h2.textContent = `You beat ${trainer.name}!`;
+    }
+  }
 
   // Create a container for the game stats
   const resultSec = ce("section");
@@ -127,6 +208,12 @@ export function displayTrainerStats(trainer, state, result) {
     setLocalStorage("collecting", trainer.name);
     window.location.href = "/collection/index.html";
   });
+
+  // If trainer is a cpu hide trade & collection buttons
+  if(trainer.name === "prof elm" || trainer.name === "prof oak") {
+    tradeBtn.style.display = "none";
+    collectBtn.style.display = "none";
+  }
 
   // Display the skiremon who won their match
   const secwin = document.createElement("section");
@@ -235,6 +322,40 @@ export function displayTrainerStats(trainer, state, result) {
     losspic.appendChild(lossimg);
   });
 
+  // Display the Skiremon who tied their match
+  const secdraw = document.createElement("section");
+  secdraw.className = "secdraw";
+
+  const secdrawh3 = document.createElement("h3");
+  secdrawh3.textContent = "Tied Skirmish";
+
+  secdraw.appendChild(secdrawh3);
+
+  const drawul = document.createElement("ul");
+  drawul.className = "skirelist";
+  secdraw.appendChild(drawul);
+
+  currentGame.draw.map(d => {
+    const skiremon = trainer.skirmishCards[[d]][d];
+
+    const drawli = document.createElement("li");
+    drawli.className = "skire skired";
+    drawli.textContent = skiremon.name;
+    drawul.appendChild(drawli);
+
+    // Append the skiremon image to the list
+    const drawpic = document.createElement("picture");
+    drawli.prepend(drawpic);
+
+    const drawimg = document.createElement("img");
+    // const lossimg = document.createElement("source");
+    drawimg.setAttribute("style", "max-width: 80px");
+    drawimg.setAttribute("src", getHeroImg(skiremon));
+    drawimg.setAttribute("alt", `Image of a ${skiremon.name}`);
+    drawimg.className = "drawImg";
+    drawpic.appendChild(drawimg);
+  });
+
   // Append the <section> to the body or another container in the document
   const main = document.querySelector("main");
   
@@ -242,10 +363,12 @@ export function displayTrainerStats(trainer, state, result) {
   main.prepend(h1);
   main.appendChild(secwin);
   main.appendChild(secloss);
+  main.appendChild(secdraw);
 
   chkAttribute();
 }
 
+// Registration form to save trainer stats
 export function registerTrainer(event) {
   let content = event.target;
   console.log(content.value);
@@ -265,6 +388,7 @@ export function registerTrainer(event) {
   }
 }
 
+// Hide card lv up stat if it is 0
 export function chkAttribute() {
   const lvUpSpan = qsa(".lvUpSpan");
   console.log(lvUpSpan);

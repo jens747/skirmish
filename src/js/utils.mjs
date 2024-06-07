@@ -2,7 +2,7 @@
 
 import { resetTrainer } from "./gameLogic.mjs";
 import { createSkireData, getHeroImg } from "./pokebank.mjs";
-import newTrainer, { getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
+import newTrainer, { cpuTrainer, getRandCpu, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
 
 // retrieve data from localstorage
 export function getLocalStorage(key) {
@@ -28,10 +28,12 @@ export function rmClick(selector, callback) {
   selector.removeEventListener("click", callback);
 }
 
+// blur event listener
 export function setBlur(selector, callback) {
   document.querySelector(selector).addEventListener("blur", callback);
 }
 
+// Display message if input field is empty
 export function hasContent(trainerInput = ".trainer-input") {
   document.querySelectorAll(".trainer-input").forEach(input => {
     // Check if input field is empty
@@ -49,6 +51,7 @@ export function hasContent(trainerInput = ".trainer-input") {
   // msg.textContent = "";
 }
 
+// Use to display a message onscreen
 export function displayMessage(msg, time = 5000) {
   // Create the <section> element
   const msgsec = document.createElement("section");
@@ -82,6 +85,7 @@ export function displayMessage(msg, time = 5000) {
   }, time);
 }
 
+// Add click eventListener to multiple tags
 export function setClickAll(selector, callback) {
   const btns = document.querySelectorAll(selector);
   btns.forEach(btn => {
@@ -125,41 +129,42 @@ export function emptyObj(obj) {
 // SetAttribute shorthand, returns matching element
 // export const sa = (selector, parent = document) => parent.setAttribute(selector);
 
+// Main menu actions
 export async function addActions(action, event) {
-  // const trainerFormElement = document.querySelector(".trainer-form");
-  // const trainerFormObj = new FormData(trainerFormElement);
   const buttonName = event.target.name;
   const input = document.querySelector(`.trainer-input[name="${buttonName}"]`);
-  // const fieldset = button.closest(".modal-fieldset"); 
-  // const input = fieldset.querySelector(".trainer-input");
-  // const input = document.querySelector(button); 
-  // const inputValue = input.value;
+
   let trainer;
+  let cpuType;
+  let name;
 
   switch(action) {
+    // Display welcom message
     case "welcomeTrainer":
       document.querySelector("#trainer-num").style.display = "none";
       document.querySelector("#trainer1Fieldset").style.display = "block";
       break;
     // Create new Trainer1, move to create trainer2 ()
     case "addTrainer1":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
       console.log("addTrainer1");
       // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile.`);
+      displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer1 & save to localStorage
-      newTrainer(input.value);
+      newTrainer(name);
       // Set the name of the trainer1 to local storage
-      setupTrainers(input.value);
+      setupTrainers(name);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // console.log(trainer);
       // Add Pokemon to Trainer1 profile
-      updateSkirmishCards(input.value, trainer);
+      updateSkirmishCards(name, trainer);
       // Hide Trainer1Fieldset
       document.querySelector("#trainer1Fieldset").style.display = "none";
       // Show Trainer2Fieldset
@@ -173,28 +178,59 @@ export async function addActions(action, event) {
       break;
     // Move to start 1-player game from creating Trainer1
     case "skirmish1":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish1");
-      displayMessage("Single-player is not yet available.");
-      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
+      // displayMessage("Single-player is not yet available.");
+
       // Check to see if trainer already exists
-      // if (getLocalStorage(input.value)) { 
-      //   displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
-      //   break;
-      // }
-      // document.querySelector("#trainer1Fieldset").style.display = "none";
-      // document.querySelector("#start-btn").style.display = "block";
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
+        break;
+      }
+
+      // Get name of Trainer & save to localStorage
+      newTrainer(name);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCards(name, trainer);
+
+      // CPU name determines cpu behavior
+      cpuType = getRandCpu();
+      console.log(cpuType);
+      // Save CPU to localStorage
+      cpuTrainer(cpuType);
+      // Set the name of the trainer1 to local storage
+      setupTrainers(name);
+      // Add CPU to current trainers
+      addTrainer(cpuType);
+      
+      // Display message to load trainer's profile
+      displayMessage(`Generating ${name}'s profile and CPU trainer.`);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCards(cpuType, trainer);
+      
+      // Hide trainer1Fieldset
+      document.querySelector("#trainer1Fieldset").style.display = "none";
+      // Show start-btn screen
+      document.querySelector("#start-btn").style.display = "block";
       break;
     // Log-in Trainer1 & move to add Trainer2 (skirmish2)
     case "addTrainer1Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("addTrainer1Login");
       // Check for Trainer name
-      if (getLocalStorage(input.value)) { 
+      if (getLocalStorage(name)) { 
         // Check if Trainer password matches provided password
-        if (qs("#login1Pass").value === getLocalStorage(input.value).pass) {
+        if (qs("#login1Pass").value === getLocalStorage(name).pass) {
           // Set the name of the trainer1 to current trainers
-          setupTrainers(input.value);
+          setupTrainers(name);
           // Message user that their profile is loading
-          displayMessage(`Loading ${input.value}'s profile.`);
+          displayMessage(`Loading ${name}'s profile.`);
           // Switch to display log in menu for trainer2
           document.querySelector("#login1Fieldset").style.display = "none";
           document.querySelector("#trainer2Fieldset").style.display = "block";
@@ -211,11 +247,33 @@ export async function addActions(action, event) {
       }
     // Move to start 1-player game after Trainer1 logs in
     case "skirmish1Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish1Login");
-      displayMessage("Single-player is not yet available.");
-      // *****COMMENTED OUT UNTIL SINGLE PLAYER IS ADDED*****
-      // document.querySelector("#login1Fieldset").style.display = "none";
-      // document.querySelector("#start-btn").style.display = "block";
+      // displayMessage("Single-player is not yet available.");
+      
+      // CPU name determines cpu behavior
+      cpuType = getRandCpu();
+
+      // Save CPU to localStorage
+      console.log(cpuType);
+      cpuTrainer(cpuType);
+      // Set the name of the trainer1 to local storage
+      setupTrainers(name);
+      // Add CPU to current trainers
+      addTrainer(cpuType);
+      // Display message to load trainer's profile
+      displayMessage(`Loading ${name}'s profile and generating CPU trainer.`);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      await updateSkirmishCards(cpuType, trainer);
+
+      // Change the cpu level to compete with user 
+      await setCpuLevel(name, cpuType);
+
+      document.querySelector("#login1Fieldset").style.display = "none";
+      document.querySelector("#start-btn").style.display = "block";
       break;
     // Move to trainer 2 log in form (skirmish2Login)
     case "loginTrainer2":
@@ -225,40 +283,44 @@ export async function addActions(action, event) {
       break;
     // Move to start 2-player game
     case "skirmish2":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       // Check for empty input
-      if (input.value === "") {
+      if (name === "") {
         displayMessage("Please enter a valid name.");
         break;
       }
       // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
       console.log("skirmish2");
       // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile.`);
+      displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer2 & save to localStorage
-      newTrainer(input.value);
+      newTrainer(name);
       // Set the name of the trainer2 to local storage
-      addTrainer(input.value);
+      addTrainer(name);
       // Get random Pokemon for Trainer2
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer2 profile
-      updateSkirmishCards(input.value, trainer);
+      updateSkirmishCards(name, trainer);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
       break;
     case "skirmish2Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish2Login");
       // Check for Trainer name
-      if (getLocalStorage(input.value)) { 
+      if (getLocalStorage(name)) { 
         // Check if Trainer password matches provided password
-        if (qs("#login2Pass").value === getLocalStorage(input.value).pass) {
+        if (qs("#login2Pass").value === getLocalStorage(name).pass) {
           // Set the name of the trainer2 to current trainers
-          addTrainer(input.value);
+          addTrainer(name);
           // Message user that their profile is loading
-          displayMessage(`Loading ${input.value}'s profile.`);
+          displayMessage(`Loading ${name}'s profile.`);
           // Switch to display log in menu for trainer2
           document.querySelector("#login2Fieldset").style.display = "none";
           document.querySelector("#start-btn").style.display = "block";
@@ -274,17 +336,21 @@ export async function addActions(action, event) {
         break;
       }
     case "regWinTrainer":
-      if (checkPass(input.value)) {
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
+      if (checkPass(name)) {
         document.querySelector("#winFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
-        savePass(input.value, true);
+        savePass(name, true);
       }
       break;
     case "regLossTrainer":
-      if (checkPass(input.value)) {
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
+      if (checkPass(name)) {
         document.querySelector("#lossFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
-        savePass(input.value, false);
+        savePass(name, false);
       }
       break;
     default:
@@ -370,9 +436,7 @@ export async function moveAndFadeImg(imgAr) {
     } finally {
       // Get images from localstorage if able
       key = Object.keys(img)[0];
-      // console.log(key);
-      // console.log(img[key]);
-      // console.log(img[key].sprites.other);
+      
       fadeImgURL = getHeroImg(img[key]);
     }
      
@@ -402,16 +466,7 @@ export async function moveAndFadeImg(imgAr) {
     skireImg.classList.add(`${anime[rand]}`); 
     imgBanner.appendChild(skireImg);
 
-    // console.log(`i: ${i}`);
     if (i > LIMIT) { i = 0; }
-    // Random movement settings
-    // const xMove = Math.random() * 100 - 50;
-    // const yMove = Math.random() * 100 - 50;
-    // skireImg.style.transform = `translate(${xMove}%, ${yMove}%)`;
-    // skireImg.classList.add = anime[rand];
-    // console.log(anime[rand]);
-    // console.log(rand);
-    // skireImg.style.animation = "randomMoveAndFadeNE 6s linear forwards;"
 
     // Wait for a specific time before moving to the next image
     await new Promise(resolve => setTimeout(resolve, 3000)); 
@@ -482,6 +537,7 @@ export function getLoser() {
   return loser;
 }
 
+// Get data for a tie game
 export function tieGame() {
   // Get the names of the trainers from the current match
   const ct = getLocalStorage("currentTrainers");
@@ -529,3 +585,58 @@ export function addTrainer(trainer) {
 //   const hash = await bcrypt.hashSync(password, salt);
 //   return hash;
 // }
+
+// *****Audio Functions*****
+// Play sound effect
+export function playSound(tag) {
+  const sound = document.querySelector(tag);
+  sound.play();
+}
+
+// Play sound effects in quick succession
+export function playDoubleSound(selector) {
+  let sound = document.querySelector(selector);
+  if (!sound.paused) {
+    // Reset the playback position
+    sound.currentTime = 0; 
+  }
+  sound.play();
+}
+
+// Play audio for Skiremon calls
+export function playCallAudio(callObj, name) {
+  const callAudio = callObj[name];
+  if (callAudio) {
+      callAudio.play().catch(e => console.error("Failed to play audio:", e));
+  } else {
+      console.log("Call not found or not loaded");
+  }
+}
+
+// Load audio for Skiremon calls
+export function preloadCalls(t1Deck, t2Deck) {
+  let callObj = {};
+
+  fillObjFromDeck(t1Deck, callObj);
+  fillObjFromDeck(t2Deck, callObj);
+
+  Object.keys(callObj).forEach(key => {
+    const audio = new Audio(callObj[key]);
+    audio.preload = "auto";
+    callObj[key] = audio; 
+    // console.log(audio);
+  });
+
+  // console.log(callObj);
+  return callObj;
+}
+
+export function fillObjFromDeck(deck, obj) {
+  deck.forEach(key => {
+      try {
+          obj[key.name] = key.cries.latest;
+      } catch (error) {
+          // console.error(`No call available for ${key.name}: ${error}`);
+      }
+  });
+}

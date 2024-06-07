@@ -803,13 +803,14 @@ body, html {
 .skireDefStats {
   width: 48%;
   display: inline-block;
-  text-align: end;
+  text-align: center;
   margin: 4px 2px;
   padding: 0 4px;
   /* background: var(--tertiary-color); */
   /* border: 4px outset var(--light-yellow); */
   /* border: 4px inset lightgray; */
-  border: 4px outset;
+  /* border: 4px inset; */
+  /* border-radius: 15px; */
 }
  
 /* .skireDefStats {
@@ -853,7 +854,7 @@ body, html {
   width: 100%;
   position: fixed;
   top: -8px;
-  left: 270px;
+  left: 226px;
   z-index: 100;
 }
 
@@ -861,6 +862,8 @@ body, html {
   padding-bottom: 4em;
 }
 
+#collectIdAsc, 
+#collectAlphaDesc, 
 #collectList, 
 #collectGrid {
   padding: 1em;
@@ -868,10 +871,13 @@ body, html {
   /* box-shadow: 4px 4px 10px var(--dark-color); */
   /* background: var(--dark-purple); */
   margin: 1em .2em;
-  padding: .5em;
+  padding: 0 .5em;
+  max-height: 36px;
   background: var(--light-red);
 }
 
+#collectIdAsc:hover, 
+#collectAlphaDesc:hover,
 #collectList:hover, 
 #collectGrid:hover {
   /* transform: scale(1.088); */
@@ -879,6 +885,8 @@ body, html {
   background-color: var(--dark-color);
 }
 
+#collectIdAsc:active, 
+#collectAlphaDesc:active,
 #collectList:active, 
 #collectGrid:active {
   transform: translateX(-1px) translateY(-1px) scale(.88);
@@ -892,6 +900,16 @@ body, html {
 
 .collectText {
   display: none;
+}
+
+.collectPText {
+  margin: 4px 0;
+  font-family: "Luckiest Guy", cursive;
+  font-style: normal;
+  color: var(--dark-color);
+  font-size: 21px;
+  color: var(--light-color);
+  text-shadow: 2px 2px var(--dark-color);
 }
 
 .collectRect {
@@ -1179,10 +1197,11 @@ body, html {
   align-content: end;
   text-align: center;
   min-width: 53px;
-  margin: 0 .1rem;
-  height: 15.6px;
   font-size: 10px;
   margin-top: 2px;
+  border-radius: 15px;
+  margin: auto 0;
+  height: 18px;
 }
 
 .skireId,
@@ -1214,8 +1233,11 @@ body, html {
 .skireName {
   font-size: xx-large;
   text-align: center;
-  margin: 0;
+  margin: 4px 0;
+  border: 4px inset;
+  border-radius: 15px;
   font-size: 24px;
+  font-weight: 100;
 }
 
 .skireRecord {
@@ -1229,6 +1251,10 @@ body, html {
   height: 12.6px;
   font-size: 14px;
   /* display: none; */
+}
+
+.hide {
+  opacity: 0;
 }
 
 /* .skireType, */
@@ -1257,6 +1283,11 @@ body, html {
   height: 15.6px;
 }
 
+.skireP {
+  border-radius: 15px;
+  margin: auto;
+}
+
 .skireAtkBtn, 
 .skireSpAtkBtn, 
 #skireAtkBtn, 
@@ -1279,7 +1310,8 @@ body, html {
 .skireAtkBtn:hover, 
 .skireSpAtkBtn:hover, 
 #skireAtkBtn:hover, 
-#skireSpAtkBtn:hover {
+#skireSpAtkBtn:hover, 
+.cpuBtnHover {
   background: var(--mid-blue);
 }
 
@@ -1400,6 +1432,86 @@ body, html {
   border: 3px outset #68A090;
 }
 
+.normalBorder {
+  border: 5px outset #9FA19F;
+}
+
+.fireBorder {
+  border: 5px outset #E62829;
+}
+
+.fightingBorder {
+  border: 5px outset #FF8000;
+}
+
+.waterBorder {
+  border: 5px outset #2980EF;
+}
+
+.flyingBorder {
+  border: 5px outset #81B9EF;
+}
+
+.grassBorder {
+  border: 5px outset #3FA129;
+}
+
+.poisonBorder {
+  border: 5px outset #9141CB;
+}
+
+.electricBorder {
+  border: 5px outset #FAC000;
+}
+
+.groundBorder {
+  border: 5px outset #915121;
+}
+
+.psychicBorder {
+  border: 5px outset #EF4179;
+}
+
+.rockBorder {
+  border: 5px outset #AFA981;
+}
+
+.iceBorder {
+  border: 5px outset #3DCEF3;
+}
+
+.bugBorder {
+  border: 5px outset #91A119;
+}
+
+.dragonBorder {
+  border: 5px outset #5060E1;
+}
+
+.ghostBorder {
+  border: 5px outset #704170;
+}
+
+.darkBorder {
+  border: 5px outset #624D4E;
+}
+
+.steelBorder {
+  border: 5px outset #60A1B8;
+}
+
+.fairyBorder {
+  border: 5px outset #EF70EF;
+}
+
+.stellarBorder {
+  border: 5px outset #44628D;
+}
+
+.questionBorder {
+  border: 5px outset #68A090;
+}
+
 .skireLife {
   display: flex;
   align-items: baseline;
@@ -1494,8 +1606,13 @@ body, html {
   border: 6px outset var(--secondary-color);
 }
 
+.skired {
+  border: 6px outset var(--tertiary-color);
+}
+
 .winImg,
-.lossImg {
+.lossImg,
+.drawImg {
   max-width: 80px;
 }
 
@@ -1520,7 +1637,8 @@ body, html {
 /* End of modal styles */
 @media (min-width: 300px) {
   .secwin,
-  .secloss {
+  .secloss, 
+  .secdraw {
     width: 80vw;
     max-width: 640px;
     margin: auto;

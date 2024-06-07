@@ -1,4 +1,4 @@
-import { qs, qsa, ce, getLocalStorage, setLocalStorage, setClickAll, displayMessage } from "./utils.mjs";
+import { qs, qsa, ce, getLocalStorage, setLocalStorage, setClick, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
 
 export default function collectLoop() {
@@ -11,6 +11,12 @@ export default function collectLoop() {
 
   // Get trainer's card collection
   getCollection();
+
+  // const alphaDescBtn = qs("#collectAlphaDesc");
+  // const idAscBtn = qs("#collectIdAsc");
+
+  setClick("#collectAlphaDesc", orderAlpaDesc);
+  setClick("#collectIdAsc", orderIdAsc);
 
   const listBtn = qs("#collectList");
   const gridBtn = qs("#collectGrid");
@@ -189,6 +195,60 @@ export function getCollection() {
   cm.appendChild(ch1);
 
   Object.values(trainer.skirmishCards).map(card => {
+    console.log(card);
     setSkireData(card, false);
   });
+}
+
+export function orderAlpaDesc() {
+  // Get the name of the current trainer
+  const trainerName = getLocalStorage("collecting");
+  // Get the trainer's info
+  const trainerDeck = getLocalStorage(trainerName);
+
+  const cards = qsa(".poke-card");
+  // console.log(cards);
+  
+  const cardName = Array.from(cards).map(card => card.children[3].textContent);
+
+  // Sort the array numerically
+  cardName.sort();
+
+  console.log(cardName);
+
+  let obval = Array.from(cardName).map(card => findObjectByName(card, trainerDeck));
+  console.log(obval);
+
+}
+
+// Function to find an object by name
+export function findObjectByName(name, trainer) {
+  console.log(name);
+  console.log(trainer);
+  return Object.values(trainer.skirmishCards).find(obj => obj.name === name);
+}
+
+export function orderIdAsc() {
+  // Select all cards
+  const cards = qsa(".poke-card");
+  // console.log(cards);
+  
+  // map through the cards
+  const cardId = Array.from(cards).map(card => {
+    // Get the text from the tag
+    let str = card.children[1].firstChild.textContent;
+
+    // Split the string into an array
+    let parts = str.split(" ");
+
+    // Get the last element of the split array
+    return parseInt(parts[parts.length - 1], 10);
+  });
+
+  // Sort the array numerically
+  cardId.sort((a, b) => a - b);
+  // Descending order
+  // cardId.sort((a, b) => b - a);
+
+  console.log(cardId);
 }

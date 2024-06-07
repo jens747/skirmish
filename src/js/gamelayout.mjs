@@ -1,5 +1,5 @@
-import { qs, ce, setClick, rmClick } from "./utils.mjs";
-import { getHeroImg } from "./pokebank.mjs";
+import { qs, ce, setClick, rmClick, playSound, playDoubleSound } from "./utils.mjs";
+import { getHeroImg, setStyleByType } from "./pokebank.mjs";
 
 export function displayBanner(match, round, t1, t2, trainer1, trainer2, t1Score, t2Score) {
   // Get the selector for main
@@ -106,7 +106,7 @@ export function displayT1Cards(t1, trainer) {
 
   // Add h3 tag for skiremon name
   const t1Name = ce("h3");
-  t1Name.className = "skireName";
+  t1Name.className = "skireName tick";
   // t1Name.id = "t1Name";
   t1Name.textContent = t1.name;
   t1Sec.appendChild(t1Name);
@@ -150,7 +150,7 @@ export function displayT1Cards(t1, trainer) {
 
   // Create a list for the skiremon record
   const skireRecord1 = ce("ul");
-  skireRecord1.className = "skireRecord";
+  skireRecord1.className = "skireRecord hide";
   t1Sec.appendChild(skireRecord1);
 
   // Add list item for wins
@@ -212,7 +212,7 @@ export function displayT1Cards(t1, trainer) {
     const li1 = ce("li");
     skireStrength1.appendChild(li1);
     const stp1 = ce("p");
-    stp1.className = `${type}`;
+    stp1.className = `skireP ${type}`;
     stp1.textContent = `${type}`;
     li1.appendChild(stp1);
   });
@@ -232,10 +232,12 @@ export function displayT1Cards(t1, trainer) {
     const li1 = ce("li");
     skireWeakness1.appendChild(li1);
     const wtp1 = ce("p");
-    wtp1.className = `${type}`;
+    wtp1.className = `skireP ${type}`;
     wtp1.textContent = `${type}`;
     li1.appendChild(wtp1);
   });
+
+  setStyleByType(t1, t1Name, t1Sec, "skireSec", popCards);
 
   // Create div to show attack and sp. attack level
   const skireAtkTypes1 = ce("div");
@@ -334,7 +336,7 @@ export function displayT1Cards(t1, trainer) {
 }
 
 // *****TRAINER 2 CARDS*****
-export function displayT2Cards(t2, trainer) {
+export function displayT2Cards(t2, t1, trainer, trainer2) {
   console.log(t2);
 
   // Get the selector for main
@@ -393,7 +395,7 @@ export function displayT2Cards(t2, trainer) {
 
   // Add h3 tag for skiremon name
   const t2Name = ce("h3");
-  t2Name.className = "skireName";
+  t2Name.className = "skireName tick";
   // t2Name.id = "t2Name";
   t2Name.textContent = t2.name;
   t2Sec.appendChild(t2Name);
@@ -437,7 +439,7 @@ export function displayT2Cards(t2, trainer) {
 
   // Create a list for the skiremon record
   const skireRecord2 = ce("ul");
-  skireRecord2.className = "skireRecord";
+  skireRecord2.className = "skireRecord hide";
   t2Sec.appendChild(skireRecord2);
 
   // Add list item for wins
@@ -499,7 +501,7 @@ export function displayT2Cards(t2, trainer) {
     const li2 = ce("li");
     skireStrength2.appendChild(li2);
     const stp2 = ce("p");
-    stp2.className = `${type}`;
+    stp2.className = `skireP ${type}`;
     stp2.textContent = `${type}`;
     li2.appendChild(stp2);
   });
@@ -519,10 +521,12 @@ export function displayT2Cards(t2, trainer) {
     const li2 = ce("li");
     skireWeakness2.appendChild(li2);
     const wtp2 = ce("p");
-    wtp2.className = `${type}`;
+    wtp2.className = `skireP ${type}`;
     wtp2.textContent = `${type}`;
     li2.appendChild(wtp2);
   });
+
+  setStyleByType(t2, t2Name, t2Sec, "skireSec", popCards);
 
   // Create div to show attack and sp. attack level
   const skireAtkTypes2 = ce("div");
@@ -600,9 +604,16 @@ export function displayT2Cards(t2, trainer) {
       resolve(moveType);
     }
 
-    // Add eventlisteners for player two
-    gameClick(skireAtkBtn2, handleMove);
-    gameClick(skireSpAtkBtn2, handleMove);
+    if (trainer2.name === "prof elm") {
+      cpuMove(t2, t1, handleMove, skireAtkBtn2, skireSpAtkBtn2);
+    } else if (trainer2.name === "prof oak") {
+      randCpuMove(handleMove, skireAtkBtn2, skireSpAtkBtn2);
+    }else {
+      // Add eventlisteners for player two
+      gameClick(skireAtkBtn2, handleMove);
+      gameClick(skireSpAtkBtn2, handleMove);
+    }
+    
   });
 }
 
@@ -612,6 +623,84 @@ export function gameClick(selector, callback, e) {
     callback(e);
   });
   selector.addEventListener("click", callback);
+}
+
+export async function cpuMove(cpu, trainer, move, atk, spAtk) {
+  console.log(cpu.doubleDamageTo);
+  console.log(trainer.types);
+  // let dmgType;
+  // Set the damage level
+  // cpu.doubleDamageTo != [] 
+  //   ? dmgType = cpu.doubleDamageTo
+  //   : cpu.halfDamageTo != [] 
+  //     ? dmgType = cpu.halfDamageTo
+  //     : dmgType = cpu.noDamageTo;
+  // cpu.doubleDamageTo.some(dmg => {
+  //   trainer.types.some(type => {
+  //     if (dmg === type) {
+  //       console.log(`${type} matches ${dmg}`);
+  //       animateCpuMove(spAtk, move);
+  //       return true;  // Returns true to break out of the `some` loop
+  //     } else {
+  //       console.log(`${type} does not match ${dmg}`);
+  //       animateCpuMove(atk, move);
+  //       return false;  // Continue the loop
+  //     }
+  //   });
+  // });
+  console.log(atk);
+  if (cpu.attack >= cpu.specialAttack) {
+    animateCpuMove(atk, move);
+  } else {
+    animateCpuMove(spAtk, move);
+  }
+}
+
+export async function randCpuMove(move, atk, spAtk) {
+  // Generate random number between 1 and 10
+  const randNum = Math.floor(Math.random() * 10) + 1; 
+  if (randNum % 2 === 0) {
+    // console.log(`${randNum} is even`); 
+    animateCpuMove(atk, move);
+  } else {
+    // console.log(`${randNum} is odd`); 
+    animateCpuMove(spAtk, move);
+  }
+}
+
+export function cpuThinking() {
+  console.log("...");
+}
+
+export function showCpuHover(elm, time) {
+  elm.classList.add("cpuBtnHover");
+
+  setTimeout(() => {
+    elm.classList.remove("cpuBtnHover");
+  }, time);
+}
+
+export function showCpuAction(act, move) {
+  gameClick(act, move);
+  act.click();
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function animateCpuMove(act, move) {
+  try {
+    console.log("Starting sequence");
+    await cpuThinking();
+    await delay(2000);
+    await showCpuHover(act, 2000);
+    await delay(2000);
+    await showCpuAction(act, move);
+    console.log("Sequence completed:");
+  } catch (error) {
+      console.error("An error occurred:", error);
+  }
 }
 
 export function endOfAnimation(elm, tag) {
@@ -642,6 +731,12 @@ export async function vtAtk(t1, t2) {
   s1.classList.add("upAtk");
   s2.classList.add("downAtk");
 
+  // Play attack sound effects
+  playSound("#punch5");
+  setTimeout(() => {
+    playSound("#punch4");
+  }, 250);
+
   await Promise.all([endOfAnimation(s1, "upAtk"), endOfAnimation(s2, "downAtk")]);
 }
 
@@ -653,6 +748,12 @@ export async function hzAtk() {
   // Apply classes to start the animation
   s1.classList.add("rightAtk");
   s2.classList.add("leftAtk");
+
+  // Play attack sound effects
+  playSound("#punch5");
+  setTimeout(() => {
+    playSound("#punch4");
+  }, 250);
 
   await Promise.all([endOfAnimation(s1, "rightAtk"), endOfAnimation(s2, "leftAtk")]);
 }
