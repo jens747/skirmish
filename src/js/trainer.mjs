@@ -36,7 +36,7 @@ export async function cpuTrainer(name) {
   const p = getLocalStorage(name.toLowerCase());
 
   try {
-    if (!p || p.name === "cpu" || p.name === "oak") {
+    if (!p || p.name === "prof elm" || p.name === "prof oak") {
       setLocalStorage(name, {
         "name": name,
         "pass": undefined, 
@@ -59,9 +59,9 @@ export async function cpuTrainer(name) {
 export function getRandCpu() {
   const randNum = Math.floor(Math.random() * 10) + 1; 
   if (randNum % 2 === 0) {
-    return "cpu";
+    return "prof elm";
   } else {
-    return "oak";
+    return "prof oak";
   }
 }
 
@@ -70,6 +70,8 @@ export async function setCpuLevel(user, cpuType, difficulty = 0) {
   const trainer = getLocalStorage(user);
   const cpu = getLocalStorage(cpuType);
   
+  console.log(trainer);
+  console.log(trainer.skirmishCards);
   // Place the card levels in an array
   const cardLevels = Object.values(trainer.skirmishCards).map(card => Object.values(card)[0].level);
   // Get the maximum value from the array
@@ -136,6 +138,7 @@ export function displayTrainerStats(trainer, state, result) {
 
   const h1 = document.createElement("h1");
   h1.className = "h1";
+
   draw 
     ? h1.textContent = "It's a draw." 
     : result 
@@ -152,6 +155,20 @@ export function displayTrainerStats(trainer, state, result) {
         // Trainer lost
         ? h2.textContent = `${trainer.name} is the winner!`
         : h2.textContent = `You lost this round ${trainer.name}.`; 
+
+  // Change the text if the player is plaing the CPU
+  if(trainer.name === "prof elm" || trainer.name === "prof oak") {
+    console.log("Step 1");
+    if(result) {
+      console.log("Step 2");
+      h1.textContent = "";
+      h2.textContent = `${trainer.name} is the winner.`;
+    } else {
+      console.log("Step 3");
+      h1.textContent = "";
+      h2.textContent = `You beat ${trainer.name}!`;
+    }
+  }
 
   // Create a container for the game stats
   const resultSec = ce("section");
@@ -191,6 +208,12 @@ export function displayTrainerStats(trainer, state, result) {
     setLocalStorage("collecting", trainer.name);
     window.location.href = "/collection/index.html";
   });
+
+  // If trainer is a cpu hide trade & collection buttons
+  if(trainer.name === "prof elm" || trainer.name === "prof oak") {
+    tradeBtn.style.display = "none";
+    collectBtn.style.display = "none";
+  }
 
   // Display the skiremon who won their match
   const secwin = document.createElement("section");

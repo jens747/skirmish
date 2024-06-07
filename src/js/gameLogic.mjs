@@ -99,7 +99,7 @@ export default async function skirmishLoop() {
       // Update round record for trainer1 if they lose
       if (trainer1.hp1 <= 0 && trainer2.hp2 > 0) { 
         // Play the audio for the Skiremon that faints
-        // playCallAudio(skireCalls, t1Deck.name);
+        playCallAudio(skireCalls, t1Deck[i].name);
         // add a loss to trainer1 and a win to trainer2
         t1Record[1] = updateRecord(t1Record[1]);
         t2Record[0] = updateRecord(t2Record[0]);
@@ -116,7 +116,7 @@ export default async function skirmishLoop() {
       // Update round record for trainer2 if they lose
       if (trainer2.hp2 <= 0 && trainer1.hp1 > 0) {
         // Play the audio for the Skiremon that faints
-        // playCallAudio(skireCalls, t2Deck[i].name);
+        playCallAudio(skireCalls, t2Deck[i].name);
         // add a loss to trainer2 and a win to trainer1
         t2Record[1] = updateRecord(t2Record[1]);
         t1Record[0] = updateRecord(t1Record[0]);

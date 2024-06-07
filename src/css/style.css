@@ -854,7 +854,7 @@ body, html {
   width: 100%;
   position: fixed;
   top: -8px;
-  left: 270px;
+  left: 226px;
   z-index: 100;
 }
 
@@ -862,6 +862,8 @@ body, html {
   padding-bottom: 4em;
 }
 
+#collectIdAsc, 
+#collectAlphaDesc, 
 #collectList, 
 #collectGrid {
   padding: 1em;
@@ -869,10 +871,13 @@ body, html {
   /* box-shadow: 4px 4px 10px var(--dark-color); */
   /* background: var(--dark-purple); */
   margin: 1em .2em;
-  padding: .5em;
+  padding: 0 .5em;
+  max-height: 36px;
   background: var(--light-red);
 }
 
+#collectIdAsc:hover, 
+#collectAlphaDesc:hover,
 #collectList:hover, 
 #collectGrid:hover {
   /* transform: scale(1.088); */
@@ -880,6 +885,8 @@ body, html {
   background-color: var(--dark-color);
 }
 
+#collectIdAsc:active, 
+#collectAlphaDesc:active,
 #collectList:active, 
 #collectGrid:active {
   transform: translateX(-1px) translateY(-1px) scale(.88);
@@ -893,6 +900,16 @@ body, html {
 
 .collectText {
   display: none;
+}
+
+.collectPText {
+  margin: 4px 0;
+  font-family: "Luckiest Guy", cursive;
+  font-style: normal;
+  color: var(--dark-color);
+  font-size: 21px;
+  color: var(--light-color);
+  text-shadow: 2px 2px var(--dark-color);
 }
 
 .collectRect {

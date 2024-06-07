@@ -136,6 +136,7 @@ export async function addActions(action, event) {
 
   let trainer;
   let cpuType;
+  let name;
 
   switch(action) {
     // Display welcom message
@@ -145,23 +146,25 @@ export async function addActions(action, event) {
       break;
     // Create new Trainer1, move to create trainer2 ()
     case "addTrainer1":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
       console.log("addTrainer1");
       // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile.`);
+      displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer1 & save to localStorage
-      newTrainer(input.value);
+      newTrainer(name);
       // Set the name of the trainer1 to local storage
-      setupTrainers(input.value);
+      setupTrainers(name);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // console.log(trainer);
       // Add Pokemon to Trainer1 profile
-      updateSkirmishCards(input.value, trainer);
+      updateSkirmishCards(name, trainer);
       // Hide Trainer1Fieldset
       document.querySelector("#trainer1Fieldset").style.display = "none";
       // Show Trainer2Fieldset
@@ -175,27 +178,36 @@ export async function addActions(action, event) {
       break;
     // Move to start 1-player game from creating Trainer1
     case "skirmish1":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish1");
-      displayMessage("Single-player is not yet available.");
+      // displayMessage("Single-player is not yet available.");
 
       // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
 
+      // Get name of Trainer & save to localStorage
+      newTrainer(name);
+      // Get random Pokemon for Trainer1
+      trainer = await createSkireData(10);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCards(name, trainer);
+
       // CPU name determines cpu behavior
       cpuType = getRandCpu();
-
+      console.log(cpuType);
       // Save CPU to localStorage
       cpuTrainer(cpuType);
       // Set the name of the trainer1 to local storage
-      setupTrainers(input.value);
+      setupTrainers(name);
       // Add CPU to current trainers
       addTrainer(cpuType);
       
       // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile and CPU trainer.`);
+      displayMessage(`Generating ${name}'s profile and CPU trainer.`);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
@@ -208,15 +220,17 @@ export async function addActions(action, event) {
       break;
     // Log-in Trainer1 & move to add Trainer2 (skirmish2)
     case "addTrainer1Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("addTrainer1Login");
       // Check for Trainer name
-      if (getLocalStorage(input.value)) { 
+      if (getLocalStorage(name)) { 
         // Check if Trainer password matches provided password
-        if (qs("#login1Pass").value === getLocalStorage(input.value).pass) {
+        if (qs("#login1Pass").value === getLocalStorage(name).pass) {
           // Set the name of the trainer1 to current trainers
-          setupTrainers(input.value);
+          setupTrainers(name);
           // Message user that their profile is loading
-          displayMessage(`Loading ${input.value}'s profile.`);
+          displayMessage(`Loading ${name}'s profile.`);
           // Switch to display log in menu for trainer2
           document.querySelector("#login1Fieldset").style.display = "none";
           document.querySelector("#trainer2Fieldset").style.display = "block";
@@ -233,8 +247,10 @@ export async function addActions(action, event) {
       }
     // Move to start 1-player game after Trainer1 logs in
     case "skirmish1Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish1Login");
-      displayMessage("Single-player is not yet available.");
+      // displayMessage("Single-player is not yet available.");
       
       // CPU name determines cpu behavior
       cpuType = getRandCpu();
@@ -243,18 +259,18 @@ export async function addActions(action, event) {
       console.log(cpuType);
       cpuTrainer(cpuType);
       // Set the name of the trainer1 to local storage
-      setupTrainers(input.value);
+      setupTrainers(name);
       // Add CPU to current trainers
       addTrainer(cpuType);
       // Display message to load trainer's profile
-      displayMessage(`Loading ${input.value}'s profile and generating CPU trainer.`);
+      displayMessage(`Loading ${name}'s profile and generating CPU trainer.`);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
       await updateSkirmishCards(cpuType, trainer);
 
       // Change the cpu level to compete with user 
-      await setCpuLevel(input.value, cpuType);
+      await setCpuLevel(name, cpuType);
 
       document.querySelector("#login1Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
@@ -267,40 +283,44 @@ export async function addActions(action, event) {
       break;
     // Move to start 2-player game
     case "skirmish2":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       // Check for empty input
-      if (input.value === "") {
+      if (name === "") {
         displayMessage("Please enter a valid name.");
         break;
       }
       // Check to see if trainer already exists
-      if (getLocalStorage(input.value)) { 
-        displayMessage(`${input.value} already exists. Please, log in or use a different name.`);
+      if (getLocalStorage(name)) { 
+        displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
       console.log("skirmish2");
       // Display message to load trainer's profile
-      displayMessage(`Generating ${input.value}'s profile.`);
+      displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer2 & save to localStorage
-      newTrainer(input.value);
+      newTrainer(name);
       // Set the name of the trainer2 to local storage
-      addTrainer(input.value);
+      addTrainer(name);
       // Get random Pokemon for Trainer2
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer2 profile
-      updateSkirmishCards(input.value, trainer);
+      updateSkirmishCards(name, trainer);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
       break;
     case "skirmish2Login":
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
       console.log("skirmish2Login");
       // Check for Trainer name
-      if (getLocalStorage(input.value)) { 
+      if (getLocalStorage(name)) { 
         // Check if Trainer password matches provided password
-        if (qs("#login2Pass").value === getLocalStorage(input.value).pass) {
+        if (qs("#login2Pass").value === getLocalStorage(name).pass) {
           // Set the name of the trainer2 to current trainers
-          addTrainer(input.value);
+          addTrainer(name);
           // Message user that their profile is loading
-          displayMessage(`Loading ${input.value}'s profile.`);
+          displayMessage(`Loading ${name}'s profile.`);
           // Switch to display log in menu for trainer2
           document.querySelector("#login2Fieldset").style.display = "none";
           document.querySelector("#start-btn").style.display = "block";
@@ -316,17 +336,21 @@ export async function addActions(action, event) {
         break;
       }
     case "regWinTrainer":
-      if (checkPass(input.value)) {
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
+      if (checkPass(name)) {
         document.querySelector("#winFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
-        savePass(input.value, true);
+        savePass(name, true);
       }
       break;
     case "regLossTrainer":
-      if (checkPass(input.value)) {
+      // Set trainer name to lower case from input
+      name = input.value.toLowerCase();
+      if (checkPass(name)) {
         document.querySelector("#lossFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
-        savePass(input.value, false);
+        savePass(name, false);
       }
       break;
     default:
@@ -600,10 +624,10 @@ export function preloadCalls(t1Deck, t2Deck) {
     const audio = new Audio(callObj[key]);
     audio.preload = "auto";
     callObj[key] = audio; 
-    console.log(audio);
+    // console.log(audio);
   });
 
-  console.log(callObj);
+  // console.log(callObj);
   return callObj;
 }
 

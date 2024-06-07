@@ -604,9 +604,9 @@ export function displayT2Cards(t2, t1, trainer, trainer2) {
       resolve(moveType);
     }
 
-    if (trainer2.name === "cpu") {
+    if (trainer2.name === "prof elm") {
       cpuMove(t2, t1, handleMove, skireAtkBtn2, skireSpAtkBtn2);
-    } else if (trainer2.name === "oak") {
+    } else if (trainer2.name === "prof oak") {
       randCpuMove(handleMove, skireAtkBtn2, skireSpAtkBtn2);
     }else {
       // Add eventlisteners for player two
