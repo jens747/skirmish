@@ -195,7 +195,7 @@ export function displayTrainerStats(trainer, state, result) {
   tradeBtn.innerHTML = `Trade <span id="smCoinIcon">C</span> ${trainer.coins} coins`;
   tradeBtn.addEventListener("click", () => {
     setLocalStorage("trading", trainer.name);
-    window.location.href = "../trader/index.html";
+    window.location.href = "../public/trader/index.html";
   });
 
   // Display button to view card collection
