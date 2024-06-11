@@ -195,7 +195,7 @@ export function displayTrainerStats(trainer, state, result) {
   tradeBtn.innerHTML = `Trade <span id="smCoinIcon">C</span> ${trainer.coins} coins`;
   tradeBtn.addEventListener("click", () => {
     setLocalStorage("trading", trainer.name);
-    window.location.href = "/trader/index.html";
+    window.location.href = "../trader/index.html";
   });
 
   // Display button to view card collection
@@ -206,7 +206,7 @@ export function displayTrainerStats(trainer, state, result) {
   collectBtn.textContent = "Your Collection";
   collectBtn.addEventListener("click", () => {
     setLocalStorage("collecting", trainer.name);
-    window.location.href = "/collection/index.html";
+    window.location.href = "../collection/index.html";
   });
 
   // If trainer is a cpu hide trade & collection buttons
@@ -378,7 +378,7 @@ export function registerTrainer(event) {
   } else if (checkPass(content.value)) {
     try {
       console.log("Password updated.");
-      // location.assign("/gameover/index.html");
+      // location.assign("../gameover/index.html");
       // setClick("#winAdvBtn", addActions);
     } catch (error) {
       console.error("Error loading page: ", error);
