@@ -34,6 +34,10 @@ export async function catchRandPoke(idx) {
 
     // Fetches the Pokemon data for a random pokemon
     let pokeData = await fetchPokeData(id, "pokemon");
+
+    // Delete extra pokemon sprite data
+    delete pokeData.sprites.versions;
+    
     // Get the Pokemon types
     let pokeTypes = pokeData.types;
     // Get the URLs for the Pokemon types, used to get strengths/weaknesses
