@@ -1,7 +1,7 @@
 import { displayBackground, displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, vtAtk, hzAtk } from "./gamelayout.mjs";
 import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage, playCallAudio, preloadCalls } from "./utils.mjs";
-import { searchDB, updateTrainerObj } from "../db/indexdb";
+import { searchDB, updateTrainerObj } from "../db/indexdb.js";
 
 export default async function skirmishLoop() {
   // Set a random background for the skirmish

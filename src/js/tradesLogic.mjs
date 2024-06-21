@@ -1,6 +1,6 @@
 import { qs, ce, isValid, getLocalStorage, setLocalStorage, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
-import { searchDB, updateTrainerObj } from "../db/indexdb";
+import { searchDB, updateTrainerObj } from "../db/indexdb.js";
 
 export default function tradeLoop() {
   // Get a selector for the back button

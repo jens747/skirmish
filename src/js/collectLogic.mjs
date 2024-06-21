@@ -1,6 +1,6 @@
 import { qs, qsa, ce, getLocalStorage, setLocalStorage, setClick, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
-import { searchDB } from "../db/indexdb";
+import { searchDB } from "../db/indexdb.js";
 
 export default async function collectLoop() {
   // Get a selector for the back button
