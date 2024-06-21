@@ -6,17 +6,17 @@ export function displayBackground() {
   const skBody = qs("#skirmishBody");
 
   const landscape = [
-    "../img/bg/beach_DALLE_GPT.webp",
-    "../img/bg/canyon_DALLE_GPT.webp",
-    "../img/bg/cliffs_DALLE_GPT.webp",
-    "../img/bg/desert_DALLE_GPT.webp",
-    "../img/bg/forest_DALLE_GPT.webp",
-    "../img/bg/island_DALLE_GPT.webp",
-    "../img/bg/lake_DALLE_GPT.webp",
-    "../img/bg/marsh_DALLE_GPT.webp",
-    "../img/bg/rainforest_DALLE_GPT.webp",
-    "../img/bg/patties_DALLE_GPT.webp",
-    "../img/bg/savannah_DALLE_GPT.webp"
+    "../public/img/bg/beach_DALLE_GPT.webp",
+    "../public/img/bg/canyon_DALLE_GPT.webp",
+    "../public/img/bg/cliffs_DALLE_GPT.webp",
+    "../public/img/bg/desert_DALLE_GPT.webp",
+    "../public/img/bg/forest_DALLE_GPT.webp",
+    "../public/img/bg/island_DALLE_GPT.webp",
+    "../public/img/bg/lake_DALLE_GPT.webp",
+    "../public/img/bg/marsh_DALLE_GPT.webp",
+    "../public/img/bg/rainforest_DALLE_GPT.webp",
+    "../public/img/bg/patties_DALLE_GPT.webp",
+    "../public/img/bg/savannah_DALLE_GPT.webp"
   ];
   const rand = Math.floor(Math.random() * (landscape.length - 1));
 
