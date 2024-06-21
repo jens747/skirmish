@@ -1,5 +1,6 @@
-import { loadAnimations, addActions, setClickAll, moveAndFadeImg, getLocalStorage } from "./utils.mjs";
+import { loadAnimations, addActions, setClickAll, moveAndFadeImg, getLocalStorage, newSkirmish } from "./utils.mjs";
 import { catchRandPoke } from "./pokebank.mjs";
+import getIndexedDB from "../db/indexdb";
 
 export default async function mainLogic() {
   // Starts the game when the event listener is triggered
@@ -14,33 +15,11 @@ export default async function mainLogic() {
 
   loadAnimations();
   setClickAll(".prime-btn", addActions);
-  let data = await catchRandPoke(10);
-  // console.log(data);
-  const localA = getLocalStorage("skireForTradeA");
-  const localB = getLocalStorage("skireForTradeB");
-  // Reset the Skiremon sold by the trader
-  if (localA) { 
-    // Show cards sold to winner
-    data = localA
-    // Clear cards sold to winner
-    localStorage.removeItem("skireForTradeA");
-    if (localB) { 
-      // Clear cards sold to loser
-      localStorage.removeItem("skireForTradeB") 
-    }
-  } 
 
-  // Show cards sold to loser
-  if (localB) { 
-    data = localB
-    // Clear cards sold to loser
-    localStorage.removeItem("skireForTradeB");
-  } 
+  // Create a new IndexedDB database if none exists
+  await getIndexedDB();
 
-  // const data = await catchRandPoke(10);
-  await moveAndFadeImg(data);
+  // Get ready for a new game
+  await newSkirmish(catchRandPoke);
 
-  // data.map(dat => setPokeData(dat.poke));
-  // const pokeTeam = await createSkireData(10);
-  // console.log(pokeTeam);
 }  

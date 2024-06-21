@@ -1,6 +1,7 @@
 import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
 import { levelUpCard } from "./gameLogic.mjs";
+import { searchDB, updateTrainerObj } from "../db/indexdb";
 
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {
@@ -67,8 +68,10 @@ export function getRandCpu() {
 
 export async function setCpuLevel(user, cpuType, difficulty = 0) {
   // Get trainer data from local storage
-  const trainer = getLocalStorage(user);
-  const cpu = getLocalStorage(cpuType);
+  // const trainer = getLocalStorage(user);
+  // const cpu = getLocalStorage(cpuType);
+  const trainer = await searchDB(user);
+  const cpu = await searchDB(cpuType);
   
   console.log(trainer);
   console.log(trainer.skirmishCards);
@@ -93,34 +96,60 @@ export async function setCpuLevel(user, cpuType, difficulty = 0) {
       levelUpCard(card);
   });
 
-  setLocalStorage(cpuType, cpu);
+  // setLocalStorage(cpuType, cpu);
+  await updateTrainerObj(cpuType, cpu);
 }
 
-export async function updateSkirmishCards(name, pokeData, poke) {
-  const trainer = getLocalStorage(name);
+// export async function updateSkirmishCards(name, pokeData) {
+//   const trainer = getLocalStorage(name);
 
-  if(trainer) {
-    await pokeData.map(card => {
-      const key = Object.keys(card);
-      // console.log(key);
-      // console.log(pokeData);
+//   if(trainer) {
+//     await pokeData.map(card => {
+//       const key = Object.keys(card);
       
-      if (key[0] in trainer.skirmishCards) {
-        console.log(`${key[0]} already exists, cannot add.`);
-      } else {
-        // console.log(`Add ${key[0]}`);
-        trainer.skirmishCards[key] = card;
-      }
-    });
-    setLocalStorage(name, trainer);
+//       if (key[0] in trainer.skirmishCards) {
+//         console.log(`${key[0]} already exists, cannot add.`);
+//       } else {
+//         trainer.skirmishCards[key] = card;
+//       }
+//     });
+//     setLocalStorage(name, trainer);
+//   } else {
+//     console.log(`${name} not in localstorage.`);
+//   }
+// }
+
+export async function updateSkirmishCards(name, pokeData) {
+  const trainer = getLocalStorage(name); // Retrieve the trainer object
+
+  // Ensure trainer and trainer.skirmishCards are initialized
+  if (trainer) {
+      if (!trainer.skirmishCards) trainer.skirmishCards = {}; // Initialize if undefined
+
+      // Process each card in pokeData
+      pokeData.forEach(card => { // Use forEach instead of map if you're not returning a new array
+          const key = Object.keys(card)[0]; // Assume card is an object with a single key
+
+          // Check if the key exists in skirmishCards
+          if (key in trainer.skirmishCards) {
+              console.log(`${key} already exists, cannot add.`);
+          } else {
+              trainer.skirmishCards[key] = card[key]; // Assign the card object to the key
+          }
+      });
+
+      // Update local storage with the modified trainer object
+      // setLocalStorage(name, trainer);
   } else {
-    console.log(`${name} not in localstorage.`);
+      console.log(`${name} not in localstorage.`);
   }
 }
 
-export function getTrainerDeck(name) {
+
+export async function getTrainerDeck(name) {
   // Get trainer data from localstorage
-  const trainer = getLocalStorage(name);
+  // const trainer = getLocalStorage(name);
+  const trainer = await searchDB(name);
   // Place trainer cards in array
   const tCards = Object.values(trainer.skirmishCards).flatMap(card => Object.values(card));
   // Randomize player deck
@@ -129,8 +158,8 @@ export function getTrainerDeck(name) {
   return tDeck;
 }
 
-export function displayTrainerStats(trainer, state, result) {
-  const draw = tieGame();
+export async function displayTrainerStats(trainer, state, result) {
+  const draw = await tieGame();
   // Create the <section> element
   const section = document.createElement("section");
   // "Winner" or "Loser"
@@ -369,15 +398,28 @@ export function displayTrainerStats(trainer, state, result) {
 }
 
 // Registration form to save trainer stats
-export function registerTrainer(event) {
+export async function registerTrainer(event) {
+  const currentPage = qs("main");
+  const winner = getLocalStorage("winner");
+  const loser = getLocalStorage("loser");
   let content = event.target;
-  console.log(content.value);
+  let trainer;
+
+  currentPage.id === "winMain"
+    ? trainer = winner
+    : trainer = loser;
+
+  // console.log(trainer);
+  // console.log(content);
+
+  // console.log(content.value);
   if (content.value === "") {
     displayMessage("Your Trainer will not be saved if you advance.");
     
   } else if (checkPass(content.value)) {
     try {
-      console.log("Password updated.");
+      await updateTrainerObj(trainer, content.value, "pass");
+      displayMessage("Password updated.");
       // location.assign("../gameover/index.html");
       // setClick("#winAdvBtn", addActions);
     } catch (error) {

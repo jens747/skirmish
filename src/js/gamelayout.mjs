@@ -1,6 +1,28 @@
 import { qs, ce, setClick, rmClick, playSound, playDoubleSound } from "./utils.mjs";
 import { getHeroImg, setStyleByType } from "./pokebank.mjs";
 
+// Uses a random background during skirmishes
+export function displayBackground() {
+  const skBody = qs("#skirmishBody");
+
+  const landscape = [
+    "../img/bg/beach_DALLE_GPT.webp",
+    "../img/bg/canyon_DALLE_GPT.webp",
+    "../img/bg/cliffs_DALLE_GPT.webp",
+    "../img/bg/desert_DALLE_GPT.webp",
+    "../img/bg/forest_DALLE_GPT.webp",
+    "../img/bg/island_DALLE_GPT.webp",
+    "../img/bg/lake_DALLE_GPT.webp",
+    "../img/bg/marsh_DALLE_GPT.webp",
+    "../img/bg/rainforest_DALLE_GPT.webp",
+    "../img/bg/patties_DALLE_GPT.webp",
+    "../img/bg/savannah_DALLE_GPT.webp"
+  ];
+  const rand = Math.floor(Math.random() * (landscape.length - 1));
+
+  skBody.style.background = `url(${landscape[rand]})`;
+}
+
 export function displayBanner(match, round, t1, t2, trainer1, trainer2, t1Score, t2Score) {
   // Get the selector for main
   const smain = qs("#skirmishMain");
@@ -784,7 +806,7 @@ export async function dmgTaken(trainer, dmg) {
     }
     // Show how much damage is taken for the card
     span.textContent = `-${dmg}`;
-    trainer.style.background = "radial-gradient(transparent, rgba(255, 0, 0, 0.3))";
+    // trainer.style.background = "radial-gradient(transparent, rgba(255, 0, 0, 0.3))";
   } else {
     // Show that no damage is taken
     span.textContent = `${dmg}`;

@@ -1,23 +1,31 @@
-import { displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, vtAtk, hzAtk } from "./gamelayout.mjs";
+import { displayBackground, displayBanner, displayT1Cards, displayT2Cards, dmgTaken, popCards, vtAtk, hzAtk } from "./gamelayout.mjs";
 import { getTrainerDeck } from "./trainer.mjs";
 import { getLocalStorage, setLocalStorage, playCallAudio, preloadCalls } from "./utils.mjs";
+import { searchDB, updateTrainerObj } from "../db/indexdb";
 
 export default async function skirmishLoop() {
+  // Set a random background for the skirmish
+  displayBackground();
+
   // Get names of trainers for this game
   const ct = getLocalStorage("currentTrainers");
 
   // Reset trainer stats from previous game
-  const t1 = resetTrainer(ct[0]);
-  const t2 = resetTrainer(ct[1]);
+  const t1 = await resetTrainer(ct[0]);
+  const t2 = await resetTrainer(ct[1]);
 
   // Set stats to local storage
-  setLocalStorage(ct[0], t1);
-  setLocalStorage(ct[1], t2);
+  // setLocalStorage(ct[0], t1);
+  // setLocalStorage(ct[1], t2);
+  await updateTrainerObj(ct[0], t1);
+  await updateTrainerObj(ct[1], t2);
 
-  const GAMEROUNDS = 9;
+  // Constants for Round and match count
+  const GAMEROUNDS = 1;
+  const GAMEMATCHES = 9;
   // Get trainer data
-  const t1Deck = getTrainerDeck(ct[0]);
-  const t2Deck = getTrainerDeck(ct[1]);
+  const t1Deck = await getTrainerDeck(ct[0]);
+  const t2Deck = await getTrainerDeck(ct[1]);
 
   // Variables for trainer's Win/Loss Round record
   let t1Record = [0, 0, 0, {"win": [], "lose": [], "draw": []}];
@@ -30,7 +38,7 @@ export default async function skirmishLoop() {
   // Cycle through trainer card data
   // for (let i = t1Deck.length - 1; i > 0; i--) {
   // for (let i = 0; i <= t1Deck.length - 1; i++) {
-  for (let i = 0; i <= GAMEROUNDS; i++) {
+  for (let i = 0; i <= GAMEMATCHES; i++) {
     // Preload Skiremon cries
     console.log(t2);
     console.log(t2Deck);
@@ -48,7 +56,7 @@ export default async function skirmishLoop() {
       "diff2": 0
     }
     // continue the skirmish for 3 rounds
-    for (let round = 1; round <= 3; round++) {
+    for (let round = 1; round <= GAMEROUNDS; round++) {
       // Display & update skirmish round banner
       displayBanner(i, round, t1Deck[i], t2Deck[i], t1, t2, t1Record[0], t2Record[0]);
 
@@ -177,21 +185,14 @@ export default async function skirmishLoop() {
   t1.currentGame = t1Record[3];
   t2.currentGame = t2Record[3];
 
-  setLocalStorage(ct[0], t1);
-  setLocalStorage(ct[1], t2);
-  console.log(`${ct[0]}'s Record: Wins ${t1Record[0]}, Losses ${t1Record[1]}, Draws ${t1Record[2]}`);
-  console.log(`${ct[1]}'s Record: Wins ${t2Record[0]}, Losses ${t2Record[1]}, Draws ${t2Record[2]}`);
+  // setLocalStorage(ct[0], t1);
+  // setLocalStorage(ct[1], t2);
 
-  try {
-    // *****UNCOMMENT TO RUN GAME*****
-    // local development
-    // location.assign("/endgame/index.html");
-    // hosting on github pages
-    // location.assign("/skirmish/src/endgame/index.html");
-    location.assign("../endgame/index.html");
-  } catch (error) {
-    console.error("Error loading page: ", error);
-  }
+  await updateTrainerObj(ct[0], t1);
+  await updateTrainerObj(ct[1], t2, false, true);
+
+  // console.log(`${ct[0]}'s Record: Wins ${t1Record[0]}, Losses ${t1Record[1]}, Draws ${t1Record[2]}`);
+  // console.log(`${ct[1]}'s Record: Wins ${t2Record[0]}, Losses ${t2Record[1]}, Draws ${t2Record[2]}`);
 }
 
 export function planAttack(trainer, rival, hp, idx, trainermove, card) {
@@ -366,15 +367,15 @@ export function levelUpCard(card) {
   const STATS = Array.from({ length: 6 }, () => Math.floor(Math.random() * 3));
   // console.log(STATS);
 
-  console.log(`
-    Name: ${card.name},
-    HP: ${card.hp} + ${STATS[0]},
-    Attack: ${card.attack} + ${STATS[1]},
-    Defense: ${card.defense} + ${STATS[2]}, 
-    Sp. Attack: ${card.specialAttack} + ${STATS[3]},
-    Sp. Defense: ${card.specialDefense} + ${STATS[4]},
-    Speed: ${card.speed} + ${STATS[5]}
-  `);
+  // console.log(`
+  //   Name: ${card.name},
+  //   HP: ${card.hp} + ${STATS[0]},
+  //   Attack: ${card.attack} + ${STATS[1]},
+  //   Defense: ${card.defense} + ${STATS[2]}, 
+  //   Sp. Attack: ${card.specialAttack} + ${STATS[3]},
+  //   Sp. Defense: ${card.specialDefense} + ${STATS[4]},
+  //   Speed: ${card.speed} + ${STATS[5]}
+  // `);
 
   card.levelUp = {
     hp: STATS[0],
@@ -392,21 +393,23 @@ export function levelUpCard(card) {
   card.specialDefense += STATS[4];
   card.speed += STATS[5];
 
-  console.log(`
-    Name: ${card.name},
-    HP: ${card.hp},
-    Attack: ${card.attack},
-    Defense: ${card.defense}, 
-    Sp. Attack: ${card.specialAttack},
-    Sp. Defense: ${card.specialDefense},
-    Speed: ${card.speed}
-  `);
-  console.log(card);
+  // console.log(`
+  //   Name: ${card.name},
+  //   HP: ${card.hp},
+  //   Attack: ${card.attack},
+  //   Defense: ${card.defense}, 
+  //   Sp. Attack: ${card.specialAttack},
+  //   Sp. Defense: ${card.specialDefense},
+  //   Speed: ${card.speed}
+  // `);
+  // console.log(card);
   return card;
 }
 
-export function resetTrainer(record) {
-  let trainer = getLocalStorage(record);
+export async function resetTrainer(record) {
+  // let trainer = getLocalStorage(record);
+  const trainer = await searchDB(record);
+  console.log(trainer);
 
   trainer.roundDraws = 0;
   trainer.roundsLost = 0;

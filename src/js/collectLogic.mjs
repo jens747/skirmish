@@ -1,7 +1,8 @@
 import { qs, qsa, ce, getLocalStorage, setLocalStorage, setClick, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
+import { searchDB } from "../db/indexdb";
 
-export default function collectLoop() {
+export default async function collectLoop() {
   // Get a selector for the back button
   const backBtn = qs("#collectBack");
   // Add an eventListener to the back button
@@ -10,7 +11,7 @@ export default function collectLoop() {
   });
 
   // Get trainer's card collection
-  getCollection();
+  await getCollection();
 
   // const alphaDescBtn = qs("#collectAlphaDesc");
   // const idAscBtn = qs("#collectIdAsc");
@@ -21,8 +22,80 @@ export default function collectLoop() {
   const listBtn = qs("#collectList");
   const gridBtn = qs("#collectGrid");
 
+  // Add listeners to all elements
+  setCollectListeners(listBtn, gridBtn)
+
+  // Measures the screen when resized 
+  window.addEventListener("resize", function() {
+    let screenWidth = window.innerWidth;
+
+    // Clicks gridBtn if screen is less than 656px
+    if (screenWidth < 656) {
+      gridBtn.click();
+    }
+  });
+  // window.addEventListener("resize", function() {
+  //   let screenWidth = window.innerWidth;
+  //   console.log(`The viewable screen width is now ${screenWidth} pixels.`);
+  // });
+  
+
+  
+  const url = document.referrer;
+  console.log(url);
+  if (url.includes("endgame")) {
+    // getTrades("skireForTradeA");
+  }
+
+  if (url.includes("gameover")) {
+    // getTrades("skireForTradeB");
+  }
+}
+
+export async function getCollection() {
+  // Get the name of the current trainer
+  const name = getLocalStorage("collecting");
+  // Get the trainer's info
+  // const trainer = getLocalStorage(name);
+  const trainer = await searchDB(name);
+  // Get the menu selector
+  const cm = qs("#collectMenu");
+
+  // Set the coin value
+  const cc = qs("#cCoins");
+  cc.textContent = trainer.coins;
+
+  // Set the win record
+  const cw = qs("#cWins");
+  cw.textContent = `W: ${trainer.wins}`;
+
+  // Set the Loss record
+  const cl = qs("#cLosses");
+  cl.textContent = `L: ${trainer.losses}`;
+
+  // Set the Draws record
+  const cd = qs("#cDraws");
+  cd.textContent = `D: ${trainer.draws}`;
+
+  // Create h1 page title
+  const ch1 = ce("h1");
+  ch1.textContent = `${name}'s Collection`;
+  ch1.className = "collectMenuH1";
+
+  // Append h1 tag to main
+  cm.appendChild(ch1);
+
+  Object.values(trainer.skirmishCards).map(card => {
+    console.log(card);
+    setSkireData(card, false);
+  });
+}
+
+export async function setCollectListeners(listBtn, gridBtn) {
+  
   // const buySkireCard = qs(".buySkireCard");
-  const pokeCard = qsa(".poke-card");
+  const pokeCard = document.querySelectorAll(".poke-card");
+  // const pokeCard = qsa(".poke-card");
   const skireDivTop = qsa(".skireDivTop");
   const skirePic = qsa("picture");
   const pokeImg = qsa(".pokeImg");
@@ -136,75 +209,14 @@ export default function collectLoop() {
       });
     }
   );
-
-  window.addEventListener("resize", function() {
-    let screenWidth = window.innerWidth;
-
-    if (screenWidth < 656) {
-      gridBtn.click();
-    }
-  });
-  // window.addEventListener("resize", function() {
-  //   let screenWidth = window.innerWidth;
-  //   console.log(`The viewable screen width is now ${screenWidth} pixels.`);
-  // });
-  
-
-  
-  const url = document.referrer;
-  console.log(url);
-  if (url.includes("endgame")) {
-    // getTrades("skireForTradeA");
-  }
-
-  if (url.includes("gameover")) {
-    // getTrades("skireForTradeB");
-  }
 }
 
-export function getCollection() {
-  // Get the name of the current trainer
-  const name = getLocalStorage("collecting");
-  // Get the trainer's info
-  const trainer = getLocalStorage(name);
-  // Get the menu selector
-  const cm = qs("#collectMenu");
-
-  // Set the coin value
-  const cc = qs("#cCoins");
-  cc.textContent = trainer.coins;
-
-  // Set the win record
-  const cw = qs("#cWins");
-  cw.textContent = `W: ${trainer.wins}`;
-
-  // Set the Loss record
-  const cl = qs("#cLosses");
-  cl.textContent = `L: ${trainer.losses}`;
-
-  // Set the Draws record
-  const cd = qs("#cDraws");
-  cd.textContent = `D: ${trainer.draws}`;
-
-  // Create h1 page title
-  const ch1 = ce("h1");
-  ch1.textContent = `${name}'s Collection`;
-  ch1.className = "collectMenuH1";
-
-  // Append h1 tag to main
-  cm.appendChild(ch1);
-
-  Object.values(trainer.skirmishCards).map(card => {
-    console.log(card);
-    setSkireData(card, false);
-  });
-}
-
-export function orderAlpaDesc() {
+export async function orderAlpaDesc() {
   // Get the name of the current trainer
   const trainerName = getLocalStorage("collecting");
   // Get the trainer's info
-  const trainerDeck = getLocalStorage(trainerName);
+  // const trainerDeck = getLocalStorage(trainerName);
+  const trainerDeck = await searchDB(trainerName);
 
   const cards = qsa(".poke-card");
   // console.log(cards);

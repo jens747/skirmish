@@ -1,4 +1,6 @@
-import { ce, getLocalStorage, setClick } from "./utils.mjs";
+import { ce, getLocalStorage, setClick, setClickAll } from "./utils.mjs";
+import { searchDB } from "../db/indexdb";
+import { buySkireCard } from "./tradesLogic.mjs";
 import { popCards } from "./gamelayout.mjs";
 
 export async function fetchPokeData(pokeId, pokeCategory) {
@@ -28,9 +30,17 @@ export async function fetchPokeData(pokeId, pokeCategory) {
 // Fetching details for random pokemon
 export async function catchRandPoke(idx) {
   let pokeBag = [];
+
   for (let index = 1; index <= idx; index++) {
     let id = Math.floor(Math.random() * 1025) + 1;
     // console.log(id);
+    pokeBag.forEach(ball => {
+      // Make sure there are no duplicate cards
+      while (ball.poke.id === id) {
+        id = Math.floor(Math.random() * 1025) + 1;
+      }
+      
+    })
 
     // Fetches the Pokemon data for a random pokemon
     let pokeData = await fetchPokeData(id, "pokemon");
@@ -146,7 +156,8 @@ export async function setSkireData(data, trade = true) {
 
   if (trade) {
     const trading = getLocalStorage("trading");
-    const trader = getLocalStorage(trading);
+    // const trader = getLocalStorage(trading);
+    const trader = await searchDB(trading);
     
     // console.log(Object.keys(trader.skirmishCards));
     Object.keys(trader.skirmishCards).map(name => {
@@ -433,6 +444,8 @@ export async function setSkireData(data, trade = true) {
   buyCard.textContent = "bought";
   section.appendChild(buyCard);
 
+  // setClick(`#${skiremon.name}`, buySkireCard);
+
   setStyleByType(skiremon, t1Name, section, "poke-card");
 
   // Create the <h2> element for the name
@@ -465,6 +478,9 @@ export async function setSkireData(data, trade = true) {
   // Append the <section> to the body or another container in the document
   const main = document.querySelector("main");
   main.appendChild(section); 
+
+  setClick(`#${skiremon.name}`, buySkireCard);
+  // setClickAll(".buySkireCard", buySkireCard);
 
   // console.log(`Name: ${name}`);
   // console.log(`Types: ${types.join(", ")}`);
