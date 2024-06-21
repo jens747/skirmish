@@ -1,17 +1,40 @@
 // getLocalStorage, setLocalStorage, and setClick sourced from WDD330 Team Website project
 
 import { resetTrainer } from "./gameLogic.mjs";
-import { createSkireData, getHeroImg } from "./pokebank.mjs";
+import { catchRandPoke, createSkireData, getHeroImg } from "./pokebank.mjs";
 import newTrainer, { cpuTrainer, getRandCpu, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
+import getIndexedDB, { updateSkirmishCardsObj, newTrainerObj, searchDB, deleteTrainerObj, updateTrainerObj } from "../db/indexdb";
+import { restockSkiremon } from "./tradesLogic.mjs";
 
 // retrieve data from localstorage
+// export function getLocalStorage(key) {
+//   let data;
+//   JSON.parse(localStorage.getItem(key)) 
+//     ? data = JSON.parse(localStorage.getItem(key)) 
+//     : data = [];
+//   return data;
+// }
 export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
+  const data = localStorage.getItem(key);
+  // If no data return empty set, otherwise parse data
+  return data ? JSON.parse(data) : [];
 }
+
 // save data to local storage
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
+
+export function rmLocalStorage(key) {
+  localStorage.removeItem(key);
+  console.log(`${key} deleted.`);
+}
+
+// variable is not an empty array, undefined, or null
+export function isValid(variable) {
+  return variable && Array.isArray(variable) ? variable.length > 0 : true;
+}
+
 // set a listener for touchend and click
 export function setClick(selector, callback) {
   // document.querySelector(selector).addEventListener("touchend", (event) => {
@@ -134,9 +157,12 @@ export async function addActions(action, event) {
   const buttonName = event.target.name;
   const input = document.querySelector(`.trainer-input[name="${buttonName}"]`);
 
+  // getIndexedDB();
+
   let trainer;
   let cpuType;
   let name;
+  let data;
 
   switch(action) {
     // Display welcom message
@@ -148,16 +174,29 @@ export async function addActions(action, event) {
     case "addTrainer1":
       // Set trainer name to lower case from input
       name = input.value.toLowerCase();
+      data = await searchDB(name);
+
       // Check to see if trainer already exists
-      if (getLocalStorage(name)) { 
+      if (data) {
         displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
+      } else {
+        displayMessage(`Setting ${name}'s entry.`);
       }
+
+      // Check to see if trainer already exists
+      // if (getLocalStorage(name)) { 
+      //   displayMessage(`${name} already exists. Please, log in or use a different name.`);
+      //   break;
+      // }
+
       console.log("addTrainer1");
       // Display message to load trainer's profile
       displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer1 & save to localStorage
-      newTrainer(name);
+      // newTrainer(name);
+      // Save name of Trainer1 to IndexedDB
+      newTrainerObj(name);
       // Set the name of the trainer1 to local storage
       setupTrainers(name);
       // Get random Pokemon for Trainer1
@@ -165,6 +204,8 @@ export async function addActions(action, event) {
       // console.log(trainer);
       // Add Pokemon to Trainer1 profile
       updateSkirmishCards(name, trainer);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCardsObj(name, trainer);
       // Hide Trainer1Fieldset
       document.querySelector("#trainer1Fieldset").style.display = "none";
       // Show Trainer2Fieldset
@@ -184,23 +225,36 @@ export async function addActions(action, event) {
       // displayMessage("Single-player is not yet available.");
 
       // Check to see if trainer already exists
-      if (getLocalStorage(name)) { 
+      // if (getLocalStorage(name)) { 
+      //   displayMessage(`${name} already exists. Please, log in or use a different name.`);
+      //   break;
+      // }
+      data = await searchDB(name);
+
+      // Check to see if trainer already exists
+      if (data) {
         displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
 
       // Get name of Trainer & save to localStorage
-      newTrainer(name);
+      // newTrainer(name);
+      // Save name of Trainer1 to IndexedDB
+      newTrainerObj(name);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
       updateSkirmishCards(name, trainer);
+      // Add Pokemon to Trainer1 profile
+      updateSkirmishCardsObj(name, trainer);
 
       // CPU name determines cpu behavior
       cpuType = getRandCpu();
       console.log(cpuType);
       // Save CPU to localStorage
-      cpuTrainer(cpuType);
+      // cpuTrainer(cpuType);
+      // Save CPU to Index Database
+      newTrainerObj(cpuType);
       // Set the name of the trainer1 to local storage
       setupTrainers(name);
       // Add CPU to current trainers
@@ -212,6 +266,8 @@ export async function addActions(action, event) {
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer1 profile
       updateSkirmishCards(cpuType, trainer);
+      // Add Pokemon to Trainer1 profile
+      await updateSkirmishCardsObj(cpuType, trainer);
       
       // Hide trainer1Fieldset
       document.querySelector("#trainer1Fieldset").style.display = "none";
@@ -222,11 +278,14 @@ export async function addActions(action, event) {
     case "addTrainer1Login":
       // Set trainer name to lower case from input
       name = input.value.toLowerCase();
+      data = await searchDB(name);
       console.log("addTrainer1Login");
       // Check for Trainer name
-      if (getLocalStorage(name)) { 
+      // if (getLocalStorage(name)) { 
+      if (data) {
         // Check if Trainer password matches provided password
-        if (qs("#login1Pass").value === getLocalStorage(name).pass) {
+        // if (qs("#login1Pass").value === getLocalStorage(name).pass) {
+        if (qs("#login1Pass").value === data.pass) {
           // Set the name of the trainer1 to current trainers
           setupTrainers(name);
           // Message user that their profile is loading
@@ -256,8 +315,10 @@ export async function addActions(action, event) {
       cpuType = getRandCpu();
 
       // Save CPU to localStorage
-      console.log(cpuType);
-      cpuTrainer(cpuType);
+      // console.log(cpuType);
+      // cpuTrainer(cpuType);
+      // Save CPU to Index Database
+      newTrainerObj(cpuType);
       // Set the name of the trainer1 to local storage
       setupTrainers(name);
       // Add CPU to current trainers
@@ -266,8 +327,10 @@ export async function addActions(action, event) {
       displayMessage(`Loading ${name}'s profile and generating CPU trainer.`);
       // Get random Pokemon for Trainer1
       trainer = await createSkireData(10);
-      // Add Pokemon to Trainer1 profile
+      // Add Pokemon to cpu profile
       await updateSkirmishCards(cpuType, trainer);
+      // Add Pokemon to cpu profile
+      await updateSkirmishCardsObj(cpuType, trainer);
 
       // Change the cpu level to compete with user 
       await setCpuLevel(name, cpuType);
@@ -285,13 +348,16 @@ export async function addActions(action, event) {
     case "skirmish2":
       // Set trainer name to lower case from input
       name = input.value.toLowerCase();
+      data = await searchDB(name);
       // Check for empty input
       if (name === "") {
         displayMessage("Please enter a valid name.");
         break;
       }
       // Check to see if trainer already exists
-      if (getLocalStorage(name)) { 
+      // if (getLocalStorage(name)) { 
+      console.log(data);
+      if (data) {
         displayMessage(`${name} already exists. Please, log in or use a different name.`);
         break;
       }
@@ -299,24 +365,31 @@ export async function addActions(action, event) {
       // Display message to load trainer's profile
       displayMessage(`Generating ${name}'s profile.`);
       // Get name of Trainer2 & save to localStorage
-      newTrainer(name);
+      // newTrainer(name);
+      // Save name of Trainer2 to IndexedDB
+      newTrainerObj(name);
       // Set the name of the trainer2 to local storage
       addTrainer(name);
       // Get random Pokemon for Trainer2
       trainer = await createSkireData(10);
       // Add Pokemon to Trainer2 profile
       updateSkirmishCards(name, trainer);
+      // Add Pokemon to Trainer2 profile
+      updateSkirmishCardsObj(name, trainer);
       document.querySelector("#trainer2Fieldset").style.display = "none";
       document.querySelector("#start-btn").style.display = "block";
       break;
     case "skirmish2Login":
       // Set trainer name to lower case from input
       name = input.value.toLowerCase();
+      data = await searchDB(name);
       console.log("skirmish2Login");
       // Check for Trainer name
-      if (getLocalStorage(name)) { 
+      // if (getLocalStorage(name)) { 
+      if (data) {
         // Check if Trainer password matches provided password
-        if (qs("#login2Pass").value === getLocalStorage(name).pass) {
+        // if (qs("#login2Pass").value === getLocalStorage(name).pass) {
+        if (qs("#login2Pass").value === data.pass) {
           // Set the name of the trainer2 to current trainers
           addTrainer(name);
           // Message user that their profile is loading
@@ -336,18 +409,20 @@ export async function addActions(action, event) {
         break;
       }
     case "regWinTrainer":
-      // Set trainer name to lower case from input
-      name = input.value.toLowerCase();
+      // If input meets pass requirements
+      name = input.value;
       if (checkPass(name)) {
+        // Hide registration fieldset 
         document.querySelector("#winFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
         savePass(name, true);
       }
       break;
     case "regLossTrainer":
-      // Set trainer name to lower case from input
-      name = input.value.toLowerCase();
+      // If input meets pass requirements
+      name = input.value;
       if (checkPass(name)) {
+        // Hide registration fieldset
         document.querySelector("#lossFieldset").style.display = "none";
         document.querySelectorAll(".regDiv")[0].style.display = "block";
         savePass(name, false);
@@ -362,25 +437,70 @@ export async function addActions(action, event) {
 // If players choose to keep playing go back to the game screen
 export function playAgain() {
   try {
-    const trainers = getLocalStorage("currentTrainers");
-    let trainerA = getLocalStorage(trainers[0]);
-    let trainerB = getLocalStorage(trainers[1]);
+    restockSkiremon();
+    // const trainers = getLocalStorage("currentTrainers");
+    // let trainerA = getLocalStorage(trainers[0]);
+    // let trainerB = getLocalStorage(trainers[1]);
 
     // Reset Trainer A current game stats
-    trainerA = resetTrainer(trainers[0]);
-    // trainerA.roundsWon = 0;
-    // trainerA.roundsLost = 0;
-    setLocalStorage(trainers[0], trainerA);
+    // trainerA = resetTrainer(trainers[0]);
+    // setLocalStorage(trainers[0], trainerA);
+
     // Reset Trainer B current game stats
-    trainerB = resetTrainer(trainers[1]);
-    // trainerB.roundsWon = 0;
-    // trainerB.roundsLost = 0;
-    setLocalStorage(trainers[1], trainerB);
+    // trainerB = resetTrainer(trainers[1]);
+    // setLocalStorage(trainers[1], trainerB);
+
     location.assign("../game/index.html");
     // location.assign("/skirmish/src/game/index.html");
   } catch (error) {
     console.error(`Error URL: bad ${error}`);
   }
+}
+
+// If player chooses to return to main menu or new game
+export async function newSkirmish(catchCallback) {
+  // Check trainers, see if game has been played
+  const trainers = getLocalStorage("currentTrainers");
+  
+  // If there are trainers or game has been played
+  if(isValid(trainers)) {
+    const t1 = await searchDB(trainers[0]);
+    const t2 = await searchDB(trainers[1]);
+
+    // Delete trainer data if they are temp accounts
+    if(t1.pass === "secret") { await deleteTrainerObj(t1.name); }
+
+    if(t2.pass === "secret") { await deleteTrainerObj(t2.name); }
+
+    // Remove all items from localStorage
+    rmLocalStorage("currentTrainers");
+    rmLocalStorage("trading");
+    rmLocalStorage("collecting");
+    rmLocalStorage("winner");
+    rmLocalStorage("loser");
+  }
+
+  // Search for CPU trainers
+  const oak = await searchDB("prof oak");
+  const elm = await searchDB("prof elm");
+
+  // Delete CPU trainers if they are found
+  if (oak) {
+    await deleteTrainerObj("prof oak");
+  }
+
+  if (elm) {
+    await deleteTrainerObj("prof elm");
+  }
+
+  // Get 10 random Skiremon to display on home page
+  let data = restockSkiremon();
+  
+  if(!data || !isValid(data))
+    data = await catchCallback(10);  
+
+  // const data = await catchRandPoke(10);
+  await moveAndFadeImg(data);
 }
 
 // Run ball logo rotate animation at main screen
@@ -499,51 +619,62 @@ export function checkPass(pass) {
 }
 
 // Saves the trainer's password
-export function savePass(pass, state) {
+export async function savePass(pass, state) {
   // Set to winning or losing trainer depending on who is registering
   let trainer;
-  state ? trainer = getWinner() : trainer = getLoser();
+  state 
+    ? trainer = await getWinner() 
+    : trainer = await getLoser();
   // Get trainer's info from local storage
-  const trainerInfo = getLocalStorage(trainer.name);
+  // const trainerInfo = getLocalStorage(trainer.name);
   // Update trainer's password
-  trainerInfo.pass = pass;
+  // trainerInfo.pass = pass;
   // Set trainer's info with updated password to localstorage
-  setLocalStorage(trainer.name, trainerInfo);
+  // setLocalStorage(trainer.name, trainerInfo);
+  await updateTrainerObj(trainer, pass, "pass");
 }
 
 // Get data for the winning player
-export function getWinner() {
+export async function getWinner() {
   // Get the names of the trainers from the current match
   const ct = getLocalStorage("currentTrainers");
   // Get the data for both trainers
-  const t1 = getLocalStorage(ct[0]);
-  const t2 = getLocalStorage(ct[1]);
+  // const t1 = getLocalStorage(ct[0]);
+  // const t2 = getLocalStorage(ct[1]);
+  const t1 = await searchDB(ct[0]);
+  const t2 = await searchDB(ct[1]);
   let winner;
   // Return the data of the trainer with the most wins
   (t1.roundsWon >= t2.roundsWon) ? winner = t1 : winner = t2;
+  setLocalStorage("winner", winner.name);
   return winner;
 }
 
 // Get data for the losing player
-export function getLoser() {
+export async function getLoser() {
   // Get the names of the trainers from the current match
   const ct = getLocalStorage("currentTrainers");
   // Get the data for both trainers
-  const t1 = getLocalStorage(ct[0]);
-  const t2 = getLocalStorage(ct[1]);
+  // const t1 = getLocalStorage(ct[0]);
+  // const t2 = getLocalStorage(ct[1]);
+  const t1 = await searchDB(ct[0]);
+  const t2 = await searchDB(ct[1]);
   let loser;
   // Return the data of the trainer with the most losses
   (t1.roundsWon < t2.roundsWon) ? loser = t1 : loser = t2;
+  setLocalStorage("loser", loser.name);
   return loser;
 }
 
 // Get data for a tie game
-export function tieGame() {
+export async function tieGame() {
   // Get the names of the trainers from the current match
   const ct = getLocalStorage("currentTrainers");
   // Get the data for both trainers
-  const t1 = getLocalStorage(ct[0]);
-  const t2 = getLocalStorage(ct[1]);
+  // const t1 = getLocalStorage(ct[0]);
+  // const t2 = getLocalStorage(ct[1]);
+  const t1 = await searchDB(ct[0]);
+  const t2 = await searchDB(ct[1]);
   // Return true if there is a tie, else return false
   if (t1.wins === t2.wins) { return true; } 
   return false;

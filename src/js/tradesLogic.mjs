@@ -1,5 +1,6 @@
-import { qs, ce, getLocalStorage, setLocalStorage, setClickAll, displayMessage } from "./utils.mjs";
+import { qs, ce, isValid, getLocalStorage, setLocalStorage, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
+import { searchDB, updateTrainerObj } from "../db/indexdb";
 
 export default function tradeLoop() {
   // Get a selector for the back button
@@ -24,12 +25,13 @@ export default function tradeLoop() {
   }
 }
 
+
 // Get the skire available for trade in that round
 export async function getTrades(skireStock) {
   let skireForTrade = getLocalStorage(skireStock);
   
   // If there are no skire in local storage
-  if (!skireForTrade) {
+  if (!isValid(skireForTrade)) {
     // Get skire for trade
     skireForTrade = await createSkireData(10);
     // Remove any duplicates from the list
@@ -38,15 +40,17 @@ export async function getTrades(skireStock) {
     await setLocalStorage(skireStock, skireForTrade);
   }
   // Display the Skire cards available for trade
-  skireForTrade.map(dat => setSkireData(dat));
+  await skireForTrade.map(dat => setSkireData(dat));
   // const cardsToBuy = qs(".poke-card");
-  setClickAll(".buySkireCard", buySkireCard);
+  window.addEventListener("load", function() {
+    setClickAll(".buySkireCard", buySkireCard)
+  });
   // pokeTeam.entries(poke => function() {
   //   console.log(poke[[poke]]);
   // });
 }
 
-export function getTradesMenu() {
+export async function getTradesMenu() {
   // Get images for the shopkeeper
   const shopKeepImg = [
     "../img/femShopkeep1ChatGPTDall-E.webp",
@@ -67,7 +71,9 @@ export function getTradesMenu() {
   // Get the name of the current trainer
   const trainer = getLocalStorage("trading");
   // Get the info of the current trainer
-  const trader = getLocalStorage(trainer);
+  // const trader = getLocalStorage(trainer);
+  const trader = await searchDB(trainer);
+
   // Get the menu selector
   const tm = qs("#tradesMenu");
 
@@ -95,15 +101,17 @@ export function getTradesMenu() {
   tm.appendChild(th1);
 }
 
-export function buySkireCard(action, event) {
+export async function buySkireCard(action, event) {
   const skireA = getLocalStorage("skireForTradeA");
   const skireB = getLocalStorage("skireForTradeB");
-  const targetSkire = event.target;
+  // console.log(event.target);
+  const targetSkire = action.target;
   const tname = getLocalStorage("trading");
-  const trainer = getLocalStorage(tname);
+  // const trainer = getLocalStorage(tname);
+  const trainer = await searchDB(tname);
   let price;
   
-  console.log(trainer.coins);
+  // console.log(trainer.coins);
   console.log(targetSkire);
   // Checking for match using forEach & hasOwnProperty
   skireA.forEach(skire => {
@@ -129,13 +137,13 @@ export function buySkireCard(action, event) {
         // console.log(skire[targetSkire.id].coinValue);
         // console.log(`${targetSkire.id} purchased`);
       } else {
-        displayMessage("Note enough coins.");
+        displayMessage("Not enough coins.");
       }
     }
   });
 }
 
-export function makeTrade(target, skire, trainer, price) {
+export async function makeTrade(target, skire, trainer, price) {
   // Get card name. Use as key to add to trainer object.
   const skireKey = target.id;
   // Get the trainer's skirmishCards.
@@ -154,7 +162,8 @@ export function makeTrade(target, skire, trainer, price) {
   tCost.textContent = -price;
   tCost.classList.add("showDmg");
   // Update the trainer cards and coins in storage.
-  setLocalStorage(trainer.name, trainer);
+  // setLocalStorage(trainer.name, trainer);
+  updateTrainerObj(trainer.name, trainer);
 }
 
 export function getUniqueSkire(list) {
@@ -179,4 +188,31 @@ export function getUniqueSkire(list) {
 
   // Return the list without duplicates
   return uniqueSkiremon;
+}
+
+export function restockSkiremon() {
+  let skiremon;
+  // Collect skiremon for trade from local storage
+  const localA = getLocalStorage("skireForTradeA");
+  const localB = getLocalStorage("skireForTradeB");
+  // Reset the Skiremon sold by the trader
+  if (localA) { 
+    // Show cards sold to winner
+    skiremon = localA
+    // Clear cards sold to winner
+    localStorage.removeItem("skireForTradeA");
+    if (localB) { 
+      // Clear cards sold to loser
+      localStorage.removeItem("skireForTradeB") 
+    }
+  } 
+
+  // Show cards sold to loser
+  if (localB) { 
+    skiremon = localB
+    // Clear cards sold to loser
+    localStorage.removeItem("skireForTradeB");
+  } 
+
+  return skiremon;
 }
