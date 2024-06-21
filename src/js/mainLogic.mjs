@@ -1,6 +1,6 @@
 import { loadAnimations, addActions, setClickAll, moveAndFadeImg, getLocalStorage, newSkirmish } from "./utils.mjs";
 import { catchRandPoke } from "./pokebank.mjs";
-import getIndexedDB from "../db/indexdb";
+import getIndexedDB from "../db/indexdb.js";
 
 export default async function mainLogic() {
   // Starts the game when the event listener is triggered
