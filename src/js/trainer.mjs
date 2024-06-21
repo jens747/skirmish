@@ -1,7 +1,7 @@
 import { getLocalStorage, setLocalStorage, shuffleCards, displayMessage, tieGame, checkPass, ce, qs, qsa, emptyObj } from "./utils.mjs";
 import { getHeroImg } from "./pokebank.mjs";
 import { levelUpCard } from "./gameLogic.mjs";
-import { searchDB, updateTrainerObj } from "../db/indexdb";
+import { searchDB, updateTrainerObj } from "../db/indexdb.js";
 
 // Set up new trainers
 export default async function newTrainer(name, pass = "secret") {

@@ -3,7 +3,7 @@
 import { resetTrainer } from "./gameLogic.mjs";
 import { catchRandPoke, createSkireData, getHeroImg } from "./pokebank.mjs";
 import newTrainer, { cpuTrainer, getRandCpu, setCpuLevel, getTrainerDeck, updateSkirmishCards } from "./trainer.mjs";
-import getIndexedDB, { updateSkirmishCardsObj, newTrainerObj, searchDB, deleteTrainerObj, updateTrainerObj } from "../db/indexdb";
+import getIndexedDB, { updateSkirmishCardsObj, newTrainerObj, searchDB, deleteTrainerObj, updateTrainerObj } from "../db/indexdb.js";
 import { restockSkiremon } from "./tradesLogic.mjs";
 
 // retrieve data from localstorage

@@ -1,5 +1,5 @@
 import { ce, getLocalStorage, setClick, setClickAll } from "./utils.mjs";
-import { searchDB } from "../db/indexdb";
+import { searchDB } from "../db/indexdb.js";
 import { buySkireCard } from "./tradesLogic.mjs";
 import { popCards } from "./gamelayout.mjs";
 
