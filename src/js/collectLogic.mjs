@@ -16,14 +16,18 @@ export default async function collectLoop() {
   // const alphaDescBtn = qs("#collectAlphaDesc");
   // const idAscBtn = qs("#collectIdAsc");
 
-  setClick("#collectAlphaDesc", orderAlpaDesc);
-  setClick("#collectIdAsc", orderIdAsc);
+  setClick("#collectAlphaAsc", sortCollection);
+  setClick("#collectAlphaDesc", sortCollection);
+  setClick("#collectIdAsc", sortCollection);
+  setClick("#collectIdDesc", sortCollection);
+  setClick("#collectLvAsc", sortCollection);
+  setClick("#collectLvDesc", sortCollection);
 
   const listBtn = qs("#collectList");
   const gridBtn = qs("#collectGrid");
 
   // Add listeners to all elements
-  setCollectListeners(listBtn, gridBtn)
+  setCollectListeners(listBtn, gridBtn);
 
   // Measures the screen when resized 
   window.addEventListener("resize", function() {
@@ -86,7 +90,7 @@ export async function getCollection() {
   cm.appendChild(ch1);
 
   Object.values(trainer.skirmishCards).map(card => {
-    console.log(card);
+    // console.log(card);
     setSkireData(card, false);
   });
 }
@@ -211,39 +215,79 @@ export async function setCollectListeners(listBtn, gridBtn) {
   );
 }
 
-export async function orderAlpaDesc() {
+export async function sortAlpha() {
   // Get the name of the current trainer
   const trainerName = getLocalStorage("collecting");
   // Get the trainer's info
-  // const trainerDeck = getLocalStorage(trainerName);
-  const trainerDeck = await searchDB(trainerName);
-
-  const cards = qsa(".poke-card");
-  // console.log(cards);
-  
-  const cardName = Array.from(cards).map(card => card.children[3].textContent);
-
-  // Sort the array numerically
-  cardName.sort();
-
-  console.log(cardName);
-
-  let obval = Array.from(cardName).map(card => findObjectByName(card, trainerDeck));
-  console.log(obval);
-
-}
-
-// Function to find an object by name
-export function findObjectByName(name, trainer) {
-  console.log(name);
-  console.log(trainer);
-  return Object.values(trainer.skirmishCards).find(obj => obj.name === name);
-}
-
-export function orderIdAsc() {
+  const trainer = await searchDB(trainerName);
+  // Select the list/grid buttons
+  const listBtn = qs("#collectList");
+  const gridBtn = qs("#collectGrid");
+  // Select ascending sort button
+  const ascBtn = qs("#collectAlphaAsc");
+  // Select descending sort button
+  const descBtn = qs("#collectAlphaDesc");
   // Select all cards
   const cards = qsa(".poke-card");
-  // console.log(cards);
+  // Array to contain sorted card objects
+  let sortedCards = {};
+  
+  // Collect the Skiremon names from cards
+  const cardName = Array.from(cards).map(card => card.children[3].textContent);
+
+  if (this.id === "collectAlphaDesc") {
+    // Sort the array numerically
+    cardName.sort().reverse();
+    descBtn.classList.add("sortOff");
+    ascBtn.classList.remove("sortOff");
+  } else {
+    // Sort in descending order
+    cardName.sort();
+    ascBtn.classList.add("sortOff");
+    descBtn.classList.remove("sortOff");
+  }
+  // Loop through the ordered array of card names
+  cardName.forEach(name => {
+    // Search Skiremon Cards for matching name
+    for (let key in trainer.skirmishCards) {
+      // If the card name matches the sorted name
+      if(trainer.skirmishCards[key][key].name === name) {
+        // Place card object in new array
+        sortedCards[key] = trainer.skirmishCards[key];
+        // Break out of loop to search for next card
+        break;
+      }
+    }
+  });
+  // Clear existing cards from screen
+  cards.forEach(card => { card.remove(); });
+
+  // Iterate over sorted card object
+  Object.values(sortedCards).map(card => {
+    // Create new card from sorted list
+    setSkireData(card, false);
+  });
+
+  // Add listeners to all elements
+  setCollectListeners(listBtn, gridBtn);
+}
+
+export async function sortId() {
+  // Get the name of the current trainer
+  const name = getLocalStorage("collecting");
+  // Get the trainer's info
+  const trainer = await searchDB(name);
+  // Select the list/grid buttons
+  const listBtn = qs("#collectList");
+  const gridBtn = qs("#collectGrid");
+  // Select ascending sort button
+  const ascBtn = qs("#collectIdAsc");
+  // Select descending sort button
+  const descBtn = qs("#collectIdDesc");
+  // Select all cards
+  const cards = qsa(".poke-card");
+  // Array to contain sorted card objects
+  let sortedCards = {};
   
   // map through the cards
   const cardId = Array.from(cards).map(card => {
@@ -253,14 +297,197 @@ export function orderIdAsc() {
     // Split the string into an array
     let parts = str.split(" ");
 
-    // Get the last element of the split array
+    // Get the last element of the split array (id)
     return parseInt(parts[parts.length - 1], 10);
   });
 
   // Sort the array numerically
-  cardId.sort((a, b) => a - b);
-  // Descending order
-  // cardId.sort((a, b) => b - a);
+  if (this.id === "collectIdAsc") {
+    // Sort in ascending order
+    cardId.sort((a, b) => a - b);
+    ascBtn.classList.add("sortOff");
+    descBtn.classList.remove("sortOff");
+  } else {
+    // Sort in descending order
+    cardId.sort((a, b) => b - a);
+    descBtn.classList.add("sortOff");
+    ascBtn.classList.remove("sortOff");
+  }
 
-  console.log(cardId);
+  // Loop through the ordered array of card ids
+  cardId.forEach(id => {
+    // Search Skiremon Cards for matching id
+    for (let key in trainer.skirmishCards) {
+      // If the card id matches the sorted id
+      if(trainer.skirmishCards[key][key].id === id) {
+        // Place card object in new array
+        sortedCards[key] = trainer.skirmishCards[key];
+        // Break out of loop to search for next card
+        break;
+      }
+    }
+  });
+  // Clear existing cards from screen
+  cards.forEach(card => { card.remove(); });
+
+  // Iterate over sorted card object
+  Object.values(sortedCards).map(card => {
+    // Create new card from sorted list
+    setSkireData(card, false);
+  });
+
+  // Add listeners to all elements
+  setCollectListeners(listBtn, gridBtn);
+}
+
+export async function sortCollection() {
+  // Get the name of the current trainer
+  const name = getLocalStorage("collecting");
+  // Get the trainer's info
+  const trainer = await searchDB(name);
+  // Select the list/grid buttons
+  const listBtn = qs("#collectList");
+  const gridBtn = qs("#collectGrid");
+  // Select all cards
+  const cards = qsa(".poke-card");
+  // Array to contain sorted card objects
+  let sortedCards = {};
+  // Setup variables for sorting buttons
+  let ascBtn = "";
+  let descBtn = "";
+  // Get the id of the current button action
+  const action = this.id;
+
+  let attribute = "";
+
+  let cardValue = [];
+  let cardName = [];
+
+  switch(action) {
+    case "collectIdAsc":
+    case "collectIdDesc":
+      // Select ascending sort button
+      ascBtn = qs("#collectIdAsc");
+      // Select descending sort button
+      descBtn = qs("#collectIdDesc");
+
+      // map through the cards
+      cardValue = Array.from(cards).map(card => {
+        // Get the text from the tag
+        let str = card.children[1].firstChild.textContent;
+
+        // Split the string into an array
+        let parts = str.split(" ");
+
+        // Get the last element of the split array (id)
+        return parseInt(parts[parts.length - 1], 10);
+      });
+
+      // Sort the array numerically
+      if (this.id === "collectIdAsc") {
+        // Sort in ascending order
+        cardValue.sort((a, b) => a - b);
+        ascBtn.classList.add("sortOff");
+        descBtn.classList.remove("sortOff");
+      } else {
+        // Sort in descending order
+        cardValue.sort((a, b) => b - a);
+        descBtn.classList.add("sortOff");
+        ascBtn.classList.remove("sortOff");
+      }
+      break;
+    case "collectAlphaAsc":
+    case "collectAlphaDesc":
+      // Select ascending sort button
+      ascBtn = qs("#collectAlphaAsc");
+      // Select descending sort button
+      descBtn = qs("#collectAlphaDesc");
+
+      // Collect the Skiremon names from cards
+      cardValue = Array.from(cards).map(card => card.children[3].textContent);
+
+      if (this.id === "collectAlphaDesc") {
+        // Sort the array numerically
+        cardValue.sort().reverse();
+        descBtn.classList.add("sortOff");
+        ascBtn.classList.remove("sortOff");
+      } else {
+        // Sort in descending order
+        cardValue.sort();
+        ascBtn.classList.add("sortOff");
+        descBtn.classList.remove("sortOff");
+      }
+      break;
+    case "collectLvAsc":
+    case "collectLvDesc":
+      // Select ascending sort button
+      ascBtn = qs("#collectLvAsc");
+      // Select descending sort button
+      descBtn = qs("#collectLvDesc");
+
+      // map through the cards
+      cardValue = Array.from(cards).map(card => {
+        // Get the text from the tag
+        let str = card.children[1].lastChild.textContent;
+
+        // Split the string into an array
+        let parts = str.split(" ");
+
+        // Get the last element of the split array (level)
+        return parseInt(parts[parts.length - 1], 10);
+      });
+
+      if (this.id === "collectLvDesc") {
+        // Sort the array numerically
+        cardValue.sort().reverse();
+        descBtn.classList.add("sortOff");
+        ascBtn.classList.remove("sortOff");
+      } else {
+        // Sort in descending order
+        cardValue.sort();
+        ascBtn.classList.add("sortOff");
+        descBtn.classList.remove("sortOff");
+      }
+      break;
+    default:
+      console.error("Error: switch case not found.");
+      break;
+  }
+
+  // Loop through the ordered array of card ids
+  cardValue.forEach(val => {
+    // Search Skiremon Cards for matching id
+    for (let key in trainer.skirmishCards) {
+      this.id === "collectAlphaAsc" || this.id === "collectAlphaDesc"
+        ? attribute = trainer.skirmishCards[key][key].name
+        : this.id === "collectIdAsc" || this.id === "collectIdDesc"
+          ? attribute = trainer.skirmishCards[key][key].id
+          : this.id === "collectLvAsc" || this.id === "collectLvDesc"
+            ? attribute = trainer.skirmishCards[key][key].level
+            : console.log("Can't find attribute.");
+      // If the card id matches the sorted id
+      if(attribute === val) {
+        // Add card object to new array if unique
+        if(!cardName.includes(key)) {
+          cardName.push(key);
+          // Place card object in new array
+          sortedCards[key] = trainer.skirmishCards[key];
+          // Break out of loop to search for next card
+          break;
+        }
+      }
+    }
+  });
+  
+  // Clear existing cards from screen
+  cards.forEach(card => { card.remove(); });
+
+  // Iterate over sorted card object
+  Object.values(sortedCards).map(card => {
+    // Create new card from sorted list
+    setSkireData(card, false);
+  });
+
+  // Add listeners to all elements
+  setCollectListeners(listBtn, gridBtn);
 }

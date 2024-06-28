@@ -533,7 +533,8 @@ body, html {
 .another-btn:hover, 
 .already-btn:hover, 
 .ready-btn:hover, 
-.modal-btn:hover {
+.modal-btn:hover, 
+#collectBack:hover {
   background: var(--mid-blue);
   cursor: pointer;
 }
@@ -693,7 +694,7 @@ body, html {
   list-style: none;
   background: var(--mid-blue);
   /* justify-content: end; */
-  padding: .4em 1em;
+  padding: .4em;
   margin: 0;
   align-items: end;
   position: fixed;
@@ -860,7 +861,7 @@ body, html {
   width: 100%;
   position: fixed;
   top: -8px;
-  left: 226px;
+  left: 192px;
   z-index: 100;
 }
 
@@ -869,7 +870,11 @@ body, html {
 }
 
 #collectIdAsc, 
+#collectIdDesc, 
+#collectAlphaAsc,
 #collectAlphaDesc, 
+#collectLvAsc,
+#collectLvDesc,
 #collectList, 
 #collectGrid {
   padding: 1em;
@@ -883,7 +888,11 @@ body, html {
 }
 
 #collectIdAsc:hover, 
+#collectIdDesc:hover, 
+#collectAlphaAsc:hover, 
 #collectAlphaDesc:hover,
+#collectLvAsc:hover, 
+#collectLvDesc:hover,
 #collectList:hover, 
 #collectGrid:hover {
   /* transform: scale(1.088); */
@@ -892,7 +901,11 @@ body, html {
 }
 
 #collectIdAsc:active, 
+#collectIdDesc:active, 
+#collectAlphaAsc:active, 
 #collectAlphaDesc:active,
+#collectLvAsc:active, 
+#collectLvDesc:active,
 #collectList:active, 
 #collectGrid:active {
   transform: translateX(-1px) translateY(-1px) scale(.88);
@@ -936,12 +949,43 @@ body, html {
   margin: 2px;
 }
 
+#collectImport, 
+#collectExport {
+  position: fixed;
+  bottom: 128px;
+  right: -24px;
+  right: -112px;
+  text-shadow: 2px 2px var(--dark-color);
+  box-shadow: 4px 4px 10px var(--dark-color);
+  z-index: 100;
+  min-width: 10em;
+}
+
+#collectExport {
+  bottom: 72px;
+  /* right: -24px; */
+}
+
+#collectExport, 
+#collectImport {
+  transition: transform 700ms;
+}
+
+#collectExport:hover, 
+#collectImport:hover {
+  transform: translateX(-88px);
+}
+
 .collectMenuH1 {
   margin-top: 56px;
 }
 
 #cUl {
   background: var(--light-red);
+}
+
+.sortOff {
+  display: none;
 }
 
 .listBuySkireCard {
