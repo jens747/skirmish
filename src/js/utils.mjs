@@ -156,8 +156,7 @@ export function emptyObj(obj) {
 export async function addActions(action, event) {
   const buttonName = event.target.name;
   const input = document.querySelector(`.trainer-input[name="${buttonName}"]`);
-
-  // getIndexedDB();
+  const importBtn = qs("#collectImport");
 
   let trainer;
   let cpuType;
@@ -169,6 +168,8 @@ export async function addActions(action, event) {
     case "welcomeTrainer":
       document.querySelector("#trainer-num").style.display = "none";
       document.querySelector("#trainer1Fieldset").style.display = "block";
+      // Hide the import button if not importing
+      importBtn.classList.toggle("sortOff");
       break;
     // Create new Trainer1, move to create trainer2 ()
     case "addTrainer1":
@@ -716,6 +717,57 @@ export function addTrainer(trainer) {
 //   const hash = await bcrypt.hashSync(password, salt);
 //   return hash;
 // }
+
+// Imports trainer data from a different pc/browser
+export async function importTrainer() {
+  // Declare variables to import trainer from file
+  const importFieldset = qs("#importFieldset");
+  const importFile = qs("#fileImport");
+
+  // Warn player that existing data will be overwritten
+  if (importFieldset.classList.contains("sortOff")) {
+    displayMessage("WARNING!!! Trainer data will be DELETED and REPLACED if it already exists!");
+  }
+
+  // Pop the input file search field into view
+  importFieldset.classList.toggle("sortOff");
+  importFieldset.classList.toggle("popSec");
+
+  // Listen for user to select file
+  importFile.addEventListener("change", function(event) {
+    // Prevent user from importing multiple files
+    if (event.target.files.length > 1) {
+      displayMessage("Please import 1 file at a time.");
+      return;
+    }
+
+    const file = event.target.files[0];
+    
+    // Process the file if it exists
+    if (file) {
+      // Set up a new reader to read the file
+      const read = new FileReader();
+      // Load the file
+      read.onload = (readEvent) => {
+        // Parse the JSON file with trainer data
+        const trainerData = JSON.parse(readEvent.target.result);
+        // Get the trainer name from parsed file
+        const name = trainerData.name;
+        // Create trainer data from name
+        newTrainerObj(name);
+        // Update trainer data with new data
+        updateTrainerObj(name, trainerData);
+        // Display message to user
+        displayMessage(`Adding trainer ${name}.`);
+        // Hiding file menu and import button
+        importFieldset.classList.toggle("sortOff");
+        importFieldset.classList.toggle("popSec");
+      };
+      // Read file, trigger onLoad event above
+      read.readAsText(file);
+    }
+  });
+}
 
 // *****Audio Functions*****
 // Play sound effect

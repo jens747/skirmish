@@ -1,6 +1,6 @@
 import { qs, qsa, ce, getLocalStorage, setLocalStorage, setClick, setClickAll, displayMessage } from "./utils.mjs";
 import { catchRandPoke, setSkireData, createSkireData } from "./pokebank.mjs";
-import { searchDB } from "../db/indexdb.js";
+import { searchDB, updateTrainerObj } from "../db/indexdb.js";
 
 export default async function collectLoop() {
   // Get a selector for the back button
@@ -16,13 +16,16 @@ export default async function collectLoop() {
   // const alphaDescBtn = qs("#collectAlphaDesc");
   // const idAscBtn = qs("#collectIdAsc");
 
+  // Add click listeners to sort buttons
   setClick("#collectAlphaAsc", sortCollection);
   setClick("#collectAlphaDesc", sortCollection);
   setClick("#collectIdAsc", sortCollection);
   setClick("#collectIdDesc", sortCollection);
   setClick("#collectLvAsc", sortCollection);
   setClick("#collectLvDesc", sortCollection);
-
+  // Add click listener to export button
+  setClick("#collectExport", exportTrainer);
+  // Set list and grid button variables
   const listBtn = qs("#collectList");
   const gridBtn = qs("#collectGrid");
 
@@ -37,14 +40,9 @@ export default async function collectLoop() {
     if (screenWidth < 656) {
       gridBtn.click();
     }
-  });
-  // window.addEventListener("resize", function() {
-  //   let screenWidth = window.innerWidth;
-  //   console.log(`The viewable screen width is now ${screenWidth} pixels.`);
-  // });
-  
+  }); 
 
-  
+  // ***May not need URL
   const url = document.referrer;
   console.log(url);
   if (url.includes("endgame")) {
@@ -97,9 +95,10 @@ export async function getCollection() {
 
 export async function setCollectListeners(listBtn, gridBtn) {
   
-  // const buySkireCard = qs(".buySkireCard");
+  const buySkireCard = qsa(".buySkireCard");
   const pokeCard = document.querySelectorAll(".poke-card");
   // const pokeCard = qsa(".poke-card");
+  const skireCostDiv = qsa(".skireCostDiv");
   const skireDivTop = qsa(".skireDivTop");
   const skirePic = qsa("picture");
   const pokeImg = qsa(".pokeImg");
@@ -116,9 +115,14 @@ export async function setCollectListeners(listBtn, gridBtn) {
 
   listBtn.addEventListener("click", 
     function() {
-      // buySkireCard.classList.add("listBuySkireCard");
+      buySkireCard.forEach(elm => {
+        elm.classList.add("listBuySkireCard");
+      });
       pokeCard.forEach(elm => {
         elm.classList.add("listPoke-card");
+      });
+      skireCostDiv.forEach(elm => {
+        elm.classList.add("listSkireCostDiv");
       });
       skireDivTop.forEach(elm => {
         elm.classList.add("listSkireDivTop");
@@ -166,9 +170,14 @@ export async function setCollectListeners(listBtn, gridBtn) {
 
   gridBtn.addEventListener("click", 
     function() {
-      // buySkireCard.classList.remove("listBuySkireCard");
+      buySkireCard.forEach(elm => {
+        elm.classList.remove("listBuySkireCard");
+      });
       pokeCard.forEach(elm => {
         elm.classList.remove("listPoke-card");
+      });
+      skireCostDiv.forEach(elm => {
+        elm.classList.remove("listSkireCostDiv");
       });
       skireDivTop.forEach(elm => {
         elm.classList.remove("listSkireDivTop");
@@ -213,6 +222,62 @@ export async function setCollectListeners(listBtn, gridBtn) {
       });
     }
   );
+
+  setClickAll(".sellSkireBtn", sellSkireCard);
+}
+
+// Function used to sell skire cards from collection
+export async function sellSkireCard(action, event) {
+  // Get the name of trainer and their data
+  const cname = getLocalStorage("collecting");
+  const trainer = await searchDB(cname);
+
+  // Get the element to change coin collection display
+  const ccoins = qs("#cCoins");
+
+  // Element to show card was sold
+  const skireCardSold = event.target.offsetParent.parentElement.lastChild;
+  // Element to show card was sold
+  const skireCardSalesTag = event.target.offsetParent;
+  // Id of card that was sold
+  const skireCardName = skireCardSold.id;
+  // Coin value of card being sold
+  const skireCardValue = event.target.offsetParent.firstChild.lastChild.textContent;
+  // Number of cards in deck, prevents sale of all cards
+  const cardsInDeck = Object.keys(trainer.skirmishCards).length;
+
+  // Can't sell if less than 10 cards
+  if (cardsInDeck > 10) {
+    // Prevent user from clicking sell button again
+    skireCardSalesTag.style.display = "none";
+
+    // Prevent user from accessing sold card again
+    skireCardSold.classList.add("soldCard");
+    skireCardSold.textContent = "Sold";
+
+    // Remove card from current stats to prevent error
+    Object.keys(trainer.currentGame).forEach(key => {
+      // Cycle through w/l/d, remove matching skiremon
+      trainer.currentGame[key] = trainer.currentGame[key].filter(skire => skire !== skireCardName);
+    });
+
+    // Update trainer coin value
+    trainer.coins += Number(skireCardValue);
+    
+    // Delete skirmish card from trainer's deck
+    delete trainer.skirmishCards[[skireCardName]];
+    
+    // Update the trainer in IndexedDB
+    await updateTrainerObj(cname, trainer);
+
+    // Tell the trainer that the card was sold
+    displayMessage(`You sold ${skireCardName} for ${skireCardValue} coins.`);
+
+    // Update user's coin value on collection page
+    ccoins.textContent = trainer.coins;
+  } else {
+    displayMessage("You must have more than 10 cards in your deck to sell.");
+  }
 }
 
 export async function sortAlpha() {
@@ -490,4 +555,39 @@ export async function sortCollection() {
 
   // Add listeners to all elements
   setCollectListeners(listBtn, gridBtn);
+}
+
+// Exports trainer data from a different pc/browser
+export async function exportTrainer() {
+  // Get the name of the current trainer
+  const name = getLocalStorage("collecting");
+  // Get the trainer's info
+  const trainer = await searchDB(name);
+  // Parse data into JSON
+  const trainerJson = JSON.stringify(trainer);
+  // Create file with trainer's JSON data in downloads
+  createFile(trainerJson, `${name}.json`, "application/json");
+  // Saving trainer data message
+  displayMessage("Downloading trainer data to files.");
+}
+
+// Function creates a file to transfer
+export async function createFile(content, fileName, contentType) {
+  // Create temporary anchor tag for download
+  const aTag = ce("a");
+  // Create Blob to store trainer data
+  const file = new Blob([content], {type: contentType});
+  // Temp url points to data like file on server
+  const url = URL.createObjectURL(file);
+  // Point anchor href at url
+  aTag.href = url;
+  // Set a-tag download attribute to filename
+  aTag.download = fileName;
+  // When downloaded the file is labeled w/filename
+  aTag.click();
+  // Delays cleanup until after download starts
+  setTimeout(() => {
+    // Clears memory being used for Blob URL
+    window.URL.revokeObjectURL(url);  
+  }, 0); 
 }
