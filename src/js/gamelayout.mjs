@@ -8,15 +8,18 @@ export function displayBackground() {
   const landscape = [
     "../public/img/bg/beach_DALLE_GPT.webp",
     "../public/img/bg/canyon_DALLE_GPT.webp",
+    "../public/img/bg/cave_DALLE_GPT.webp",
     "../public/img/bg/cliffs_DALLE_GPT.webp",
     "../public/img/bg/desert_DALLE_GPT.webp",
     "../public/img/bg/forest_DALLE_GPT.webp",
     "../public/img/bg/island_DALLE_GPT.webp",
     "../public/img/bg/lake_DALLE_GPT.webp",
+    "../public/img/bg/lava_DALLE_GPT.webp",
     "../public/img/bg/marsh_DALLE_GPT.webp",
     "../public/img/bg/rainforest_DALLE_GPT.webp",
     "../public/img/bg/patties_DALLE_GPT.webp",
-    "../public/img/bg/savannah_DALLE_GPT.webp"
+    "../public/img/bg/savannah_DALLE_GPT.webp", 
+    "../public/img/bg/winter_DALLE_GPT.webp"
   ];
   const rand = Math.floor(Math.random() * (landscape.length - 1));
 

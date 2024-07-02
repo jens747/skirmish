@@ -312,8 +312,10 @@ export function updateRecord(name, amount = 1, add = true) {
 }
 
 export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, outcome = "draw") {
-  const COIN = 2;
-  const BONUS = 5;
+  const COIN = 3;
+  const BONUS = 6;
+  let prize = 0;
+  
   // check both card levels
   // update coins, update card wins, losses, draws, level, stats
   try {
@@ -331,7 +333,10 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
         trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, 1, false);
       // If level is less than rival, give 5 coins, decrease nextLevel by 2
       } else {
-        trainer.coins = updateRecord(trainer.coins, BONUS);
+        prize = rivalCard.level - trainerCard.level + BONUS;
+        
+        // trainer.coins = updateRecord(trainer.coins, BONUS);
+        trainer.coins = updateRecord(trainer.coins, prize);
         // Update current game coin count
         trainer.coinsEarned = updateRecord(trainer.coinsEarned, BONUS);
         

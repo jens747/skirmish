@@ -41,7 +41,7 @@ export async function getTrades(skireStock) {
   }
   // Display the Skire cards available for trade
   await skireForTrade.map(dat => setSkireData(dat));
-  // const cardsToBuy = qs(".poke-card");
+  // When the page loads add listeners to all cards
   window.addEventListener("load", function() {
     setClickAll(".buySkireCard", buySkireCard)
   });

@@ -114,7 +114,7 @@ export async function createSkireData(idx) {
       "evolutions": bag.poke.forms.map(form => form.name),
       "cries": bag.poke.cries, 
       "forms": bag.poke.forms, 
-      "moves": bag.poke.moves, 
+      // "moves": bag.poke.moves, 
       "id": bag.poke.id,
       "level": 1,
       "wins": 0, 
@@ -175,17 +175,33 @@ export async function setSkireData(data, trade = true) {
   skireCostDiv.className = "skireCostDiv";
   section.appendChild(skireCostDiv);
 
+  let sellSkireBtn;
+
+  // Display the sell price of the card
+  if (!trade) {
+    sellSkireBtn = ce("button");
+    sellSkireBtn.className = "sellSkireBtn";
+    sellSkireBtn.textContent = "Sell"
+    skireCostDiv.appendChild(sellSkireBtn);
+  }
+
   // Create the div for the coin
   const skireCostCoin = ce("div");
   skireCostCoin.className = "skireCostCoin";
   skireCostCoin.textContent = "C";
-  skireCostDiv.appendChild(skireCostCoin);
 
   // Create the p tag to show the card value
   const skireCostValue = ce("p");
   skireCostValue.className = "skireCostValue";
-  skireCostValue.textContent = skiremon.coinValue;
-  skireCostDiv.appendChild(skireCostValue);
+  if (!trade) {
+    skireCostValue.textContent = Math.floor(skiremon.coinValue / 3.5);
+    sellSkireBtn.appendChild(skireCostCoin);
+    sellSkireBtn.appendChild(skireCostValue);
+  } else {
+    skireCostValue.textContent = skiremon.coinValue;
+    skireCostDiv.appendChild(skireCostCoin);
+    skireCostDiv.appendChild(skireCostValue);
+  } 
 
   // Create the div for the id, type, & lv
   const skireDivTop1 = ce("div");
@@ -273,7 +289,7 @@ export async function setSkireData(data, trade = true) {
     skireRecord1.appendChild(skireNext1);
 
     // If not trading remove coin value
-    skireCostDiv.style.display = "none";
+    // skireCostDiv.style.display = "none";
   }
 
   // Create div for hp & dmg tags

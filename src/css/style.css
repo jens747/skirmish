@@ -533,7 +533,8 @@ body, html {
 .another-btn:hover, 
 .already-btn:hover, 
 .ready-btn:hover, 
-.modal-btn:hover {
+.modal-btn:hover, 
+#collectBack:hover {
   background: var(--mid-blue);
   cursor: pointer;
 }
@@ -693,7 +694,7 @@ body, html {
   list-style: none;
   background: var(--mid-blue);
   /* justify-content: end; */
-  padding: .4em 1em;
+  padding: .4em;
   margin: 0;
   align-items: end;
   position: fixed;
@@ -837,12 +838,17 @@ body, html {
   border-radius: 32px;
 }
 
+.soldCard, 
 .boughtCard {
   opacity: 0.8;
   background: var(--primary-color);
   color: var(--tertiary-color);
   font-family: inherit;
   font-size: xx-large;
+}
+
+.soldCard {
+  background: var(--dark-purple);
 }
 
 .shopkeeper {
@@ -860,7 +866,7 @@ body, html {
   width: 100%;
   position: fixed;
   top: -8px;
-  left: 226px;
+  left: 192px;
   z-index: 100;
 }
 
@@ -869,7 +875,11 @@ body, html {
 }
 
 #collectIdAsc, 
+#collectIdDesc, 
+#collectAlphaAsc,
 #collectAlphaDesc, 
+#collectLvAsc,
+#collectLvDesc,
 #collectList, 
 #collectGrid {
   padding: 1em;
@@ -883,7 +893,11 @@ body, html {
 }
 
 #collectIdAsc:hover, 
+#collectIdDesc:hover, 
+#collectAlphaAsc:hover, 
 #collectAlphaDesc:hover,
+#collectLvAsc:hover, 
+#collectLvDesc:hover,
 #collectList:hover, 
 #collectGrid:hover {
   /* transform: scale(1.088); */
@@ -892,7 +906,11 @@ body, html {
 }
 
 #collectIdAsc:active, 
+#collectIdDesc:active, 
+#collectAlphaAsc:active, 
 #collectAlphaDesc:active,
+#collectLvAsc:active, 
+#collectLvDesc:active,
 #collectList:active, 
 #collectGrid:active {
   transform: translateX(-1px) translateY(-1px) scale(.88);
@@ -936,6 +954,33 @@ body, html {
   margin: 2px;
 }
 
+#collectImport, 
+#collectExport {
+  position: fixed;
+  bottom: 72px;
+  right: -24px;
+  right: -112px;
+  text-shadow: 2px 2px var(--dark-color);
+  box-shadow: 4px 4px 10px var(--dark-color);
+  z-index: 100;
+  min-width: 10em;
+}
+
+#collectExport {
+  bottom: 72px;
+  /* right: -24px; */
+}
+
+#collectExport, 
+#collectImport {
+  transition: transform 700ms;
+}
+
+#collectExport:hover, 
+#collectImport:hover {
+  transform: translateX(-88px);
+}
+
 .collectMenuH1 {
   margin-top: 56px;
 }
@@ -944,8 +989,20 @@ body, html {
   background: var(--light-red);
 }
 
-.listBuySkireCard {
+#importFieldset {
+  position: relative;
+  z-index: 100;
+}
+
+.sortOff {
   display: none;
+}
+
+.listBuySkireCard {
+  /* display: none; */
+  left: -12px;
+  height: 114%;
+  width: 104%;
 }
 
 .listPoke-card {
@@ -958,6 +1015,14 @@ body, html {
 
 .listSkireDivTop {
   grid-column: 2/3;
+}
+
+.listSkireCostDiv {
+  justify-content: flex-start;
+  top: -10px;
+  left: 20px;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .listPicture {
@@ -1008,6 +1073,27 @@ body, html {
 
 .listSkireCardTypes {
   display: none;
+}
+
+.sellSkireBtn {
+  background: var(--light-color);
+  border: 3px outset var(--tertiary-color);
+  padding: 1px 5px;
+  min-width: 96px;
+  font-family: "Luckiest Guy", cursive;
+  font-size: 14px;
+  margin-top: -32px;
+  border-radius: 15px;
+  height: 28px;
+  display: flex;
+  justify-content: space-around;
+  z-index: 1;
+}
+
+.sellSkireBtn:hover {
+  cursor: pointer;
+  background: var(--mid-green);
+  border: 3px outset var(--mid-green);
 }
 
 /* End Collection Page Styles */

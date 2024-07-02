@@ -1,4 +1,4 @@
-import { loadAnimations, addActions, setClickAll, moveAndFadeImg, getLocalStorage, newSkirmish } from "./utils.mjs";
+import { loadAnimations, addActions, setClick, setClickAll, moveAndFadeImg, getLocalStorage, newSkirmish, importTrainer } from "./utils.mjs";
 import { catchRandPoke } from "./pokebank.mjs";
 import getIndexedDB from "../db/indexdb.js";
 
@@ -14,6 +14,7 @@ export default async function mainLogic() {
   });
 
   loadAnimations();
+  setClick("#collectImport", importTrainer);
   setClickAll(".prime-btn", addActions);
 
   // Create a new IndexedDB database if none exists
