@@ -340,7 +340,7 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
         // Update current game coin count
         trainer.coinsEarned = updateRecord(trainer.coinsEarned, BONUS);
         
-        trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, COIN, false);
+        trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, 1, false);
       }
       // If nextLevel reaches 0, trainerCard levels up, resets nextLevel
       if (trainerCard.nextLevel <= 0) {
