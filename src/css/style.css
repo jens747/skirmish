@@ -1833,6 +1833,21 @@ body, html {
   #collectStyle {
     display: none;
   }
+
+  #collectImport, 
+  #collectExport {
+    right: -24px;
+  }
+
+  #collectExport, 
+  #collectImport {
+    transition: transform 700ms;
+  }
+
+  #collectExport:hover, 
+  #collectImport:hover {
+    transform: translateX(0px);
+  }
 }
 
 @media (max-width: 428px) {

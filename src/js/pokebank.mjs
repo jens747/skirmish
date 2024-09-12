@@ -424,6 +424,17 @@ export async function setSkireData(data, trade = true) {
   skireStrength1.className = "skireStrength";
   skireTypes1.appendChild(skireStrength1);
 
+  // Combin both arrays in new set to remove duplicates
+  // const strongTypes = [
+  //   ...new Set(
+  //     [
+  //       ...skiremon.doubleDamageTo, 
+  //       ...skiremon.halfDamageFrom
+  //     ]
+  //   )
+  // ];
+
+  // strongTypes.map(type => {
   skiremon.doubleDamageTo.map(type => {
     const li1 = ce("li");
     skireStrength1.appendChild(li1);
@@ -444,6 +455,17 @@ export async function setSkireData(data, trade = true) {
   skireWeakness1.className = "skireWeakness";
   skireTypes1.appendChild(skireWeakness1);
 
+  // Combin both arrays in new set to remove duplicates
+  // const weakTypes = [
+  //   ...new Set(
+  //     [
+  //       ...skiremon.doubleDamageFrom, 
+  //       ...skiremon.halfDamageTo
+  //     ]
+  //   )
+  // ];
+
+  // weakTypes.map(type => {
   skiremon.doubleDamageFrom.map(type => {
     const li1 = ce("li");
     skireWeakness1.appendChild(li1);

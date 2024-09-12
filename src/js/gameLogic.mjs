@@ -196,54 +196,43 @@ export default async function skirmishLoop() {
 }
 
 export function planAttack(trainer, rival, hp, idx, trainermove, card) {
-  // console.log(`*****NEXT TURN*****`);
   let rivalHp = hp;
 
   // variables to set trainer attack and defense stats
   let trainerAtk, rivalDef;
-    
-  // const trainermove = prompt("Press 'a' for attack, or 's' for sp. attack: ");
 
   // Attack if true
   if (trainermove) {
     trainerAtk = trainer[idx].attack;
-    // console.log("Trainer Atack");
-    // console.log(trainerAtk);
+    // Type effects modify skiremon attack strength
     trainerAtk = addTypeEffectsModifier(trainer[idx], rival[idx], trainerAtk);
-    console.log(trainerAtk);
+    
     // trainerAtk = trainer[idx].attack;
     rivalDef = rival[idx].defense;
-    // console.log("Rival Defense");
-    // console.log(rivalDef);
+    
     // rivalDef = addTypeEffectsModifier(rival[idx], trainer[idx], rivalDef, false);
-    // console.log(rivalDef);
   }
 
   // Special attack if false
   if (!trainermove) {
+    // Use special attack value
     trainerAtk = trainer[idx].specialAttack;
+    // Modify attack based on type
     trainerAtk = addTypeEffectsModifier(trainer[idx], rival[idx], trainerAtk);
+    // Opponent uses their special defense stats
     rivalDef = rival[idx].specialDefense;
   }
-
-  // ***add animation***
-  
-  console.log(`${rival[idx].name} HP: ${rivalHp} Defense: ${rivalDef}`);
-  console.log(`${trainer[idx].name} Attack: ${trainerAtk}`);
-  // Create variable for damage level of the current attack
-  // let trainerAtkdmg;
 
   // If the attack is greater than defense 
   // Subtract the defense from the attack 
   if(trainerAtk > rivalDef) {
     window.trainerAtkdmg = trainerAtk - rivalDef;
     // dmgTaken(card, trainerAtkdmg);
-    console.log(`${rival[idx].name} damage: ${window.trainerAtkdmg}`);
+    // console.log(`${rival[idx].name} damage: ${window.trainerAtkdmg}`);
   } else {
     // If attack is less than defense, player takes no damage
     window.trainerAtkdmg = 0;
     // dmgTaken(card, trainerAtkdmg);
-    console.log("no damage");
   }
   
   // Subtract any remaining attack from the rival hp
@@ -256,14 +245,14 @@ export function planAttack(trainer, rival, hp, idx, trainermove, card) {
     rivalHp = 0;
     // trainer[idx].wins = updateRecord(trainer[idx].wins);
     // rival[idx].losses = updateRecord(rival[idx].losses);
-    console.log(`${rival[idx].name} loses HP: ${rivalHp}.`);
-    console.log(`Winner: ${trainer[idx].name}`);
-    console.log(`Wins: ${trainer[idx].wins}, Losses: ${trainer[idx].losses}, Lv. ${trainer[idx].level}, Next: ${trainer[idx].nextLevel}`);
-    console.log(`Loser: ${rival[idx].name}`);
-    console.log(`Wins: ${rival[idx].wins}, Losses: ${rival[idx].losses}, Lv. ${rival[idx].level}, Next: ${rival[idx].nextLevel}`);
-  } else {
-    console.log(`${rival[idx].name} HP: ${rivalHp}. Keep fighting!!!`);
-  }
+    // console.log(`${rival[idx].name} loses HP: ${rivalHp}.`);
+    // console.log(`Winner: ${trainer[idx].name}`);
+    // console.log(`Wins: ${trainer[idx].wins}, Losses: ${trainer[idx].losses}, Lv. ${trainer[idx].level}, Next: ${trainer[idx].nextLevel}`);
+    // console.log(`Loser: ${rival[idx].name}`);
+    // console.log(`Wins: ${rival[idx].wins}, Losses: ${rival[idx].losses}, Lv. ${rival[idx].level}, Next: ${rival[idx].nextLevel}`);
+  } //else {
+    // console.log(`${rival[idx].name} HP: ${rivalHp}. Keep fighting!!!`);
+  //}
   return rivalHp;
 }
 
@@ -330,6 +319,7 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
         // Update current game coin count
         trainer.coinsEarned = updateRecord(trainer.coinsEarned, COIN);
 
+        // Reduce the next level requirement by 1
         trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, 1, false);
       // If level is less than rival, give 5 coins, decrease nextLevel by 2
       } else {
@@ -340,7 +330,8 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
         // Update current game coin count
         trainer.coinsEarned = updateRecord(trainer.coinsEarned, BONUS);
         
-        trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, COIN, false);
+        // Reduce the next level requirement by 1
+        trainerCard.nextLevel = updateRecord(trainerCard.nextLevel, 1, false);
       }
       // If nextLevel reaches 0, trainerCard levels up, resets nextLevel
       if (trainerCard.nextLevel <= 0) {
@@ -370,17 +361,6 @@ export function updateTrainerCard(trainer, trainerCard, rivalCard, callback, out
 
 export function levelUpCard(card) {
   const STATS = Array.from({ length: 6 }, () => Math.floor(Math.random() * 3));
-  // console.log(STATS);
-
-  // console.log(`
-  //   Name: ${card.name},
-  //   HP: ${card.hp} + ${STATS[0]},
-  //   Attack: ${card.attack} + ${STATS[1]},
-  //   Defense: ${card.defense} + ${STATS[2]}, 
-  //   Sp. Attack: ${card.specialAttack} + ${STATS[3]},
-  //   Sp. Defense: ${card.specialDefense} + ${STATS[4]},
-  //   Speed: ${card.speed} + ${STATS[5]}
-  // `);
 
   card.levelUp = {
     hp: STATS[0],
@@ -398,16 +378,6 @@ export function levelUpCard(card) {
   card.specialDefense += STATS[4];
   card.speed += STATS[5];
 
-  // console.log(`
-  //   Name: ${card.name},
-  //   HP: ${card.hp},
-  //   Attack: ${card.attack},
-  //   Defense: ${card.defense}, 
-  //   Sp. Attack: ${card.specialAttack},
-  //   Sp. Defense: ${card.specialDefense},
-  //   Speed: ${card.speed}
-  // `);
-  // console.log(card);
   return card;
 }
 
@@ -422,11 +392,11 @@ export async function resetTrainer(record) {
   trainer.coinsEarned = 0;
 
   Object.values(trainer.skirmishCards).map(card => {
+    // Get the key name for the skiremon
     const keys = Object.keys(card)[0];
-    // card[keys].levelUp = {};
-    // console.log(card[keys].levelUp);
+
+    // Clear lv up values, random values added at lv up
     trainer.skirmishCards[keys][keys].levelUp = {};
-    // console.log(trainer.skirmishCards[keys][keys]);
   });
 
   return trainer;
